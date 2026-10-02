@@ -1,0 +1,14 @@
+Dear Switchgrass Freight planning team,
+
+Your posting says your forecasts missed by 24% last year, and that a miss means idle docks one day and overtime the next. At Brightwell Grocers Distribution I worked on the same problem with groceries in place of freight, and I'd like to work on yours.
+
+When I took over our weekly forecast in 2021, it missed by 31% on average across 1,900 items and three distribution centers. Most of the misses came from store promotions the old model never saw. I rebuilt the forecast in SQL and Excel with promotions as an input, and within a year the error was down to 19%. Our buyers now set their orders every Monday from a Power BI dashboard I built for them.
+
+I learned the warehouse side first. I ran cycle counts in Manhattan WMS as an inventory coordinator and cut count variance from 2.8% to 0.9%, so I've seen what a bad forecast does to the people on the dock.
+
+Freight forecasting starts with the question I've worked on for five years: where does the forecast miss, and which input causes it? I'd start with your 38 terminals the way I started with our 1,900 items, and I'd send your terminal managers the same one-page weekly note our buyers get now.
+
+I'd like to talk about where your forecasts miss most and what your terminal managers need from a weekly report.
+
+Dmitri Okafor
+(816) 555-0172 | dmitri.okafor@example.com
