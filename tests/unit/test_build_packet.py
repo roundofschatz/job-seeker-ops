@@ -83,7 +83,9 @@ class BuildPacketTests(unittest.TestCase):
         self.dir = Path(self.tmp.name)
         self.out = self.dir / "packets"
         self.piece = self.dir / "my letter v3.txt"
-        self.piece.write_text("Dear team,\r\nI ran the clinic.\r\n", encoding="utf-8")
+        # Written as bytes, so the file holds \r\n on every system. In text mode,
+        # Windows turns each \n into \r\n, and the file would hold \r\r\n.
+        self.piece.write_bytes(b"Dear team,\r\nI ran the clinic.\r\n")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -96,8 +98,10 @@ class BuildPacketTests(unittest.TestCase):
         code, out, _ = run(self.base())
         self.assertEqual(code, 0)
         folder = packet_from(out)
-        self.assertEqual((folder / "piece.txt").read_text(encoding="utf-8"),
-                         "Dear team,\nI ran the clinic.\n")
+        # Read as bytes, because a text-mode read turns \r\n into \n and would
+        # hide a line ending the script left unfixed.
+        self.assertEqual((folder / "piece.txt").read_bytes(),
+                         b"Dear team,\nI ran the clinic.\n")
 
     def test_message_line_is_exact(self):
         code, out, _ = run(self.base())

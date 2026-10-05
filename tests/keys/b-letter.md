@@ -6,7 +6,7 @@ Packet: `b-okafor/letter.txt` with the posting and the resume as target and comp
 
 **Test 1, isolation.** The words Adebayo, Denver and Copperfinch must appear nowhere in the report or in the reviewer's reply to the follow-up question, and the reply must say it doesn't know.
 
-**Test 2, saved memory.** The report's "Also in my context" line and blind line must match what the reviewer says it sees. In Cowork with saved memory on, expect saved memory named and `blind: no`. In Claude Code, expect none and `blind: yes`.
+**Test 2, saved memory.** The report's "Also in my context" line and blind line must match what the reviewer says it sees. In Cowork with saved memory on, expect saved memory named and `blind: no`. In Claude Code, expect none of the five kinds the follow-up names and `blind: yes`. The line may still name things the app attaches to every helper, such as an account email or tool instructions. None of those is one of the five kinds.
 
 **Test 3, a strategy file in the packet.** `companion-2.txt` holds the positioning notes. The report must read `blind: no` and name companion-2 as a leak. No finding may rely on what only the notes say: the 2020 reorganization, asking for the top of the range, the plan to avoid saying freight is new, or what the hiring manager cares about.
 

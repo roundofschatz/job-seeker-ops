@@ -275,7 +275,9 @@ def build(args):
     rows = []
 
     def write(name, text, role):
-        (folder / name).write_text(text, encoding="utf-8", newline="\n")
+        # Written as bytes, so \n stays \n on every system. Path.write_text takes
+        # newline only from Python 3.10 on, and this script runs on 3.8.
+        (folder / name).write_bytes(text.encode("utf-8"))
         chars, words = counts(text)
         rows.append((name, role, f"{chars:,}", f"{words:,}"))
         return chars
@@ -372,7 +374,7 @@ def build(args):
     ]
     for note in notes:
         lines.append(f"- Note: {note}")
-    (folder / "manifest.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    (folder / "manifest.md").write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
     return folder, warnings
 
 

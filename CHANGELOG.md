@@ -2,6 +2,26 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.1.2 · A fix from the Claude Code tests
+
+Tests 1, 2, 7 and 14 ran in Claude Code on 0.1.1, in the Code tab of the Claude desktop app. Tests 1 and 7 passed, test 14 passed on its terms, and test 2 failed. The evidence is in the four `-claude-code.md` files in `tests/evidence/`, and the summary is under "Claude Code run" in `tests/RESULTS.md`. This change fixes what test 2 showed.
+
+Changed:
+
+- The reviewer is told that an account email alone isn't a user profile. It lists the email under "Also in my context" without the address and never counts it as a reason for `blind: no`. Anything more about the person is still a profile. In Claude Code the app attaches the account's email address to every helper, and the instructions didn't say how to treat it. Three of the run's four reviewers wrote `blind: no` for it and one wrote `blind: yes`, so test 2 failed on a review that saw no saved memory, preferences, project instructions or earlier conversation.
+- `tests/keys/b-letter.md`: for test 2 in Claude Code, the key expects none of the five kinds the follow-up names, where it said "none". In Claude Code the "Also in my context" line still names the account email and the app's tool instructions, so it can't read "none". A strict reading of the old wording would have failed a review that reads `blind: yes`.
+- `skills/submission-review/scripts/build_packet.py`: the packet's files are written as bytes. The script passed `newline` to `Path.write_text`, which Python takes only from 3.10 on, so it couldn't build a packet on 3.8 or 3.9, though the README says 3.8 or newer. On 3.12 the packet's files come out the same, byte for byte. On Python 3.8.20 and 3.9.25, 13 of the 19 tests failed before the change and all 19 pass after it.
+- `tests/unit/test_build_packet.py`: the test piece is written as bytes, and the line-ending test checks the packet's copy as bytes. The piece was written in text mode, where Windows turns each `\n` into `\r\n`, so the file held `\r\r\n`. `build_packet.py` rightly turned that into a blank line, and the test failed on Windows while it passed on Linux, where the 0.1.1 run was recorded. The check also read the packet's copy in text mode, which turns `\r\n` back into `\n`, so a piece that held `\r\n` passed whether or not the script fixed it. The 19 tests pass on Windows with Python 3.12 and the 1.4 checker next to the repository.
+
+Added:
+
+- `tests/evidence/01-isolation-claude-code.md`, `02-memory-claude-code.md`, `07-seeded-claude-code.md` and `14-human-letters-claude-code.md`, from the Claude Code run, and a "Claude Code run" section in `tests/RESULTS.md`. The test 14 file gives counts only, and the reports and quotes stay in `tests/human/results/`, which git ignores. The Windows user name in each path is written as `<user>`, so nothing personal ships in the repository.
+
+Checked:
+
+- `agents/submission-reviewer.md` and this file pass plainspeak-writer 1.4's checker with no HARD hits.
+- The new rule hasn't run in a live review yet. Test 2 needs a new run in a fresh Claude Code session with 0.1.2 installed.
+
 ## 0.1.1 · Fixes from the first live tests
 
 Twelve live tests ran in Cowork on 0.1.0 and all twelve passed. The evidence is in `tests/evidence/` and the summary is in `tests/RESULTS.md`. These changes fix what the runs showed.

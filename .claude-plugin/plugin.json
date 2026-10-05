@@ -1,7 +1,7 @@
 {
   "name": "job-seeker-ops",
   "displayName": "Job Seeker Ops",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Job-search tools that sit beside plainspeak-writer and resume-ops. Version 0.1 adds submission review: a separate reviewer reads a finished cover letter, resume or outreach note the way its real reader will, without seeing how it was made, and returns quoted findings with a verdict.",
   "author": {
     "name": "roundofschatz",
