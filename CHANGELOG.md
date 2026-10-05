@@ -7,6 +7,7 @@ Every change to this plugin is logged here: what was added, changed or removed, 
 Changed:
 
 - `build_packet.py` reports its own version as 0.1.2, so a packet's manifest shows which script built it. The script changed in 0.1.2, but the 0.1.2 commit (`7d0de7e`) still called it 0.1.0. The copy installed in the desktop app was uploaded after this change, so it reports 0.1.2. This ships with the next version.
+- The reviewer treats the git snapshot that Claude Code attaches to every helper (the branch, the git user name and recent commit titles) the way it treats the account email: it lists the snapshot, quotes none of it and never counts it as a profile. A branch name or commit title about the piece, its target or how it was written counts as a leak. The 0.1.2 rerun showed the snapshot reaching every reviewer with no rule for it, and a commit title such as "soften the gap line" would tell a reviewer what the writer meant.
 - `.gitignore` leaves out `jso-tests/`. RUN-TESTS.md has a session build its packets there, and in Claude Code that folder sits inside the repository, so the rerun's packets showed up as untracked files.
 
 Added:
