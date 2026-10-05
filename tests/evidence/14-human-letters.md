@@ -47,10 +47,12 @@ The owner edited two letters by hand in a Claude Doc to clear their must-fix fin
 | Letter | HARD in 1.4 | Verdict | Must fix | Should fix |
 |---|---|---|---|---|
 | A, edited | 0 | Send | 0 | 15 |
-| C, edited | 0 | Fix first | 2 | 17 |
+| C, first edit | 0 | Fix first | 2 | 17 |
+| C, second edit | 0 | Send | 0 | 16 |
 
-- Letter A passes the case: no HARD hits, no must-fix findings, and a Send. Its 15 should-fix findings are about content, such as claims without numbers, labels and jargon, and a read-through found no false alarm among them.
-- Letter C still has two must-fix findings. One is jargon the edit left in. The other is a Risk finding on a sentence that the first review of the letter read without flagging, so the same sentence drew different calls in two reviews.
+- Letters A and C both pass the case: no HARD hits, no must-fix findings, and a Send. Letter A's 15 should-fix findings are about content, such as claims without numbers, labels and jargon, and a read-through found no false alarm among them.
+- Letter C's first edit kept two must-fix findings: jargon the edit left in, and a Risk finding. The second edit cleared both, and it came back Send.
+- The Risk finding came in one of the letter's three reviews. It quoted a sentence the other two reviews read without flagging, so the same sentence can draw different calls from one review to the next.
 - The test's wording asks for few findings, which doesn't fit a letter with real content gaps. The verdict path is what this case checks, and it passed.
 
 **Result: Pass**

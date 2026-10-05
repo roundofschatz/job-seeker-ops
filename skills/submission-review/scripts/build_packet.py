@@ -25,7 +25,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
 # type: (label for the manifest, checker surface, default readers)
 TYPES = {
