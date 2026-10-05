@@ -40,8 +40,17 @@
 - The letters' text stays out of the repository. The owner saved each one from a public page, and only counts are kept.
 - In a review, either letter would get one must-fix finding for its dashes, since one rule counts once, and a verdict of Fix first.
 
-## Not covered yet
+## The clean-letter case
 
-- Neither letter is free of HARD hits, so "a letter with no HARD hits should get Send with few findings" is still untested. It needs a clean letter a person wrote.
+The owner edited two letters by hand in a Claude Doc to clear their must-fix findings, keeping every change in their own words. The edited versions then went through the checker and a fresh review. Letter C is a third letter, mostly the owner's own words, which first came back Fix first with three must-fix findings.
+
+| Letter | HARD in 1.4 | Verdict | Must fix | Should fix |
+|---|---|---|---|---|
+| A, edited | 0 | Send | 0 | 15 |
+| C, edited | 0 | Fix first | 2 | 17 |
+
+- Letter A passes the case: no HARD hits, no must-fix findings, and a Send. Its 15 should-fix findings are about content, such as claims without numbers, labels and jargon, and a read-through found no false alarm among them.
+- Letter C still has two must-fix findings. One is jargon the edit left in. The other is a Risk finding on a sentence that the first review of the letter read without flagging, so the same sentence drew different calls in two reviews.
+- The test's wording asks for few findings, which doesn't fit a letter with real content gaps. The verdict path is what this case checks, and it passed.
 
 **Result: Pass**
