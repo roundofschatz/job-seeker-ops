@@ -6,7 +6,8 @@ Every change to this plugin is logged here: what was added, changed or removed, 
 
 Changed:
 
-- `build_packet.py` reports its own version as 0.1.2, so a packet's manifest shows which script built it. The script changed in 0.1.2 but still called itself 0.1.0, and the 0.1.2 that's installed still does. This ships with the next version.
+- `build_packet.py` reports its own version as 0.1.2, so a packet's manifest shows which script built it. The script changed in 0.1.2, but the 0.1.2 commit (`7d0de7e`) still called it 0.1.0. The copy installed in the desktop app was uploaded after this change, so it reports 0.1.2. This ships with the next version.
+- `.gitignore` leaves out `jso-tests/`. RUN-TESTS.md has a session build its packets there, and in Claude Code that folder sits inside the repository, so the rerun's packets showed up as untracked files.
 
 Added:
 

@@ -5,3 +5,5 @@ review-packets/
 *.tmp
 # Letters people shared for testing stay on this computer, never in the repository.
 tests/human/
+# Packets built for the live tests stay on this computer too.
+jso-tests/
