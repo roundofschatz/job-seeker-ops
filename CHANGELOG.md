@@ -2,11 +2,13 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
-## Unreleased
+## 0.1.3 · A rule for the git snapshot
+
+A package rebuilt on October 5 carried these changes under the 0.1.2 number, so two different packages shared one version. This version gives the changes their own number. A changed file always gets a new version from here on.
 
 Changed:
 
-- `build_packet.py` reports its own version as 0.1.2, so a packet's manifest shows which script built it. The script changed in 0.1.2, but the 0.1.2 commit (`7d0de7e`) still called it 0.1.0. The copy installed in the desktop app was uploaded after this change, so it reports 0.1.2. This ships with the next version.
+- `build_packet.py` reports its own version as 0.1.2, so a packet's manifest shows which script built it. The script changed in 0.1.2, but the 0.1.2 commit (`7d0de7e`) still called it 0.1.0. The copy uploaded to the desktop app on October 5 already had this fix, so it reports 0.1.2.
 - The reviewer treats the git snapshot that Claude Code attaches to every helper (the branch, the git user name, changed files and recent commit titles) the way it treats the account email: it lists the snapshot, quotes none of it and never counts it as a profile. A branch name, file name or commit title about the piece, its target or how it was written counts as a leak. The 0.1.2 rerun showed the snapshot reaching every reviewer with no rule for it, and a commit title such as "soften the gap line" would tell a reviewer what the writer meant. File names count because the snapshot lists changed files, and a file name can say what the writer meant, which is why the manifest leaves them out.
 - `tests/keys/b-letter.md`: test 2 names a git snapshot among the things the app attaches to every helper, next to the account email and tool instructions.
 - `.gitignore` leaves out `jso-tests/`. RUN-TESTS.md has a session build its packets there, and in Claude Code that folder sits inside the repository, so the rerun's packets showed up as untracked files.
