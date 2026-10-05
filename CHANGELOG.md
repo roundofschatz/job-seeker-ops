@@ -8,6 +8,14 @@ Changed:
 
 - `build_packet.py` reports its own version as 0.1.2, so a packet's manifest shows which script built it. The script changed in 0.1.2 but still called itself 0.1.0, and the 0.1.2 that's installed still does. This ships with the next version.
 
+Added:
+
+- `tests/evidence/01-isolation-claude-code-0.1.2.md`, `02-memory-claude-code-0.1.2.md` and `07-seeded-claude-code-0.1.2.md`, from a rerun of tests 1, 2 and 7 in Claude Code with 0.1.2 installed, and a "Claude Code rerun on 0.1.2" section in `tests/RESULTS.md`. All three passed. Test 2 passed this time because the reviewer saw none of the five kinds, listed the account email without the address and wrote `blind: yes`. The test 7 reviewer wrote the same blind line. The `-claude-code.md` files from the 0.1.1 run stay as they were. The Windows user name in each path is written as `<user>`, and no email address appears.
+
+Checked:
+
+- The three new evidence files, `tests/RESULTS.md` and this file pass plainspeak-writer 1.4.1's checker with no HARD hits.
+
 ## 0.1.2 · A fix from the Claude Code tests
 
 Tests 1, 2, 7 and 14 ran in Claude Code on 0.1.1, in the Code tab of the Claude desktop app. Tests 1 and 7 passed, test 14 passed on its terms, and test 2 failed. The evidence is in the four `-claude-code.md` files in `tests/evidence/`, and the summary is under "Claude Code run" in `tests/RESULTS.md`. This change fixes what test 2 showed.

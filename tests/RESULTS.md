@@ -62,3 +62,27 @@
 - The Risk check moves between runs. On letter B the Cowork reviewer listed a typo as a should-fix under Clarity, and this run's reviewer made it a must-fix under Risk.
 - RUN-TESTS.md points at the wrong folder for this product. The desktop app keeps the installed plugin under `%APPDATA%\Claude\local-agent-mode-sessions\`, and nothing from job-seeker-ops is under `~/.claude/plugins`.
 - The test 14 packets named no channel. The Cowork run passed `--channel upload`. The test's text names none, so this run passed none, and a few should-fix lines hedge about email and text boxes because of it.
+
+## Claude Code rerun on 0.1.2
+
+- Date: 2026-10-05
+- Product: Claude Code 2.1.280, in the Code tab of the Claude desktop app on Windows 11. A fresh session that didn't help build the plugin.
+- Plugin: job-seeker-ops, installed copy (`plugin.json` 0.1.2, `build_packet.py` 0.1.2). Python 3.12.10.
+- Voice rules used in both packets: plainspeak-writer 1.4.1, the copy next to this repository, passed with `--voice-dir ..\plainspeak-writer`.
+- Evidence: the three `-claude-code-0.1.2.md` files in `tests/evidence/`. The `-claude-code.md` files from the 0.1.1 run are unchanged.
+
+| Test | Result | Reason |
+|---|---|---|
+| 1. Isolation from the conversation | Pass | The reply says it doesn't know the middle name, a move or a canary word, and Adebayo, Denver and Copperfinch appear nowhere in either reviewer's transcript. |
+| 2. Saved memory | Pass | The reviewer sees none of the five kinds, lists the account email without the address, and the report reads `blind: yes`. |
+| 7. Seeded flaws | Pass | Fix first, with all eight planted flaws in the right list, nothing else must-fix, no replacement wording and `blind: yes`. |
+
+3 of 3 passed.
+
+### Worth a look
+
+- In this run the app attached a git snapshot to each reviewer as well as the account email. It holds the branch, the git user name and the five latest commit titles. 0.1.2's rule names only the email. Both reviewers kept the snapshot out of the five kinds, but nothing in the rule tells them to, so a later reviewer could count the git user name as a profile, the way three of four counted the email on 0.1.1.
+- This project now has saved memory, which this session loaded when it started. Neither reviewer's transcript holds any of it, so the review stayed blind with saved memory present.
+- The Unreleased line in `CHANGELOG.md` says the installed 0.1.2 still calls itself 0.1.0. The copy installed for this run reports 0.1.2, and so do its manifests. It was uploaded at 00:03 on 5 October, after commit `e8f5c34` set the label. The pushed `main` still says 0.1.0.
+- A follow-up still brings the whole report back when the reviewer first answers in plain text, because the harness then asks for "your full report". The second follow-up came back as the short answer alone.
+- RUN-TESTS.md puts PACKETS in the session's working folder, which in Claude Code is this repository. This run's packets sit in `jso-tests/packets/`, which `.gitignore` doesn't cover, so the folder shows as untracked. It isn't committed.
