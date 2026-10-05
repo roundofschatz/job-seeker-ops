@@ -1,8 +1,8 @@
 {
   "name": "job-seeker-ops",
   "displayName": "Job Seeker Ops",
-  "version": "0.1.3",
-  "description": "Job-search tools that sit beside plainspeak-writer and resume-ops. Version 0.1 adds submission review: a separate reviewer reads a finished cover letter, resume or outreach note the way its real reader will, without seeing how it was made, and returns quoted findings with a verdict.",
+  "version": "0.2.0",
+  "description": "Job-search tools that sit beside plainspeak-writer and resume-ops. Candidate positioning works out the case for one candidate and one posting before anything gets written, and saves it as one file that resume-ops and cover-letter read. Submission review has a separate reviewer read a finished cover letter, resume or outreach note the way its real reader will, without seeing how it was made, and return quoted findings with a verdict.",
   "author": {
     "name": "roundofschatz",
     "url": "https://github.com/roundofschatz"
@@ -10,5 +10,5 @@
   "homepage": "https://github.com/roundofschatz/job-seeker-ops",
   "repository": "https://github.com/roundofschatz/job-seeker-ops",
   "license": "MIT",
-  "keywords": ["job-search", "cover-letter", "resume", "review", "hiring", "claude-plugin"]
+  "keywords": ["job-search", "cover-letter", "resume", "positioning", "review", "hiring", "claude-plugin"]
 }

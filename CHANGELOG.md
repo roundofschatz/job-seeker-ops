@@ -2,6 +2,60 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.2.0 · Candidate positioning
+
+The second skill, built from the candidate-positioning spec. It works out the case for one candidate and one posting before anything gets written, and saves it as one positioning file. resume-ops reads the file from 2.4.0 on, and cover-letter will read it once it's built. Submission review gains a second direction that uses the same file.
+
+Added:
+
+- `skills/candidate-positioning/SKILL.md`, the ten steps, the rules and the commands. The skill asks the person at two points at most: one message at step 2 when something's missing, and one confirmation at step 9.
+- `skills/candidate-positioning/references/format.md`, the positioning file's format, section by section, with a full example built on test writer B's files. It's the format's one home.
+- `skills/candidate-positioning/references/case.md`, on finding what the firm is buying, the hiring team's view, the four lines, ranking the proofs and picking the phrases to watch for.
+- `skills/candidate-positioning/scripts/check_positioning.py` 0.2.0. It checks a file's shape every time. Its options check each quote against its file and line, whether a source changed since the stamp, the sentences a file shares with a past letter, plainspeak-writer's voice check on the sentences other pieces reuse, what resume-ops or cover-letter needs, a finished piece against the file, and the firm facts' links. It also prints a JSON view and the file's name.
+- `tests/unit/test_check_positioning.py`, 47 tests for the script; `tests/unit/test_version.py`, which checks that `plugin.json`, this file and the built package agree; and `tests/unit/run_tests.py`, which runs every unit test.
+- Writers E to H in `tests/writers/` and their keys in `tests/keys/`. Writer H's posting is a real one, as the owner asked, so the link test reaches real pages. Its text stays on the test computer, out of the repository.
+- `tests/RUN-TESTS-positioning.md`, with the spec's thirteen tests and how to run them; the `tests/evidence/positioning-*.md` files and `tests/evidence/positioning-runs/`; and a candidate-positioning section in `tests/RESULTS.md`.
+- Test 16 in `tests/RUN-TESTS.md`, for the review's second direction, with its evidence in `tests/evidence/16-second-direction.md`.
+
+Changed:
+
+- `skills/submission-review/SKILL.md`: when the posting has a positioning file, the conversation checks the piece against it after the blind report, under its own heading. The owner asked for a review that works in both directions. The reviewer never sees the file, so the review itself stays blind, and `agents/submission-reviewer.md` is unchanged.
+- `README.md`: a section on candidate positioning, the review's second direction, new examples, the file list and the tests.
+- `.claude-plugin/plugin.json`: version 0.2.0, a description that names both skills, and the keyword "positioning".
+- `tests/RUN-TESTS.md`: the Claude desktop app keeps an uploaded plugin under `%APPDATA%\Claude\local-agent-mode-sessions\` on Windows, not under `~/.claude/plugins`, so the setup step names both places.
+- `tests/writers/README.md`: rows for writers E to H.
+
+Fixed before release, from round one of the tests:
+
+- Writer E's facts from her saved pages cited the saved file and line but not the page. A fact from a saved page now gives the page's address, with the saved file and line in brackets, and the checker warns when a fact from beyond the posting has no link.
+- Writer H's posting has numbered headings and lines for other units, which no requirement row fits, so the checker warned on 15 of its lines. A "Not mapped" line under the map now lists such lines with the reason, and the checker warns only when the reason is missing.
+- Writer H's first file said how often one of her certifications renews, which came from general knowledge, not from her files. SKILL.md now says an outside fact goes in the firm facts with its source, or to the person as a question. In round two the skill asked her.
+
+Round two ran writers E and H again, and both passed.
+
+Where this build departs from the spec, and why:
+
+- **Past letters.** The spec says no sentence or structure moves from an old letter into the file. On October 5 the owner ruled that a sentence may move from one piece to another when it states the same proven fact and is still true, and that no sentence repeats word for word within one piece. The skill follows the ruling. `--against` lists every sentence the file shares with a past letter so each one gets checked, a fact that ages is still worked out from the dates, and the shape check fails a sentence the file says twice. The spec's test for past letters became a check that each shared sentence is still true.
+- **Firm facts.** The owner ruled that facts come from the posting and the firm's other pages, that two is a floor, and that relevance decides how many. Each fact says why it matters to the case. Home-page facts stay out, since every applicant reads the home page.
+- **Stops.** The spec has the skill stop once, at step 9, and also ask once at step 2. The skill asks at step 2 only when something's missing, puts the request for firm facts into that message when the session can't reach the web, and confirms once at step 9.
+- **Reading a long file.** The spec reads a file whole under about 2,000 lines. The skill takes resume-ops's whole rule, about 2,000 lines or 150 KB, so a file of few but very long lines gets searched too.
+- **The voice check** also covers the plain descriptions in section 6, since pages use them, and runs on the letter surface, since cover-letter reuses these sentences in letters.
+- **The format adds four things** the spec doesn't name: a short SHA-256 for each source in the stamp, so a script can tell whether the file is current; IDs for the answers the person gives in the session; "Confirmed: not yet" for a saved draft; and "off" in the show-on column for a gap.
+- **The letter half of "Off the page"** waits for cover-letter, whose spec repeats the test. The resume half ran on a resume built by resume-ops 2.4.0.
+
+Checked:
+
+- The spec's tests 1 to 13 pass, with their evidence in `tests/evidence/positioning-01-shape.md` to `positioning-13-own-files.md`. Test 4 passed in round two. Test 6 ran for the resume only.
+- Test 16 passes. The reviewer stayed blind, and the check against the file sorted its two must-fix findings.
+- The unit tests: 68 of 68 pass on Windows with Python 3.12.10, including the 19 submission-review tests and the check that the package in `dist/` matches the repository.
+- Every file this version adds or changes passes plainspeak-writer 1.4.1's checker and the 1.5 build's with no HARD hits, apart from the quoted examples that `positioning-13-own-files.md` lists. No file holds anything personal to the owner.
+
+Left for later:
+
+- cover-letter, and with it section 9 of the format and the letter half of test 6.
+- A fresh session with 0.2.0 installed, for submission-review test 2 with the git snapshot rule and for a positioning run through the installed plugin.
+- plainspeak-writer 1.4.1 blocks the dash in a date range such as "Jan 2022 – Present", which resume-ops writes, so a review of a resume-ops resume gets a must-fix for it. The fix belongs in plainspeak-writer, and a change note for its next version asks for it.
+
 ## 0.1.3 · A rule for the git snapshot
 
 A package rebuilt on October 5 carried these changes under the 0.1.2 number, so two different packages shared one version. This version gives the changes their own number. A changed file always gets a new version from here on.

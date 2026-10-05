@@ -1,6 +1,23 @@
 # Job Seeker Ops
 
-Job Seeker Ops is a Claude plugin for job-search writing. It sits beside two tools that stay separate: plainspeak-writer, which writes in a plain human voice, and resume-ops, which builds resumes. Version 0.1 adds the first piece, submission review.
+Job Seeker Ops is a Claude plugin for job-search writing. It sits beside two tools that stay separate: plainspeak-writer, which writes in a plain human voice, and resume-ops, which builds resumes. Version 0.2 holds two pieces. Candidate positioning works out the case for a posting before anything gets written, and submission review checks a finished piece before it goes out.
+
+## Candidate positioning
+
+Before a resume or a letter gets written, candidate positioning works out the case for one candidate and one posting and saves it in one positioning file. resume-ops 2.4.0 reads the file to decide which proof leads and where the summary points, and cover-letter will read it for the reasoning behind the letter. So the case gets settled once, from the evidence, rather than twice in two drafts.
+
+It reads the posting and the resume being sent, plus anything else the person shares, such as a master resume, LinkedIn text, a career record, portfolio pages, past letters or notes. Then it:
+
+1. Finds what the hiring team is buying, from the problem the posting describes rather than its list of duties.
+2. Maps every requirement to the evidence that answers it, with the file and line, and names the gaps.
+3. Looks up the firm for facts from the posting and the firm's other pages, never its home page.
+4. Writes the hiring team's view after an imagined interview, and the case in four lines.
+5. Ranks three to five proofs, each with its story and source, and lists the words the candidate can claim.
+6. Shows the person the case once, with any conflict between sources or any choice between two readings as a question, and saves the file once they confirm it.
+
+The gaps, the hiring team's concern and anything private stay in the file. They decide which proof leads, and nothing the person lacks goes on a page a reader sees.
+
+A script, `check_positioning.py`, checks every file: the sections, a source for every row and proof, each quote against its file and line, whether a source changed since the person confirmed the file, and plainspeak-writer's voice check on the sentences a resume or letter will reuse.
 
 ## Submission review
 
@@ -15,6 +32,8 @@ The reviewer never saw how the piece was made. The conversation that wrote a let
 - The helper's only tool is Read. It opens the files the manifest names and can't search for others, and it can't edit anything.
 - It skips project instruction files (CLAUDE.md), which helpers load by default.
 - Its report opens with what it received and whether the review was blind.
+
+**The second direction.** When the posting has a positioning file, the conversation checks the piece against that file after the report, under its own heading. It notes whether the reviewer's first take lands on what the case says the reader should believe, whether a must-fix finding falls on a gap or the concern, which proofs made it onto the page, and any phrase from the file's keep-off list that shows up. The reviewer never sees the file, so the review itself stays blind.
 
 **One limit in Cowork.** Cowork gives every helper the account's saved memory, and no setting in the plugin can turn that off. If your saved memory holds your career history, a Cowork review sees it and says "blind: no." For a fully blind review, run it in Claude Code, such as the Code tab in the Claude desktop app, which doesn't load the Claude app's saved memory.
 
@@ -43,11 +62,17 @@ Install it under Plugins, not Skills. A skill upload drops the reviewer, and the
 
 **Claude Code.** Run `claude --plugin-dir ./job-seeker-ops` to load it for one session. A marketplace listing comes with the first public release.
 
-**What it needs.** Python 3.8 or newer runs the packet script. plainspeak-writer runs the voice check; without it, the review marks voice as unchecked and runs everything else. Chat on claude.ai doesn't run plugin helpers, so the review needs Cowork or Claude Code.
+**What it needs.** Python 3.8 or newer runs the scripts. plainspeak-writer runs the voice checks; without it, the review marks voice as unchecked and runs everything else, and a positioning file's stamp says its voice check didn't run. resume-ops reads a positioning file from version 2.4.0 on, and an older resume-ops builds without it. Chat on claude.ai doesn't run plugin helpers, so the review needs Cowork or Claude Code.
 
 ## Use
 
-Give Claude the finished piece and the posting, and ask for a review:
+Give Claude the posting and your resume, plus anything else you have, and ask for your case:
+
+> Work out my case for this posting before I write anything.
+
+> What should my resume and cover letter lead with for this job?
+
+For a review, give Claude the finished piece and the posting:
 
 > Review this cover letter against the posting before I send it.
 
@@ -63,6 +88,11 @@ Claude asks once for anything missing, builds the packet, starts the reviewer an
 job-seeker-ops/
 ├── .claude-plugin/plugin.json      name, version and description
 ├── agents/submission-reviewer.md   the reviewer's instructions
+├── skills/candidate-positioning/
+│   ├── SKILL.md                    the ten steps that build a positioning file
+│   ├── references/format.md        the file's format, with a full example
+│   ├── references/case.md          finding what the firm is buying, and the case
+│   └── scripts/check_positioning.py  checks a positioning file
 ├── skills/submission-review/
 │   ├── SKILL.md                    the steps Claude follows to start a review
 │   └── scripts/build_packet.py     builds the packet
@@ -74,8 +104,9 @@ job-seeker-ops/
 
 ## Tests
 
-- `python3 tests/unit/test_build_packet.py` runs the packet script's tests.
-- `tests/RUN-TESTS.md` holds the live tests: isolation, leaks, seeded flaws, repeat runs and the rest. Every test piece comes from made-up writers.
+- `python3 tests/unit/run_tests.py` runs every unit test: the packet script's, the positioning checker's, and the check that `plugin.json`, the changelog and a built package agree.
+- `tests/RUN-TESTS.md` holds submission review's live tests: isolation, leaks, seeded flaws, repeat runs and the rest.
+- `tests/RUN-TESTS-positioning.md` holds candidate positioning's live tests. Every test piece comes from made-up writers, and writer H applies to a real posting, which isn't stored here.
 
 ## Contributing
 
@@ -83,6 +114,7 @@ job-seeker-ops/
 - Build on what's here instead of replacing it.
 - Log every change in `CHANGELOG.md`: what was added, changed or removed, and why.
 - Run plainspeak-writer's checker on every file you change.
+- Give every change to a shipped file a new version. Build the package from the release commit, so it matches the commit byte for byte: `git archive --format=zip --prefix=job-seeker-ops/ -o dist/job-seeker-ops.plugin HEAD .claude-plugin agents skills README.md CHANGELOG.md LICENSE`.
 - The voice rules live in plainspeak-writer. This plugin keeps no copy of them.
 
 ## License

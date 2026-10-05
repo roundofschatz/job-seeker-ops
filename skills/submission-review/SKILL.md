@@ -58,6 +58,24 @@ Give the person the report as it came back. Don't soften the verdict, argue with
 - If the person disagrees with a finding, a second opinion means a new review with a new packet. Never ask the same reviewer to reconsider.
 - If the report says `blind: no`, tell the person why in one line. When the reason is saved memory, explain that Claude Code doesn't load the Claude app's saved memory, so the same review run in Claude Code, such as the Code tab in the Claude desktop app, is fully blind.
 
+### When the posting has a positioning file
+
+The reviewer reads like the real reader, who never sees the positioning file, so the check against that file runs here, after the report. Write it under its own heading, "Against the positioning file", below the report and apart from it. Never send it to the reviewer, and never put the file in a packet.
+
+Run candidate-positioning's script on the piece. Use `--as resume` for a resume and `--as outreach` for an outreach note:
+
+```bash
+python3 "${CLAUDE_SKILL_DIR}/../candidate-positioning/scripts/check_positioning.py" \
+  positioning-<company>-<role>.md --piece letter.docx --as letter
+```
+
+Then say in a few lines:
+
+- whether the reviewer's first take lands on line 4 of the case, what the reader should believe
+- whether any must-fix finding falls on a gap or the concern from section 7
+- which proofs marked for this piece show on the page, from the script's report
+- any phrase from section 7 the script found on the page, which has to come off before the piece goes out
+
 ## When another skill calls this one
 
 A writing skill such as cover-letter or resume-ops may run this review after a draft and before the person sees it.

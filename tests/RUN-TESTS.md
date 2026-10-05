@@ -17,7 +17,7 @@ Work through the tests in order. Write each result to `tests/evidence/` in this 
 
 1. **Session.** Note the product (Cowork or Claude Code), the date, and the Claude Code version if `claude --version` works here.
 2. **Reviewer.** Look for `job-seeker-ops:submission-reviewer` in the Agent tool's agent types. If it's missing, write `tests/evidence/00-setup.md` saying so and stop.
-3. **Packet script.** Find the installed copy of `skills/submission-review/scripts/build_packet.py` under `~/.claude/plugins`. Call its path SCRIPT below. Use `python3`, or `python` on Windows, and record the version.
+3. **Packet script.** Find the installed copy of `skills/submission-review/scripts/build_packet.py`. Claude Code keeps an installed plugin under `~/.claude/plugins`. The Claude desktop app keeps a plugin uploaded under Customize, Plugins in its own folder: `%APPDATA%\Claude\local-agent-mode-sessions\` on Windows, or `~/Library/Application Support/Claude/local-agent-mode-sessions/` on a Mac, in a subfolder named `plugin_<id>`. Call its path SCRIPT below. Use `python3`, or `python` on Windows, and record the version.
 4. **Test pieces.** In Claude Code, use `tests/writers/` in place. In Cowork, the reviewer can only open files in this session's workspace, so stage these eleven files from the computer into the session and call their folder WRITERS:
    - `a-quintero/posting.txt`, `resume.txt`, `letter-clean.txt`, `letter-seeded.txt`
    - `b-okafor/posting.txt`, `resume.txt`, `letter.txt`, `positioning-notes.md`, `career-record.md`
@@ -104,6 +104,15 @@ A review takes several minutes. To save time, build every packet first, then sta
 1. Build: `SCRIPT --type outreach --piece WRITERS/d-ferreira/outreach-note.txt --channel textbox --limit 300 --out PACKETS`
 2. Start a new reviewer with the printed line. Save the report.
 3. Grade against `keys/d-outreach.md`. Evidence: `12-channel.md`.
+
+## Test 16: The second direction
+
+New in 0.2.0. It needs a positioning file and a piece built from it, such as the resume resume-ops builds for writer E in `tests/RUN-TESTS-positioning.md`.
+
+1. Build a packet for the piece with the posting as its target. The positioning file never goes in.
+2. Start a new reviewer with the printed line, and save the report.
+3. Run `check_positioning.py` on the positioning file with `--piece` and `--as`, then write the note under "Against the positioning file", as submission-review's SKILL.md says.
+4. Pass when the report reads `blind: yes` in Claude Code, the positioning file is in neither the packet nor the reviewer's list of opened files, and the note covers the first take, any must-fix finding on a gap or the concern, the proofs and any watch phrase. Evidence: `16-second-direction.md`.
 
 ## Finish
 

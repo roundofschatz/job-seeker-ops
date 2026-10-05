@@ -86,3 +86,55 @@
 - The Unreleased line in `CHANGELOG.md` said the installed 0.1.2 still called itself 0.1.0. The copy installed for this run reports 0.1.2, and so do its manifests, because it was uploaded at 00:03 on 5 October, after commit `e8f5c34` set the label. The changelog line is fixed.
 - A follow-up still brings the whole report back when the reviewer first answers in plain text, because the harness then asks for "your full report". The second follow-up came back as the short answer alone.
 - RUN-TESTS.md puts PACKETS in the session's working folder, which in Claude Code is this repository. This run's packets sit in `jso-tests/packets/`, and they showed up as untracked files until `.gitignore` gained `jso-tests/`. They aren't committed.
+
+## Candidate positioning, for 0.2.0
+
+- Date: 2026-10-05
+- Product: Claude Code 2.1.286, in the Code tab of the Claude desktop app on Windows 11. The session that built the skill gave each run to a fresh general-purpose helper on Claude Opus 5.5. A helper saw only the skill's files and its own folder, and its replies came word for word from the writer's key in `tests/keys/`.
+- Skill: candidate-positioning from this repository's working tree before the 0.2.0 commit, with `check_positioning.py` 0.2.0, and resume-ops 2.4.0 from its own repository's working tree. Python 3.12.10.
+- Voice rules: plainspeak-writer 1.4.1, the copy installed in the desktop app.
+- Writers: E, a warehouse lead; F, a teacher with a master resume and an old letter; G, an engineer with LinkedIn text and no web access; and H, a nurse applying to a real posting. H's files stay on the test computer.
+- Evidence: `tests/evidence/positioning-01-shape.md` to `positioning-13-own-files.md`, with the saved files and conversations in `tests/evidence/positioning-runs/`. The steps are in `tests/RUN-TESTS-positioning.md`.
+
+| Test | Result | Reason |
+|---|---|---|
+| 1. The file's shape | Pass | All six saved files pass `check_positioning.py`, with every quote found at its cited line. resume-ops 2.4.0 reads each one as "use it", and each passes the check for what cover-letter needs. |
+| 2. No invention | Pass | Writer E's missing OSHA 30-hour card is gap R3, owned by the role and kept off the page. Her 10-hour card isn't counted as a match. |
+| 3. What the firm is buying | Pass | Writer E's case leads with lifting the new building from 82% to 97% on time, not with the duties list. The run with no skill led the same way, so this test doesn't tell them apart. |
+| 4. Firm facts | Pass in round two | In round one, writer E's facts from her saved pages had no page address. After the fix, every fact from beyond the posting has a link. Writer G, with no web access, was asked for facts and gave two, and all of writer H's links answered 200. |
+| 5. Reuse | Pass | A second request for writer F's posting used her file as it was: the same hash, the same time and no new file. |
+| 6. Off the page | Pass for the resume | The resume that resume-ops 2.4.0 built for writer E names none of her gaps and not her concern, and both checkers agree. The letter half waits for cover-letter. |
+| 7. One confirmation | Pass | In six runs, the skill asked once at step 2 at most, confirmed once at step 9, and stopped nowhere else. Writer G's choice of program reached him as a question with a recommendation and a default. |
+| 8. Deeper proof | Pass | Writer F's Summer Bridge result, which only her master resume holds, is P3, with its story, file, line and date, marked for both pieces. |
+| 9. Gap search | Pass | Writer F's professional development and adoption work come from her master resume, and neither is marked a gap. |
+| 10. Conflict | Pass | Writer F's 61% and 63% reached her at step 9, with the resume's 61% as the default. |
+| 11. Aging facts | Pass | Writer F's old letter says eight years. The file works out about 13 from her dates. |
+| 12. Past letters | Pass | `--against` found no sentence from writer F's 2021 letter in her file, and no sentence repeats within it. |
+| 13. Its own files | Pass | Every new or changed file passes the checker in 1.4.1 and in both 1.5 builds, apart from four quoted examples. None holds anything personal, and both changelogs log the change. |
+
+13 of 13 passed. Test 4 passed in round two, and test 6 covered the resume only.
+
+| Test in RUN-TESTS.md | Result | Reason |
+|---|---|---|
+| 16. The second direction | Pass | The reviewer stayed blind and never saw the file. The check against the file came after the report, under its own heading. It showed that one must-fix finding is gap R3 and that the other comes from the dash rule. |
+
+### Round two
+
+Round one found three faults in the skill. Round two ran writers E and H again after the fixes, and both passed.
+
+- Facts from saved pages cited the saved file but not the page. They now give the page's address, with the file and line in brackets.
+- Lines of writer H's posting that are headings, or that apply to other units, had no place in the map, so the checker warned on 15 of them. A "Not mapped" line now lists such lines with the reason.
+- Writer H's first file said how often one of her certifications renews, which came from general knowledge. In round two the skill asked her instead.
+
+### Not run in this session
+
+- Any test through the installed plugin. Every run here followed the skill from this repository, and the desktop app still has 0.1.3 installed.
+- Submission-review test 2 with the git snapshot rule. This session's folder isn't a git repository, so test 16's reviewer got no snapshot.
+- The letter half of test 6, which waits for cover-letter.
+
+### Worth a look
+
+- resume-ops writes a date range with a dash, as in "Jan 2022 – Present", and plainspeak-writer 1.4.1 blocks the dash, so a review of a resume-ops resume gets a must-fix for it. The owner ruled that a range outside prose may keep its dash, and the checker doesn't follow that ruling yet.
+- skill-creator's benchmark for round one: 98% of the graded checks passed with the skill, against 36% for the same prompts with no skill. Without the skill, one run advised listing the OSHA 30-hour card as in progress, two saved a case with no confirmation, and one came back with new questions three times.
+- A first build took 14 to 25 minutes of helper time, and a reuse took under three.
+- LibreOffice isn't on the test computer, so neither resume-ops build could run its real render and widow check, and both said so.
