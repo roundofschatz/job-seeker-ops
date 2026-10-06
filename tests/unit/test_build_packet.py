@@ -39,12 +39,15 @@ def make_docx(path, paragraphs, header=None):
             z.writestr("word/header1.xml", part(header))
 
 
-def make_voice(root, version="1.4.0", checker=None):
+def make_voice(root, version="1.4.0", checker=None, full_check=False):
     folder = Path(root) / "plainspeak-writer"
     (folder / "references").mkdir(parents=True)
     (folder / "scripts").mkdir()
     (folder / "SKILL.md").write_text("---\nname: plainspeak-writer\n---\n# x\n", encoding="utf-8")
     (folder / "references" / "tells.md").write_text("# Tells\n", encoding="utf-8")
+    if full_check:
+        # From 1.5 on, the full check has its own file instead of a section of tells.md.
+        (folder / "references" / "full-check.md").write_text("# The full check\n", encoding="utf-8")
     (folder / "CHANGELOG.md").write_text(f"# Changelog\n\n## {version} · test\n", encoding="utf-8")
     script = checker or textwrap.dedent('''\
         import sys
@@ -192,6 +195,35 @@ class BuildPacketTests(unittest.TestCase):
                             "--voice-dir", str(voice)])
         folder = packet_from(out)
         self.assertIn("exit code 1", (folder / "checker.txt").read_text(encoding="utf-8"))
+
+    def test_full_check_named_when_it_has_its_own_file(self):
+        voice = make_voice(self.dir / "skills", version="1.5", full_check=True)
+        code, out, _ = run(["--type", "letter", "--piece", str(self.piece), "--out", str(self.out),
+                            "--voice-dir", str(voice)])
+        self.assertEqual(code, 0)
+        manifest = (packet_from(out) / "manifest.md").read_text(encoding="utf-8")
+        self.assertIn(f"Rules file: {voice / 'references' / 'tells.md'}", manifest)
+        self.assertIn(f"- Full check: {voice / 'references' / 'full-check.md'}", manifest)
+
+    def test_no_full_check_line_when_the_rules_file_holds_it(self):
+        voice = make_voice(self.dir / "skills")
+        code, out, _ = run(["--type", "letter", "--piece", str(self.piece), "--out", str(self.out),
+                            "--voice-dir", str(voice)])
+        manifest = (packet_from(out) / "manifest.md").read_text(encoding="utf-8")
+        self.assertNotIn("Full check:", manifest)
+
+    def test_a_checker_that_stops_points_at_the_full_check(self):
+        broken = "import sys\nprint('boom', file=sys.stderr)\nsys.exit(3)\n"
+        expected = {False: "Run the full check in the rules file by hand.",
+                    True: "Run the full check by hand, from the file the Full check line names."}
+        for split, line in expected.items():
+            voice = make_voice(self.dir / f"split-{split}", checker=broken, full_check=split)
+            code, out, _ = run(["--type", "letter", "--piece", str(self.piece), "--out", str(self.out),
+                                "--voice-dir", str(voice)])
+            self.assertEqual(code, 0, split)
+            folder = packet_from(out)
+            self.assertIn(line, (folder / "manifest.md").read_text(encoding="utf-8"), split)
+            self.assertFalse((folder / "checker.txt").exists(), split)
 
     def test_unknown_surface_falls_back_to_general(self):
         script = textwrap.dedent('''\

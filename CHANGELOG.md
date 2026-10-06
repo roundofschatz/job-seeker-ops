@@ -2,6 +2,29 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.2.1 · The full check in its own file
+
+plainspeak-writer's 1.5 build moves the full check out of `references/tells.md` into `references/full-check.md`. The full check is the rule-by-rule list that says which rules block and which warn. 0.2.0's review packet named only `tells.md`, and the reviewer opens nothing the manifest doesn't name. So with 1.5 installed, the reviewer would have had no list of blocks to sort its own findings by, and no full check to run by hand when the checker can't run. This version works with both layouts.
+
+Changed:
+
+- `skills/submission-review/scripts/build_packet.py` 0.2.1. When plainspeak-writer has `references/full-check.md`, the manifest gets a "Full check" line naming it under the "Voice rules" line, and a checker that didn't run points the reviewer at that file. With 1.4.1, which keeps the full check in `tells.md`, the manifest is the same as before apart from the script's version. That version had stayed at 0.1.2 until now, since the script didn't change in 0.1.3 or 0.2.0. Three section comments that ended in "--" and two subtractions with a spaced minus are rewritten without them, because plainspeak-writer's checker reads code as prose and blocked each one under R01. They're older than this version, and the script works the same.
+- `agents/submission-reviewer.md`: the reviewer opens the file on the manifest's "Full check" line as well as the rules file, and takes the list of blocks from the full check wherever it sits. The report's "Voice rules" line names each rules file it used.
+- `tests/keys/b-letter.md`: test 5's list of opened files allows the full check file when the manifest names it.
+- `tests/RUN-TESTS.md`: test 11 checks the "Full check" line, and that the reviewer opened that file, when plainspeak-writer 1.5 or later is installed.
+- `tests/unit/test_build_packet.py`: three tests for the two layouts. The two for the new layout fail on 0.2.0's script.
+- `.claude-plugin/plugin.json`: version 0.2.1.
+
+Checked:
+
+- The unit tests: 71 of 71 pass on Windows with Python 3.12.10, including the check that the package in `dist/` matches the repository.
+- With the installed plainspeak-writer 1.4.1, a packet for writer B's letter came out the same as from 0.2.0's script, apart from the script's version and the packet folder's name. With the 1.5 build at commit `3396771`, the manifest named both files, and the checker ran.
+- Every file this version changes passes plainspeak-writer 1.4.1's checker and the 1.5 build's with no HARD hits.
+
+Left for later:
+
+- A live review with the new instructions, which needs 0.2.1 installed. The fresh-session tests cover it.
+
 ## 0.2.0 · Candidate positioning
 
 The second skill, built from the candidate-positioning spec. It works out the case for one candidate and one posting before anything gets written, and saves it as one positioning file. resume-ops reads the file from 2.4.0 on, and cover-letter will read it once it's built. Submission review gains a second direction that uses the same file.

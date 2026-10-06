@@ -33,7 +33,7 @@ Do this before you judge anything, and report it at the top.
 
 1. **The message.** The submission-review skill sends one fixed line: `Review the packet in <folder>. Read manifest.md first.` Compare the message you got with that line word for word. Extra words of any kind, such as a summary, praise, a note on what the piece is trying to do or a request to go easy, break the blind review. Quote them in your report.
 2. **Your own context.** Look outside the message. Note whether you can see saved memory, a user profile, preferences, project instructions or an earlier conversation, and name each kind you see. Never quote any of it, and never use any of it in a finding. The app may attach the account's email address to your context. An email address alone isn't a user profile, because it names the account and says nothing about the person's work or the piece. List it under "Also in my context" as an account email, leave the address out, and never count it as a reason for `blind: no`. Anything more about the person, such as a role, a work history or saved facts, is a profile. The app may also attach a git snapshot: the branch, the git user name, changed files and recent commit titles. Treat it the same way. List it as a git snapshot, quote none of it, and never count it as a profile. The one exception is a branch name, file name or commit title that says something about this piece, its target or how it was written. That's a leak, so name it and mark `blind: no`.
-3. **The packet.** Open `manifest.md` in the folder the message names, then every file it lists, whole. Open the voice rules file at the path the manifest gives. Open nothing else, even a path you could guess, and keep a list of every file you open. If the manifest is missing, or a file it lists won't open, stop and report what's missing.
+3. **The packet.** Open `manifest.md` in the folder the message names, then every file it lists, whole. Open the voice rules file at the path the manifest gives, and the file on its "Full check" line when it has one. Open nothing else, even a path you could guess, and keep a list of every file you open. If the manifest is missing, or a file it lists won't open, stop and report what's missing.
 4. **Leaks.** A companion must be something the real reader also sees, like the resume sent with a letter. A positioning or strategy file, drafting notes, an earlier draft, a career record, a brief, or any file that explains what the writer meant is a leak. Name it in the report, and don't use it.
 
 Mark the review `blind: yes` only when all of these hold: the message is the fixed line; the packet holds nothing beyond the piece, the target, companions the reader sees, the checker output and the manifest; and your context holds no saved memory, profile, preferences, project instructions or earlier conversation. Otherwise mark it `blind: no` and list every reason. An account email alone is never a reason, and neither is a git snapshot that says nothing about the piece. Finish the review either way, judging only from the packet.
@@ -60,7 +60,7 @@ Run all seven checks in this order every time. A fixed order is what lets two re
 2. **Fit.** List each requirement in the target and mark it shown, claimed without proof, or missing. A requirement is must-have when the target calls it required, a minimum or a must, or lists it under requirements or qualifications. It's preferred when the target says preferred, a plus or nice to have. When the target doesn't separate them, every listed requirement counts as must-have. Judge a resume from the resume alone. Judge any other piece across the piece and any resume sent with it, because the grader sees both, and note where each requirement shows. With no target, or a target too thin to list requirements, skip this check and say the review used a general reader for this type of piece.
 3. **Proof.** Every claim should land on a name, a number, a tool or a result. Flag labels a reader can't check, such as "proprietary," "bleeding edge" or "world-class." Flag claims that read as overreach. Flag any line that could go to any firm unchanged.
 4. **Clarity.** Flag any line a smart outsider wouldn't get the first time through: jargon, acronyms, coined or internal names, and references to something the reader never saw.
-5. **Voice.** Start with the checker output in the packet. Then go through the piece against the voice rules file, which holds the structural tells and the full check, and catch what a pattern can't, such as internal method names, metaphors that point at nothing and repeated sentence shapes. When the checker didn't run but the rules file is there, run the full check by hand. When the manifest says the voice rules weren't found, write `Voice: unchecked` in the report and skip this check.
+5. **Voice.** Start with the checker output in the packet. Then go through the piece against the voice rules, and catch what a pattern can't, such as internal method names, metaphors that point at nothing and repeated sentence shapes. The rules file holds the structural tells. The full check, which lists every rule that blocks or warns, is a section of the rules file, or the file on the manifest's "Full check" line when it has one. When the checker didn't run but the rules are there, run the full check by hand. When the manifest says the voice rules weren't found, write `Voice: unchecked` in the report and skip this check.
 6. **Risk.** Flag anything that reads as a disqualifier: a gap named outright, a shortcoming, an apology, an exit story or negative talk about a past employer. Also flag any title, date, company or figure that disagrees with a companion document.
 7. **Channel.** Check the length against the channel and any character limit, using the counts in the manifest. A text box drops bold, bullets and links. An email body gets opened on a phone first, so its top lines decide whether the rest gets seen.
 
@@ -69,7 +69,7 @@ Run all seven checks in this order every time. A fixed order is what lets two re
 A finding is must-fix when it's one of these:
 
 - A HARD hit in the checker output.
-- A rule the voice rules file lists under its blocks that you find by hand, such as an internal method name.
+- A rule the full check lists under its blocks that you find by hand, such as an internal method name.
 - Anything the Risk check finds.
 - A must-have requirement that's missing or claimed without proof, when the AI grader is one of the readers.
 - A piece over a hard character limit.
@@ -96,7 +96,7 @@ Write the report in plain words, following the voice rules in the packet. Use th
 ## What I received
 - Message: the fixed line | the fixed line plus "<the extra words>"
 - Packet files: <each file and its role>
-- Voice rules: <name, version and path> | not found
+- Voice rules: <name, version, and the path of each rules file> | not found
 - Also in my context: none | <the kinds you saw, never their content>
 - Files I opened: <every path>
 - blind: yes | blind: no (<every reason>)

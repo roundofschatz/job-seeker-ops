@@ -94,7 +94,7 @@ A review takes several minutes. To save time, build every packet first, then sta
 
 ## Test 11: Voice source
 
-1. Copy the "Voice rules" line from test 7's manifest. It should name plainspeak-writer, its version and the installed copy's path.
+1. Copy the "Voice rules" line from test 7's manifest. It should name plainspeak-writer, its version and the installed copy's path. From plainspeak-writer 1.5 on, the full check has a file of its own, and a "Full check" line under it names that file. When the manifest has one, the test 7 report's "Files I opened" should list that file and the rules file.
 2. Build: `SCRIPT --type letter --piece WRITERS/c-abernathy/letter.txt --no-voice --out PACKETS`. Start a new reviewer with the printed line, and grade the report against `keys/c-letter.md`.
 3. Run `tests/unit/test_build_packet.py` with Python on the computer that holds this repository. Its tests cover plainspeak-writer installed on its own, inside a plugin and in a synced folder. Record the result.
 4. Evidence: `11-voice-source.md`.

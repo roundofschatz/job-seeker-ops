@@ -25,7 +25,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.1.2"
+__version__ = "0.2.1"
 
 # type: (label for the manifest, checker surface, default readers)
 TYPES = {
@@ -62,7 +62,7 @@ class PacketError(Exception):
     """Input the person needs to fix."""
 
 
-# ------------------------------------------------------------------ reading --
+# Reading files
 
 def normalize(text):
     text = text.replace("\r\n", "\n").replace("\r", "\n")
@@ -149,7 +149,7 @@ def counts(text):
     return len(body), len(body.split())
 
 
-# -------------------------------------------------------- plainspeak-writer --
+# plainspeak-writer
 
 def default_roots():
     roots = []
@@ -252,7 +252,7 @@ def run_checker(voice_dir, surface, piece_path):
     return None, f"the checker stopped with an error: {last}", None
 
 
-# ------------------------------------------------------------------- packet --
+# The packet
 
 def build(args):
     kind_label, surface, default_readers = TYPES[args.type]
@@ -306,14 +306,21 @@ def build(args):
         found = find_voice_dirs(default_roots())
         voice_dir, found_count = choose_voice_dir(found), len(found)
 
+    full_check = None
     if voice_dir:
         version = voice_version(voice_dir)
         rules = voice_dir / "references" / "tells.md"
         voice_line = (f"plainspeak-writer {version}. Rules file: {rules}"
                       + (f" (newest of {found_count} copies found)" if found_count > 1 else ""))
+        # From 1.5 on, the full check, with the list of rules that block, has its own
+        # file. Before that it's a section of tells.md.
+        split = voice_dir / "references" / "full-check.md"
+        full_check = split if split.is_file() else None
         output, used, code = run_checker(voice_dir, surface, folder / "piece.txt")
         if output is None:
-            checker_line = f"Didn't run: {used}. Run the full check in the rules file by hand."
+            checker_line = (f"Didn't run: {used}. "
+                            + ("Run the full check by hand, from the file the Full check line names."
+                               if full_check else "Run the full check in the rules file by hand."))
         else:
             header = (f"plainspeak-writer {version} checker output for piece.txt, "
                       f"surface {used}, exit code {code} "
@@ -329,13 +336,13 @@ def build(args):
     if args.channel:
         channel_line = CHANNELS[args.channel]
         if args.limit:
-            over = piece_chars - args.limit
+            over = piece_chars-args.limit
             channel_line += f", with a limit of {args.limit:,} characters. The piece has {piece_chars:,}"
             channel_line += (f", which is {over:,} over the limit." if over > 0 else ", which fits.")
         else:
             channel_line += "."
     elif args.limit:
-        over = piece_chars - args.limit
+        over = piece_chars-args.limit
         channel_line = (f"not given, with a limit of {args.limit:,} characters. The piece has {piece_chars:,}"
                         + (f", which is {over:,} over the limit." if over > 0 else ", which fits."))
     else:
@@ -370,6 +377,10 @@ def build(args):
         f"- Target: {target_line}",
         f"- Channel: {channel_line}",
         f"- Voice rules: {voice_line}",
+    ]
+    if full_check:
+        lines.append(f"- Full check: {full_check}")
+    lines += [
         f"- Checker: {checker_line}",
     ]
     for note in notes:
