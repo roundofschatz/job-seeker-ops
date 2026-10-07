@@ -138,3 +138,45 @@ Round one found three faults in the skill. Round two ran writers E and H again a
 - skill-creator's benchmark for round one: 98% of the graded checks passed with the skill, against 36% for the same prompts with no skill. Without the skill, one run advised listing the OSHA 30-hour card as in progress, two saved a case with no confirmation, and one came back with new questions three times.
 - A first build took 14 to 25 minutes of helper time, and a reuse took under three.
 - LibreOffice isn't on the test computer, so neither resume-ops build could run its real render and widow check, and both said so.
+
+## Claude Code run on 0.2.1
+
+- Date: 2026-10-06
+- Product: Claude Code 2.1.289, from the `AI_AGENT` environment variable, in the Code tab of the Claude desktop app on Windows 11. This session didn't help build the plugin.
+- Installed in the app: job-seeker-ops 0.2.1 as a plugin, and resume-ops 2.4.0 and plainspeak-writer 1.5 as uploaded skills. The plugin's `build_packet.py` and `check_positioning.py` are the same files as this repository's copies, byte for byte. Python 3.12.10.
+- An earlier session ran this round on Claude Code 2.1.288 the same day and left its evidence uncommitted. That evidence and its section of this file were moved to `tests/evidence/prior-2.1.288/` before this run, and its run folder was renamed `e-installed-prior-2.1.288`.
+- Voice rules in every packet: the installed plainspeak-writer 1.5, which keeps the full check in `references/full-check.md`. The packet script didn't find it on its own, so each packet was built again with `--voice-dir` pointing at it, as submission-review's SKILL.md says.
+- Working folder: this repository, on `main`. This run's evidence was drafted outside the repository and copied in after the last review, so every reviewer's git snapshot showed only the `prior-2.1.288` folder and five commit titles.
+- Evidence: the six `-claude-code-0.2.1.md` files in `tests/evidence/`. The positioning run and the resume build used `..\jso-tests\positioning\runs\e-installed\`, outside the repository.
+
+| Test | Result | Reason |
+|---|---|---|
+| 1. Isolation from the conversation | Pass | The reply says "I don't know any of the three", and Adebayo, Denver and Copperfinch appear nowhere in the report or either reply. Send, with no must-fix finding. |
+| 2. Saved memory, with the git snapshot | Pass | The reviewer named "a git snapshot (branch, git user name, one untracked folder and recent commit titles ...)", quoted no branch, user name, file name or commit title, kept it apart from a profile and wrote `blind: yes`. |
+| 7. Seeded flaws | Pass | Fix first. Must-fix: Q-Ladder, the dash, "wasn't just", the 2017 date, the gap, and nothing else. Should-fix: the opener, "known across the hospital", "keep the room calm". No replacement wording. |
+| 11. Voice source, with the full check in its own file | Pass with `--voice-dir` | The manifest's "Full check" line names the installed `full-check.md`, and the test 7 reviewer opened the five packet files, `tells.md` and `full-check.md`, and nothing else. Without `--voice-dir` the manifest read "Voice rules: not found". Unit tests: 22 of 22 OK. |
+| Positioning 1. The file's shape, writer E | Pass | `check_positioning.py --sources --current` passes with 30 quotes found, and so do `--for resume-ops` and `--for cover-letter`. resume-ops 2.4.0 reads the file as "use it". |
+| Positioning 2. No invention | Pass | The OSHA 30-hour card is R8, "gap, owned by the role", kept off. Spanish and Lean or Six Sigma are gaps too. |
+| Positioning 3. What the firm is buying | Pass | Line 1 aims at bringing Sparks up to its on-time goal, and P1 is the Fernley opening, 79% to 98% by August 2022. |
+| Positioning 4. Firm facts | **Fail** | Three facts link to the news and careers pages with a checked date, but F2 keeps "now ships to all 42 stores", a fact the home page states, which the skill's step 3 says to drop. No "since 1987" or "free returns". |
+| Positioning 7. One confirmation | Pass | One message at step 2, one confirmation at step 9, then the closing message. |
+| The installed skill in the positioning run | Pass | The helper's first call loaded `job-seeker-ops:candidate-positioning`, and every run of `check_positioning.py` used the installed copy. No call touched this repository. |
+| 16. The second direction | **Fail**, on one condition | resume-ops 2.4.0 showed the seventh Level Set line, the POSITIONING line and the review offer, but its CHECKS line has no "positioning PASS". The check ran and passed, and the brief reports it on the POSITIONING line. The review passed every condition: `blind: yes`, the file in neither the packet nor the opened list, and the skill's check against it ran seven seconds after the report. |
+
+9 of 11 passed. Test 11 passed only with `--voice-dir`.
+
+### Worth a look
+
+- Positioning test 4: the skill's rule to drop any fact the home page states didn't hold when the news page states the same fact. `check_positioning.py` can't catch it, since its home page check reads only a fact's source link. The 2.1.288 run kept "42 stores" out, so the miss doesn't happen every time.
+- Test 16's CHECKS line: resume-ops 2.4.0's brief format doesn't name the positioning check on the CHECKS line, and its example line in `references/tailoring.md` has no place for it. Either the test's condition or resume-ops's format needs to change so they agree.
+- `build_packet.py` 0.2.1 still doesn't find plainspeak-writer when it's uploaded to the desktop app as a skill. Its `default_roots()` searches `~/.claude/skills`, `~/.claude/plugins` and `.claude/skills` in the working folder. The app keeps uploaded skills in `%APPDATA%\Claude\local-agent-mode-sessions\skills-plugin\<ids>\skills\`. `check_positioning.py` in the same plugin searches that folder and found plainspeak-writer on its own. Without `--voice-dir`, a review runs with voice unchecked. Fixed in 0.2.2, which searches the app's folder too.
+- `check_positioning.py` won't take a confirmed answer as the source of a gap row. `searched resume.txt; A2` fails because it reads "A2" as a file missing from the stamp, and `A2; searched resume.txt` fails because a gap's source must start with "searched". The helper moved the A2 citations into the section 7 bullets.
+- The positioning helper's closing hand-back put notes for this session ahead of its message to the person, though its first message asked for the message alone.
+- resume-ops still writes date ranges as "Jan 2022 – Present", and plainspeak-writer 1.5 blocks the dash under R01, so the review gave the resume a must-fix for it, as in the 2.1.288 run.
+- On this computer, every Read call by a reviewer set off a PreToolUse and a PostToolUse hook that failed with "python3: command not found". The hooks don't block, so every read went through. They come from a hook set up on this computer, outside the plugin.
+- LibreOffice still isn't on the test computer, so the resume-ops helper skipped its page view and said so.
+
+### Not run in this session
+
+- Tests 3 to 6, 8 to 10 and 12, and test 11's packet without voice rules for writer C. This round asked for tests 1, 2, 7, 11 and 16.
+- Positioning tests 5, 6 and 8 to 13 through the installed skill. The resume half of test 6 held in test 16's build.
