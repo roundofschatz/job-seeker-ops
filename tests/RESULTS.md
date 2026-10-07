@@ -180,3 +180,13 @@ Round one found three faults in the skill. Round two ran writers E and H again a
 
 - Tests 3 to 6, 8 to 10 and 12, and test 11's packet without voice rules for writer C. This round asked for tests 1, 2, 7, 11 and 16.
 - Positioning tests 5, 6 and 8 to 13 through the installed skill. The resume half of test 6 held in test 16's build.
+
+## Claude Code rerun of test 11 on 0.2.2
+
+- Date: 2026-10-07
+- Product: Claude Code 2.1.289 in the Code tab of the Claude desktop app on Windows 11, with job-seeker-ops 0.2.2 uploaded to the app and plainspeak-writer 1.5 uploaded as a skill. The Code tab installed the plugin under `~/.claude/plugins/marketplaces/local-desktop-app-uploads/`.
+- Evidence: `tests/evidence/11-voice-source-claude-code-0.2.2.md`.
+
+| Test | Result | Reason |
+|---|---|---|
+| 11. Voice source, with no `--voice-dir` | Pass | Built exactly as RUN-TESTS.md gives it, the manifest names plainspeak-writer 1.5, its rules file and its full check. The reviewer opened the five packet files, `tells.md` and `full-check.md`, and nothing else, and its report meets `keys/a-seeded.md`. Unit tests: 25 of 25 OK. |
