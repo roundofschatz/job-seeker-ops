@@ -2,6 +2,26 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.2.2 · Voice rules uploaded to the desktop app
+
+The packet script didn't find plainspeak-writer when it was uploaded to the Claude desktop app as a skill. The app keeps uploaded skills in its own folder, `local-agent-mode-sessions\skills-plugin\<ids>\skills\` under `%APPDATA%\Claude\` on Windows, and the script searched only `~/.claude/skills`, `~/.claude/plugins` and `.claude/skills` in the working folder. In both live runs of 0.2.1 in the Code tab, every packet came out "Voice rules: not found. Voice is unchecked." until it was built again with `--voice-dir`. candidate-positioning's `check_positioning.py` already searched the app's folder and found the same copy on its own.
+
+Changed:
+
+- `skills/submission-review/scripts/build_packet.py` 0.2.2. `default_roots()` adds the app's `local-agent-mode-sessions` folder: under `%APPDATA%\Claude\` on Windows, `~/Library/Application Support/Claude/` on a Mac and `~/.config/Claude/` on Linux, the same places `check_positioning.py` searches. Nothing else changed, and `--voice-dir` still wins when it's given.
+- `tests/unit/test_build_packet.py`: three tests for the app's layout. Two of them, the search roots and a packet built with no `--voice-dir`, fail on 0.2.1's script.
+- `tests/RUN-TESTS.md`: test 11's step 3 names the new layout among those the unit tests cover.
+- `.claude-plugin/plugin.json`: version 0.2.2.
+
+Checked:
+
+- `test_build_packet.py`: 25 of 25 pass on Windows with Python 3.12.10.
+- On the test computer, with plainspeak-writer 1.5 uploaded to the app, a packet for writer B's letter built with no `--voice-dir` named plainspeak-writer 1.5, its rules file and its full check, and the checker ran. The search took under a second.
+
+Left for later:
+
+- The package in `dist/` still holds 0.2.1 until it's built from the release commit.
+
 ## 0.2.1 · The full check in its own file
 
 plainspeak-writer's 1.5 build moves the full check out of `references/tells.md` into `references/full-check.md`. The full check is the rule-by-rule list that says which rules block and which warn. 0.2.0's review packet named only `tells.md`, and the reviewer opens nothing the manifest doesn't name. So with 1.5 installed, the reviewer would have had no list of blocks to sort its own findings by, and no full check to run by hand when the checker can't run. This version works with both layouts.

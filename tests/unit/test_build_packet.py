@@ -15,6 +15,7 @@ import tempfile
 import textwrap
 import unittest
 import zipfile
+from unittest import mock
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -252,6 +253,40 @@ class BuildPacketTests(unittest.TestCase):
         found = bp.find_voice_dirs([home / "skills", home / "plugins"])
         self.assertEqual(sorted(map(str, found)), sorted(map(str, [standalone, synced, in_plugin])))
         self.assertEqual(bp.choose_voice_dir(found), in_plugin)
+
+    def test_discovery_finds_a_skill_uploaded_to_the_desktop_app(self):
+        # The Claude desktop app keeps a skill uploaded under Customize here.
+        sessions = self.dir / "AppData" / "Roaming" / "Claude" / "local-agent-mode-sessions"
+        uploaded = make_voice(sessions / "skills-plugin" / "org-id" / "user-id" / "skills", version="1.5")
+        self.assertEqual(bp.find_voice_dirs([sessions]), [uploaded])
+
+    def test_default_roots_include_the_desktop_apps_folder(self):
+        home = self.dir / "home"
+        env = {"APPDATA": str(self.dir / "AppData" / "Roaming"),
+               "HOME": str(home), "USERPROFILE": str(home)}
+        with mock.patch.dict(os.environ, env):
+            os.environ.pop("CLAUDE_CONFIG_DIR", None)
+            roots = bp.default_roots()
+        self.assertIn(self.dir / "AppData" / "Roaming" / "Claude" / "local-agent-mode-sessions", roots)
+        self.assertIn(home / "Library" / "Application Support" / "Claude" / "local-agent-mode-sessions", roots)
+        self.assertIn(home / ".config" / "Claude" / "local-agent-mode-sessions", roots)
+
+    def test_packet_finds_a_skill_uploaded_to_the_desktop_app_on_its_own(self):
+        appdata = self.dir / "AppData" / "Roaming"
+        sessions = appdata / "Claude" / "local-agent-mode-sessions"
+        make_voice(sessions / "skills-plugin" / "org-id" / "user-id" / "skills", version="1.5",
+                   full_check=True)
+        home = self.dir / "home"
+        home.mkdir()
+        env = {"APPDATA": str(appdata), "HOME": str(home), "USERPROFILE": str(home)}
+        with mock.patch.dict(os.environ, env):
+            os.environ.pop("CLAUDE_CONFIG_DIR", None)
+            code, out, _ = run(["--type", "letter", "--piece", str(self.piece), "--out", str(self.out)])
+        self.assertEqual(code, 0)
+        manifest = (packet_from(out) / "manifest.md").read_text(encoding="utf-8")
+        self.assertIn("Voice rules: plainspeak-writer 1.5. Rules file: ", manifest)
+        self.assertIn("local-agent-mode-sessions", manifest)
+        self.assertIn("- Full check: ", manifest)
 
     def test_discovery_skips_a_folder_with_another_skill_name(self):
         impostor = make_voice(self.dir / "roots")

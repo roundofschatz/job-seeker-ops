@@ -25,7 +25,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 # type: (label for the manifest, checker surface, default readers)
 TYPES = {
@@ -159,6 +159,13 @@ def default_roots():
     home = Path.home()
     roots += [home / ".claude" / "skills", home / ".claude" / "plugins",
               Path.cwd() / ".claude" / "skills"]
+    # The Claude desktop app keeps a skill uploaded under Customize in its own folder,
+    # under skills-plugin/<ids>/skills/, on Windows, Mac and Linux.
+    appdata = os.environ.get("APPDATA")
+    if appdata:
+        roots.append(Path(appdata) / "Claude" / "local-agent-mode-sessions")
+    roots += [home / "Library" / "Application Support" / "Claude" / "local-agent-mode-sessions",
+              home / ".config" / "Claude" / "local-agent-mode-sessions"]
     unique = []
     for root in roots:
         if root not in unique:
