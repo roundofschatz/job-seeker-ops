@@ -2,6 +2,60 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.3.0 · Cover letter
+
+The third skill, built from the cover-letter spec. It writes one letter for one posting from three files, the positioning file, the posting and the resume that goes with the letter, in plainspeak-writer's voice. It checks every fact against those files by script, has submission-review's blind reviewer read the draft before the person sees it, and saves the letter in the channel's form, with its record in a ninth section of the positioning file.
+
+Added:
+
+- `skills/cover-letter/SKILL.md`: the nine steps, the calls, when to stop, and the hand-over with the watermark line.
+- `skills/cover-letter/references/letter.md`: the four movements with their word budgets and where each takes its material from in the positioning file, the map, sentences from earlier writing, the three channel forms, and a full example letter from writer B, which the unit tests check against his files.
+- `skills/cover-letter/references/checks.md`: every check and what runs it, the hard fails, the sentence list, the two swap tests, and what happens when the person edits.
+- `skills/cover-letter/references/sources.md`: 25 sources, each checked again on October 7, 2026 from the 27 in the owner's own notes and the two pages on Anthropic's watermark, with its date, grade and link, and 9 more listed with the reason they're left out.
+- `skills/cover-letter/scripts/check_letter.py` 0.3.0. Before drafting, it compares the proofs marked for the letter with the resume that goes with it and lists the sentences plainspeak-writer blocks in a voice sample. On a draft, it counts the body's words and the letter's characters, and checks the header against the resume, every number, date and name against the three files, a count of years, the keep-off phrases, restated resume lines, the firm and any referral in the first two sentences, the close, a channel's rules, and sentences shared with a sample or another letter. On a Word file, it checks the author field, the layout and the page. It reads the positioning file with `check_positioning.py`, so the format has one reader.
+- `skills/cover-letter/scripts/build_letter.py` 0.3.0, which writes the Word file the way resume-ops writes a resume: every part Word writes, the writer's name as author, no program named in the properties, and the resume's font, size and margins. It never makes a PDF.
+- `tests/unit/test_check_letter.py`, with 41 tests for both scripts, and `tests/unit/test_cover_letter_sources.py`, which checks that every cited source has a row and every row is cited where it says.
+- `tests/RUN-TESTS-cover-letter.md`, the keys `tests/keys/cl-*.md`, the pieces in `tests/letters/` (copies of writers E, F and G's confirmed positioning files, writer E's Word resume, a resume with changed dates, a voice sample with blocked phrases, a second posting for writer F, and a file with one firm fact), and three tools for the live tests: `tests/tools/stage_run.py`, `scan_transcript.py` and `measure_page.py`.
+- The evidence: `tests/evidence/cover-letter-01-three-files.md` to `cover-letter-14-own-files.md`, with the runs' letters, records and hand-backs in `tests/evidence/cover-letter-runs/`, and a cover-letter section in `tests/RESULTS.md`.
+
+Changed:
+
+- `skills/candidate-positioning/references/format.md`: the format of section 9, one record per letter with its labelled lines, its map, its checks and its text.
+- `skills/candidate-positioning/scripts/check_positioning.py` 0.3.0. It checks each record in section 9, adds the records to `--json`, and writes its output as UTF-8, since a record's heading holds a middle dot that a Windows console wrote in its own code page.
+- `skills/candidate-positioning/SKILL.md`: the file list names the section 9 check.
+- `tests/unit/test_check_positioning.py`: the section 9 test now checks a full record, and five new tests cover a draft record, a finished record missing its parts, missing lines and map rows, the section's name, and a heading inside the letter's text.
+- `README.md`: a cover letter section with the watermark, examples, the file list and the tests.
+- `.claude-plugin/plugin.json`: version 0.3.0 and a description that names cover letter.
+
+Where this build departs from the spec, and why. The owner approved each of these on October 7 before the build:
+
+- **Voice samples never turn a rule off.** plainspeak-writer lets a user's own samples override a rule that blocks. Call 10 says a blocked phrase can't come back through a sample, so the skill tells plainspeak-writer, as part of the request, that samples set word choice and rhythm only.
+- **Section 9's format lives in candidate-positioning's `format.md`,** the format's one home, and `check_positioning.py` checks it.
+- **The gate compares the proofs with the resume going with the letter,** since it may not be the one the case was built from. That's how a changed date gets caught before drafting.
+- **`check_positioning.py --current` hashes the deeper record** to prove the case is current. No text from it reaches the conversation, and the three-files test checks that nothing reads, prints or searches it.
+- **A missing reviewer means the letter is recorded as not reviewed,** as submission-review tells a calling skill.
+- **A bracket plainspeak-writer leaves** is the one thing the person fills, and the Word file waits for it. The gate asks up front for what the letter can't stand without, and `--given` lets a name the person gives in the session, like the hiring manager's, pass the name check.
+- **Two scripts, not one:** the checks in `check_letter.py`, and the Word file in `build_letter.py`, the way resume-ops keeps its build apart.
+- **`sources.md` gives where each source says it,** and quotes only the two open-licensed studies, to keep word-for-word quotes from copyrighted pages to a minimum.
+- **A text resume has no font,** so the Word file uses Calibri 11 with one-inch margins and says so.
+- **The page is estimated,** since neither Word nor LibreOffice is on the test computer. The tests measure each Word file line by line with the real font's widths.
+- **A text box letter drops the contact block and the date,** as the email form does. The channel and the reader come from the positioning file when it has them.
+- **Without plainspeak-writer the skill stops,** since it keeps no copy of the voice.
+- **The research changed two things the spec says.** The Yale study holds as a preprint about one freelance platform, where keyword-tailored letters predicted callbacks about half as strongly after an AI tool arrived, and where editing time went with winning but wasn't shown to cause it. The watermark covers current Claude models, with older ones still being added, so the notice says a letter's text "may carry" the mark.
+
+Fixed before release, from the live runs:
+
+- Step 1 looked the positioning file up from the person's shorthand in run cl-n1. It now lists the `positioning-*.md` files and takes the company and the role from the posting.
+- The watermark line in SKILL.md held its source ID inside the quote, and three hand-overs passed "[C24]" to the person. The ID now sits outside the line.
+- `check_letter.py`: a comma now ends a name ("Fernley, Nevada"); a plural possessive and words like "Thank" at a sentence's start no longer read as names; a Word file's voice check reads the contact block and the sign-off as blocks, not one-line paragraphs; and a number counts as disagreeing with the resume when the resume the case was built from held it, while a number from a deeper record is only noted.
+
+Checked:
+
+- Every live test in `tests/RUN-TESTS-cover-letter.md` passed, 14 of 14, in runs on October 7 with made-up writers B, E, F and G. `tests/RESULTS.md` gives each result, and `tests/evidence/cover-letter-*.md` gives the evidence.
+- skill-creator graded two of those runs against the same requests without the skill, on ten checks each. With the skill, both letters passed all ten, and without it they passed 3 and 2.
+- The unit tests: 129 of 129 pass on Windows with Python 3.12.10, once the package is built from the release commit.
+- plainspeak-writer 1.6.2's checker, pinned at commit 577a985, ran on every text file this release adds or changes. HARD hits are left only in quoted material, and `tests/evidence/cover-letter-14-own-files.md` lists them with each warning that was cleared.
+
 ## 0.2.3 · Home page facts and confirmed gaps
 
 Two faults in `check_positioning.py` from the Claude Code run on 0.2.1, and three lines that plainspeak-writer 1.6 and the 0.2.2 install left out of date.

@@ -1,10 +1,10 @@
 # Job Seeker Ops
 
-Job Seeker Ops is a Claude plugin for job-search writing. It sits beside two tools that stay separate: plainspeak-writer, which writes in a plain human voice, and resume-ops, which builds resumes. Version 0.2 holds two pieces. Candidate positioning works out the case for a posting before anything gets written, and submission review checks a finished piece before it goes out.
+Job Seeker Ops is a Claude plugin for job-search writing. It sits beside two tools that stay separate: plainspeak-writer, which writes in a plain human voice, and resume-ops, which builds resumes. Version 0.3 holds three pieces. Candidate positioning works out the case for a posting before anything gets written, cover letter writes the letter from that case, and submission review checks a finished piece before it goes out.
 
 ## Candidate positioning
 
-Before a resume or a letter gets written, candidate positioning works out the case for one candidate and one posting and saves it in one positioning file. resume-ops 2.4.0 reads the file to decide which proof leads and where the summary points, and cover-letter will read it for the reasoning behind the letter. So the case gets settled once, from the evidence, rather than twice in two drafts.
+Before a resume or a letter gets written, candidate positioning works out the case for one candidate and one posting and saves it in one positioning file. resume-ops 2.4.0 reads the file to decide which proof leads and where the summary points, and cover letter reads it for the reasoning behind the letter and keeps each letter's record in it. So the case gets settled once, from the evidence, rather than twice in two drafts.
 
 It reads the posting and the resume being sent, plus anything else the person shares, such as a master resume, LinkedIn text, a career record, portfolio pages, past letters or notes. Then it:
 
@@ -18,6 +18,27 @@ It reads the posting and the resume being sent, plus anything else the person sh
 The gaps, the hiring team's concern and anything private stay in the file. They decide which proof leads, and nothing the person lacks goes on a page a reader sees.
 
 A script, `check_positioning.py`, checks every file: the sections, a source for every row and proof, each quote against its file and line, whether a source changed since the person confirmed the file, and plainspeak-writer's voice check on the sentences a resume or letter will reuse.
+
+## Cover letter
+
+Cover letter writes one letter for one posting from three files: the positioning file, the posting and the resume that goes with the letter. The resume is the evidence, and the letter is the reasoning: why this firm, why this seat, why now, proved by two or three named results. The person's deeper record reaches the letter only through the positioning file, and with no positioning file the skill offers candidate positioning instead of working out a case of its own.
+
+It:
+
+1. Checks that the positioning file is confirmed and current, holds two firm facts, and agrees with the resume going with the letter on every figure the letter will use.
+2. Maps the four movements (the frame, the proof, the fit and why now, and the invitation) before writing a sentence, and saves the map in the positioning file.
+3. Drafts with plainspeak-writer, matching the person's own writing when they share some. A phrase plainspeak-writer blocks in that writing never comes back, and a sentence from it moves into the letter only with a fact the files still hold.
+4. Checks every number, date and name in the letter against the three files by script, along with the length, the channel's rules and every phrase on the positioning file's keep-off list.
+5. Has submission review's blind reviewer read the draft, twice at most, before the person sees it.
+6. Hands over the letter with the results, and saves it as a Word file for an upload, the text for a text box, or the email itself, with its record in the positioning file. It never makes a PDF.
+
+A tailored letter is worth the work. In one resume company's field test, applications with a letter tailored to the job drew 53% more callbacks than applications with no letter [C16]. Source IDs in square brackets point to `skills/cover-letter/references/sources.md`, where each one has its date, grade and link.
+
+### The watermark
+
+Current Claude models put an invisible watermark in the text they write. It's added at the model level, so it's there in Claude Code and Cowork as well as the Claude apps. It travels with copied text and can last through some editing, and detecting it in text is in private preview for eligible organizations [C24, C25]. A letter this skill drafts may have it. The skill says so when it hands over a letter, and it never tries to remove, hide or get around the mark.
+
+The skill builds each letter for the person to finish. The facts come from their own files, and the hand-over points to the two sentences only they can write: the opener and the topic they'd like to talk about. In one study of a freelance platform, more time spent editing an AI-drafted letter went with a better chance of winning the job, though the study doesn't show the editing caused it [C15].
 
 ## Submission review
 
@@ -62,7 +83,7 @@ Install it under Plugins, not Skills. A skill upload drops the reviewer, and the
 
 **Claude Code.** Run `claude --plugin-dir ./job-seeker-ops` to load it for one session. A marketplace listing comes with the first public release.
 
-**What it needs.** Python 3.8 or newer runs the scripts. plainspeak-writer runs the voice checks; without it, the review marks voice as unchecked and runs everything else, and a positioning file's stamp says its voice check didn't run. resume-ops reads a positioning file from version 2.4.0 on, and an older resume-ops builds without it. Chat on claude.ai doesn't run plugin helpers, so the review needs Cowork or Claude Code.
+**What it needs.** Python 3.8 or newer runs the scripts. plainspeak-writer runs the voice checks; without it, the review marks voice as unchecked and runs everything else, and a positioning file's stamp says its voice check didn't run. Cover letter needs plainspeak-writer for the voice, and stops without it. resume-ops reads a positioning file from version 2.4.0 on, and an older resume-ops builds without it. Chat on claude.ai doesn't run plugin helpers, so the review needs Cowork or Claude Code.
 
 ## Use
 
@@ -71,6 +92,12 @@ Give Claude the posting and your resume, plus anything else you have, and ask fo
 > Work out my case for this posting before I write anything.
 
 > What should my resume and cover letter lead with for this job?
+
+Then ask for the letter:
+
+> Write my cover letter for this posting. I'm uploading it with the resume in this folder.
+
+> I need a cover letter for the Ironwood job. Their form has a text box that takes 3,000 characters.
 
 For a review, give Claude the finished piece and the posting:
 
@@ -93,6 +120,13 @@ job-seeker-ops/
 │   ├── references/format.md        the file's format, with a full example
 │   ├── references/case.md          finding what the firm is buying, and the case
 │   └── scripts/check_positioning.py  checks a positioning file
+├── skills/cover-letter/
+│   ├── SKILL.md                    the nine steps that write a letter
+│   ├── references/letter.md        the letter's shape, the map, the channels, a full example
+│   ├── references/checks.md        every check, what runs it, and the hard fails
+│   ├── references/sources.md       the research behind the rules
+│   ├── scripts/check_letter.py     checks a letter against the three files
+│   └── scripts/build_letter.py     writes the Word file
 ├── skills/submission-review/
 │   ├── SKILL.md                    the steps Claude follows to start a review
 │   └── scripts/build_packet.py     builds the packet
@@ -104,9 +138,10 @@ job-seeker-ops/
 
 ## Tests
 
-- `python3 tests/unit/run_tests.py` runs every unit test: the packet script's, the positioning checker's, and the check that `plugin.json`, the changelog and a built package agree.
+- `python3 tests/unit/run_tests.py` runs every unit test: the packet script's, the positioning checker's, cover letter's two scripts and its sources, and the check that `plugin.json`, the changelog and a built package agree.
 - `tests/RUN-TESTS.md` holds submission review's live tests: isolation, leaks, seeded flaws, repeat runs and the rest.
 - `tests/RUN-TESTS-positioning.md` holds candidate positioning's live tests. Every test piece comes from made-up writers, and writer H applies to a real posting, which isn't stored here.
+- `tests/RUN-TESTS-cover-letter.md` holds cover letter's live tests, with made-up writers too.
 
 ## Contributing
 

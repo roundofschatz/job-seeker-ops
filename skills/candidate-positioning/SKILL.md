@@ -152,4 +152,4 @@ It fails on any phrase from section 7 found on the page and on a sentence repeat
 
 - `references/format.md` holds the positioning file's format, section by section, with a full example.
 - `references/case.md` covers finding what the firm is buying, the hiring team's view, the four lines, ranking proofs and picking the phrases to watch for.
-- `scripts/check_positioning.py` checks the file's shape and sources, whether it's current, shared sentences, links, the voice check, what each reader needs, and a finished piece. It needs Python 3.8 or newer and nothing else.
+- `scripts/check_positioning.py` checks the file's shape and sources, whether it's current, shared sentences, links, the voice check, what each reader needs, a finished piece, and the letter records cover-letter keeps in section 9. It needs Python 3.8 or newer and nothing else.

@@ -208,3 +208,31 @@ Round one found three faults in the skill. Round two ran writers E and H again a
 | The installed skill in the positioning run | Pass | The helper loaded `job-seeker-ops:candidate-positioning` from the 0.2.3 install, and every run of `check_positioning.py` used it. No call touched this repository. |
 
 The four gap rows cite her confirmation, as in `searched resume.txt; A1; A2`, which 0.2.3 allows.
+
+## Cover letter, for 0.3.0
+
+- Date: 2026-10-07
+- Product: Claude Code 2.1.293 in the Code tab of the Claude desktop app on Windows 11. Each run was a fresh helper that followed `skills/cover-letter/` from this repository's working tree, with plainspeak-writer 1.6.2 installed as a skill. Python 3.12.10.
+- Run folders: `..\jso-tests\cover-letter\runs\`, outside the repository. Each run's letter, record, hand-back and scan are copied into `tests/evidence/cover-letter-runs/`, with user names and IDs taken out.
+- Keys: `tests/keys/cl-*.md`. Evidence: `tests/evidence/cover-letter-01-three-files.md` to `cover-letter-14-own-files.md`.
+
+| Test | Result | Evidence |
+|---|---|---|
+| 1. Three files only | Pass | In cl-f1, cl-g1 and cl-b1, no call that reads, searches or writes files names the deeper record, and its proofs still reached the letters through the positioning file. Without the skill, writer F's run read her master resume twice. |
+| 2. No positioning file | Pass | cl-n1 stopped after four tool calls, said the letter needs its case worked out first, and offered candidate-positioning. It wrote no file. |
+| 3. One firm fact | Pass | In cl-n2, `check_positioning.py --for cover-letter` failed with "cover-letter needs two firm facts, and the file has 1", and the skill stopped and offered two ways on. |
+| 4. Shape | Pass | Bodies of 382, 352, 355, 350 and 371 words in five paragraphs, with all six map rows. The three Word files measure 0.72, 0.55 and 0.72 of a page with the font's real widths. |
+| 5. Voice | Pass | plainspeak-writer 1.6.2's checker finds 0 HARD hits and 0 warnings on all five letters. |
+| 6. Agreement | Pass | cl-e2 stopped before drafting and named both pairs of dates, March against April 2022 and August against September 2022. |
+| 7. Reuse | Pass | `check_letter.py --compare` finds no sentence shared between writer F's Silver Larch and Juniper Flats letters, and none repeated within either. The two nearest pairs are proofs whose facts are in the file and still true. The frame, fit and invitation rest on Juniper Flats' own facts, and no out-of-date count of years moved. |
+| 8. Off the page | Pass | Neither script finds a section 7 phrase in any letter, and a reading finds none of the gaps or concerns in other words. |
+| 9. Review limit | Pass | Every letter run had two blind reviews. cl-e1 got Fix first twice, over the OSHA card she doesn't have, and handed over with the open findings and `Status: open findings`. |
+| 10. Channels | Pass | The Word files are named FirstName_LastName_CoverLetter_Company.docx with the writer as author, and cl-e1's took Calibri 10.5 and half-inch margins from her Word resume. The text box letter is 1,986 of 3,000 characters, and the email opens with a subject line. No run made a PDF. |
+| 11. The watermark notice | Pass | The line appears once in each of the five hand-overs and once in the README, and no tool call or file tries to remove the mark. |
+| 12. Deeper proof | Pass | cl-f1 tells P2, P3 and P4, none of them on her resume, and gives 61%, never 63%. cl-g1 tells his LinkedIn details through P1. |
+| 13. Voice samples | Pass | cl-f1 set aside the note's two blocked sentences before drafting. Neither is in the letter, and neither is any out-of-date count of years. |
+| 14. Its own files | Pass | plainspeak-writer 1.6.2's checker finds HARD hits only in quoted material: the test 13 sample written with them, the scans' command lines, and the reviewer's own words in two hand-backs. A search finds nothing personal, and the changelog logs every file. |
+
+### The skill-creator benchmark
+
+skill-creator graded cl-f1 and cl-e1 against the same two requests run without the skill, on ten checks each. With the skill, the letters passed every check. Without it, they passed 3 and 2 of the 10, or 25% on average. The skill's runs took 1,469.5 seconds and 257,256 tokens on average, against 132.5 seconds and 80,708 tokens, because each one runs the checks, a fresh reader and two blind reviews. The workspace and its review page are in `..\jso-tests\cover-letter\workspace\`.

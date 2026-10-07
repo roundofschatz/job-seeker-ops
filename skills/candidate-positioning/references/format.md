@@ -32,7 +32,7 @@ The format line lets a reader refuse a version of the file it doesn't know.
 
 ## The sections
 
-There are eight, in this order, each with its number. A ninth belongs to cover-letter, which adds a record there for each letter it writes. A rebuild keeps section 9 exactly as it was.
+There are eight, in this order, each with its number. A ninth belongs to cover-letter, which adds a record there for each letter it writes, in the shape under "9. Letters" below. A rebuild keeps section 9 exactly as it was.
 
 ### 1. Target
 
@@ -125,6 +125,31 @@ Then three labelled lines:
 - `- **Confirmed:**` reads `not yet` until step 10, then the date and the person's words in quotes.
 
 Last, `### Answers in this session` lists each answer the file cites, with its ID, the person's words in quotes, and the date, or reads "None."
+
+### 9. Letters
+
+cover-letter adds this section, headed `## 9. Letters`, the first time it writes a letter for the posting, and one record under it for each letter. candidate-positioning never writes here.
+
+Each record starts `### Letter 1 · <Role> · YYYY-MM-DD`, with the letters numbered in the order they were written and the date the record started. These labelled lines come next:
+
+- `- **Role:**` the role, as section 1 names it.
+- `- **Date:**` the date the letter was written.
+- `- **Channel:**` upload, text box with its character limit, or email.
+- `- **Reader:**` cold, or warm with the referrer's name and what they agreed to.
+- `- **Resume:**` the resume that goes with the letter, by file name.
+- `- **Voice samples:**` the person's own writing that set the letter's sound, by file name, or none.
+- `- **Status:**` one of draft, ready, open findings, not reviewed, or sent with its date, like `sent 2026-10-09`.
+- `- **Built:**` the skill and its version, like `cover-letter 0.3.0`.
+
+A record is a draft while the map stands and the letter isn't finished. It's ready when the review said Send, or when the person took the letter as it stood. It reads open findings when two reviews still found something to fix, not reviewed when no reviewer was available, and sent once the person says the letter went out.
+
+Three parts follow, each under its own `####` heading:
+
+- `#### Map`, a table with the columns `Movement`, `What it says` and `From`, and a row each for Frame, Proof, Fit and why now, Invitation, Referral and Off the page. `From` names the parts of this file the row draws on, such as `P1; P3` or `F2; section 3`. The Referral row reads "None." for a cold reader. The Off the page row names the concern and the proof that answers it without naming it.
+- `#### Checks`, one line for each check with its result: the voice check, the body's word count, `check_letter.py`, the sentence list, the two swap tests, any sentence from the person's earlier writing, and each review's verdict.
+- `#### Text`, the letter as the person got it, word for word, in a fenced block that opens with three backticks and `text`.
+
+A draft record needs its labelled lines and its map. Past draft, it also needs its checks and its text. `check_positioning.py` checks both, and a heading inside the fenced text never counts as a record.
 
 ## A full example
 

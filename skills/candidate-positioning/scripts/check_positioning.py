@@ -16,7 +16,9 @@ The shape check always runs. It wants the eight sections in order, a source on
 every requirement row and every proof, a story and a date on every proof, each
 gap and the concern in section 7 with phrases to watch for, the case in four
 lines, and the stamp. It also fails a sentence of the file's own that shows up
-twice, word for word.
+twice, word for word. When cover-letter has added section 9, each letter's
+record there needs its labelled lines and its map, and a finished record needs
+its checks and its text.
 
 Exit code 0 means no FAIL, 1 means at least one, and 2 means the input needs
 fixing. Python 3.8 or newer, standard library only. The format is described in
@@ -37,7 +39,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
 
-__version__ = "0.2.3"
+__version__ = "0.3.0"
 FORMAT = "1"
 
 SECTIONS = ["Target", "Requirement map", "The hiring team's view", "The case in four lines",
@@ -52,6 +54,11 @@ SHOW_ON = ("resume", "letter", "both", "off")
 USE_ON = ("resume", "letter", "both")
 ROLES = ("posting", "resume being sent", "deeper record", "past letter", "notes",
          "firm pages", "rulings", "other")
+# Section 9, which cover-letter writes: one record per letter.
+LETTER_LABELS = ["Role", "Date", "Channel", "Reader", "Resume", "Voice samples", "Status", "Built"]
+MOVEMENTS = ["Frame", "Proof", "Fit and why now", "Invitation", "Referral", "Off the page"]
+LETTER_HEAD = re.compile(r"^###\s+Letter\s+(\d+)\s+·\s+(.+?)\s+·\s+(\d{4}-\d{2}-\d{2})\s*$")
+STATUS = re.compile(r"^(draft|ready|open findings|not reviewed|sent \d{4}-\d{2}-\d{2})\.?$", re.I)
 TEXT_SUFFIXES = {".txt", ".md", ".markdown", ".text", ".csv"}
 MIN_WORDS = 6          # a sentence this long or longer counts for repeats and sharing
 WINDOW = 2             # lines either side of a cited line where a quote may sit
@@ -234,6 +241,7 @@ class Positioning:
         self.answers = {}
         self.not_mapped = set()
         self.stamp = {}
+        self.letters = []
         self.parse()
 
     def line(self, n):
@@ -286,6 +294,7 @@ class Positioning:
         self.parse_words()
         self.parse_keep_off()
         self.parse_stamp()
+        self.parse_letters()
         self.cross_checks()
         self.repeats()
 
@@ -708,6 +717,92 @@ class Positioning:
                 rep.fail(n, "stamp", f"{cells[0]} needs its date.")
             self.answers[cells[0]] = {"line": n, "text": cells[1], "date": cells[2]}
 
+    def parse_letters(self):
+        """Section 9, which cover-letter adds: a record per letter, each under
+        '### Letter 1 · <Role> · YYYY-MM-DD'. Lines inside a fenced block are
+        the letter's text and never count as headings."""
+        if 9 not in self.sections:
+            return
+        rep = self.report
+        title, start, end = self.sections[9]
+        if norm(title) != "letters":
+            rep.fail(start-1, "letters", "Section 9 is '## 9. Letters'.")
+        rows = self.body(9)
+        fenced, inside = set(), False
+        for n, t in rows:
+            if t.strip().startswith("```"):
+                fenced.add(n)
+                inside = not inside
+            elif inside:
+                fenced.add(n)
+        heads = [(n, t) for n, t in rows if n not in fenced and re.match(r"^###\s", t)]
+        if not heads:
+            rep.fail(start, "letters", "Section 9 holds one record per letter, each under "
+                     "'### Letter 1 · <Role> · YYYY-MM-DD'.")
+            return
+        for i, (n, t) in enumerate(heads):
+            stop = heads[i+1][0] if i+1 < len(heads) else end+1
+            self.parse_letter(n, t, [(k, x) for k, x in rows if n < k < stop], fenced)
+        numbers = [r["number"] for r in self.letters if r["number"]]
+        if numbers != list(range(1, len(numbers)+1)):
+            rep.warn(heads[0][0], "letters", "Number the letters 1, 2 and so on, in the order "
+                     "they were written.")
+
+    def parse_letter(self, n, heading, rows, fenced):
+        rep = self.report
+        m = LETTER_HEAD.match(heading.strip())
+        record = {"line": n, "number": int(m.group(1)) if m else None,
+                  "role": m.group(2) if m else "", "started": m.group(3) if m else "",
+                  "fields": {}, "map": {}, "checks": [], "text": ""}
+        if not m:
+            rep.fail(n, "letters", "A letter's record starts '### Letter 1 · <Role> · YYYY-MM-DD'.")
+        parts, current = {}, None
+        for k, t in rows:
+            if k not in fenced and re.match(r"^####\s", t):
+                current = norm(t.strip("# \t"))
+                parts[current] = []
+                continue
+            if current is None:
+                parts.setdefault("", []).append((k, t))
+            else:
+                parts[current].append((k, t))
+        fields = self.fields(parts.get("", []))
+        for label in LETTER_LABELS:
+            if label not in fields or not fields[label][1]:
+                rep.fail(n, "letters", f"Letter {record['number'] or '?'} needs '- **{label}:** ...'.")
+        record["fields"] = {k: v[1] for k, v in fields.items()}
+        date = fields.get("Date")
+        if date and not DATE.search(date[1]):
+            rep.fail(date[0], "letters", "A letter's date is written YYYY-MM-DD.")
+        status = fields.get("Status")
+        state = status[1].strip() if status else ""
+        if status and not STATUS.match(state):
+            rep.fail(status[0], "letters", "Status reads draft, ready, open findings, not reviewed, "
+                     "or sent with its date, like 'sent 2026-10-09'.")
+        table = self.table(parts.get("map", []), ["Movement", "What it says", "From"], "letters", n)
+        if not table:
+            rep.fail(n, "letters", f"Letter {record['number'] or '?'} needs '#### Map', a table with "
+                     "a row for each of: " + ", ".join(MOVEMENTS) + ".")
+        else:
+            for k, cells in table:
+                record["map"][norm(cells[0])] = {"line": k, "says": cells[1], "from": cells[2]}
+                if not cells[1]:
+                    rep.fail(k, "letters", f"The map's {cells[0]} row says nothing.")
+            missing = [mv for mv in MOVEMENTS if norm(mv) not in record["map"]]
+            if missing:
+                rep.fail(n, "letters", "The map has no row for " + ", ".join(missing) + ".")
+        record["checks"] = [t.strip() for _k, t in parts.get("checks", []) if t.strip()]
+        text_rows = [t for k, t in parts.get("text", []) if k in fenced and not t.strip().startswith("```")]
+        record["text"] = "\n".join(text_rows).strip()
+        if state and not state.lower().startswith("draft"):
+            if not record["checks"]:
+                rep.fail(n, "letters", f"Letter {record['number'] or '?'} is past draft, so it needs "
+                         "'#### Checks' with each check's result.")
+            if not record["text"]:
+                rep.fail(n, "letters", f"Letter {record['number'] or '?'} is past draft, so it needs "
+                         "'#### Text' with the letter in a fenced block.")
+        self.letters.append(record)
+
     @property
     def confirmed(self):
         text = self.stamp.get("Confirmed", {}).get("text", "")
@@ -818,7 +913,7 @@ class Positioning:
                 "case": self.case, "proof_bank": self.proofs,
                 "words_to_use": self.terms, "plain_descriptions": self.descriptions,
                 "keep_off_the_page": self.keep_off, "stamp": {"files": self.files,
-                "answers": self.answers, **self.stamp}}
+                "answers": self.answers, **self.stamp}, "letters": self.letters}
 
 
 # Checks that open the person's files
@@ -1301,6 +1396,12 @@ def parser():
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    try:
+        # A record heading in section 9 holds a middle dot, and a Windows console
+        # would write it in its own code page; a reader of --json expects UTF-8.
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
     if args.name:
         print(file_name(*args.name))
         return 0

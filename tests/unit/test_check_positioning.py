@@ -59,6 +59,53 @@ def make_voice(root, checker):
     return folder
 
 
+# A finished record in section 9, the way cover-letter writes one.
+LETTER_RECORD = """
+## 9. Letters
+
+### Letter 1 · Supply Chain Planning Analyst · 2026-10-07
+
+- **Role:** Supply Chain Planning Analyst
+- **Date:** 2026-10-07
+- **Channel:** upload
+- **Reader:** cold
+- **Resume:** resume.txt
+- **Voice samples:** none
+- **Status:** ready
+- **Built:** cover-letter 0.3.0
+
+#### Map
+
+| Movement | What it says | From |
+|---|---|---|
+| Frame | Last year's 24% miss, and the input it hides | Section 1, measure; section 3 |
+| Proof | The forecast rebuilt around store promotions, and the dashboard the buyers use | P1; P2 |
+| Fit and why now | Saturday dock shifts staffed from the weekly forecast | F3; section 3 |
+| Invitation | Line 4 in his voice, then the lanes that miss most | Section 4, line 4 |
+| Referral | None. The reader is cold. | Section 1, Reader |
+| Off the page | The freight concern, answered by the warehouse work in P3 | Section 7, concern; P3 |
+
+#### Checks
+
+- **Voice:** plainspeak-writer 1.6.2, letter surface, no HARD hits
+- **Body:** 402 words by code
+
+#### Text
+
+```text
+Dmitri Okafor
+Kansas City, MO | (816) 555-0172 | dmitri.okafor@example.com
+
+Dear Switchgrass Freight hiring team,
+
+I'd like to talk about the lanes that miss most.
+
+Best,
+Dmitri Okafor
+```
+"""
+
+
 # A stand-in checker that blocks the word BADWORD, on the line it finds it.
 FAKE_CHECKER = '''import sys
 args = sys.argv[1:]
@@ -134,9 +181,48 @@ class ExampleTests(Base):
         self.assertEqual(code, 0, out)
 
     def test_section_9_belongs_to_cover_letter(self):
-        self.write(example() + "\n## 9. Letters\n\nA record cover-letter keeps here.\n")
+        self.write(example() + LETTER_RECORD)
+        code, out, _ = self.check("--sources", "--current")
+        self.assertEqual(code, 0, out)
+        code, out, _ = self.check("--json")
+        letter = json.loads(out)["letters"][0]
+        self.assertEqual((letter["number"], letter["fields"]["Status"]), (1, "ready"))
+        self.assertTrue(letter["text"].startswith("Dmitri Okafor"))
+        self.assertEqual(len(letter["map"]), 6)
+
+    def test_a_draft_record_needs_no_text_yet(self):
+        draft = LETTER_RECORD.split("#### Checks")[0].replace("- **Status:** ready", "- **Status:** draft")
+        self.write(example() + draft)
         code, out, _ = self.check()
         self.assertEqual(code, 0, out)
+
+    def test_a_finished_record_needs_its_text_and_checks(self):
+        self.write(example() + LETTER_RECORD.split("#### Checks")[0])
+        code, out, _ = self.check()
+        self.assertFails(out, "needs '#### Checks'")
+        self.assertFails(out, "needs '#### Text'")
+
+    def test_a_record_needs_every_line_and_every_map_row(self):
+        broken = (LETTER_RECORD.replace("- **Channel:** upload\n", "")
+                  .replace("| Referral | None. The reader is cold. | Section 1, Reader |\n", "")
+                  .replace("- **Status:** ready", "- **Status:** almost"))
+        self.write(example() + broken)
+        code, out, _ = self.check()
+        self.assertFails(out, "needs '- **Channel:** ...'")
+        self.assertFails(out, "The map has no row for Referral")
+        self.assertFails(out, "Status reads draft")
+
+    def test_section_9_has_one_name_and_records(self):
+        self.write(example() + "\n## 9. Cover letters\n\nA note with no record.\n")
+        code, out, _ = self.check()
+        self.assertFails(out, "Section 9 is '## 9. Letters'")
+        self.assertFails(out, "one record per letter")
+
+    def test_a_heading_inside_the_letter_text_isnt_a_record(self):
+        self.write(example() + LETTER_RECORD.replace("I'd like to talk about",
+                                                     "### Letter 2 · x · 2026-10-07\nI'd like to talk about"))
+        code, out, _ = self.check("--json")
+        self.assertEqual(len(json.loads(out)["letters"]), 1)
 
     def test_unknown_format_stops(self):
         self.edit("Format: candidate-positioning 1", "Format: candidate-positioning 2")
