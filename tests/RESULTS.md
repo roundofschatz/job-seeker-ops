@@ -190,3 +190,21 @@ Round one found three faults in the skill. Round two ran writers E and H again a
 | Test | Result | Reason |
 |---|---|---|
 | 11. Voice source, with no `--voice-dir` | Pass | Built exactly as RUN-TESTS.md gives it, the manifest names plainspeak-writer 1.5, its rules file and its full check. The reviewer opened the five packet files, `tells.md` and `full-check.md`, and nothing else, and its report meets `keys/a-seeded.md`. Unit tests: 25 of 25 OK. |
+
+## Claude Code rerun of the writer E positioning run on 0.2.3
+
+- Date: 2026-10-07
+- Product: Claude Code 2.1.289 in the Code tab of the Claude desktop app on Windows 11, with job-seeker-ops 0.2.3 uploaded to the app, and plainspeak-writer 1.6.2 and resume-ops 2.4.0 uploaded as skills.
+- Run folder: `..\jso-tests\positioning\runs\e-installed-0.2.3\`, outside the repository.
+- Evidence: `tests/evidence/positioning-installed-claude-code-0.2.3.md`.
+
+| Test | Result | Reason |
+|---|---|---|
+| Positioning 1. The file's shape, writer E | Pass | `check_positioning.py` 0.2.3 passes with `--sources --current`, 27 quotes found, and with `--for resume-ops` and `--for cover-letter`. resume-ops 2.4.0 reads the file as "use it". |
+| Positioning 2. No invention | Pass | The OSHA 30-hour card is R3, "gap, owned by the role", kept off. Spanish and Lean or Six Sigma are gaps too. |
+| Positioning 3. What the firm is buying | Pass | Line 1 aims at bringing Sparks up to its on-time goal, and P1 is the Fernley opening, 79% to 98% by August 2022. |
+| Positioning 4. Firm facts | Pass | Four facts link to the news and careers pages with a checked date, and none of the home page's facts appears: no "since 1987", "42 stores" or "free returns". |
+| Positioning 7. One confirmation | Pass | One message at step 2, one confirmation at step 9, then the closing message. |
+| The installed skill in the positioning run | Pass | The helper loaded `job-seeker-ops:candidate-positioning` from the 0.2.3 install, and every run of `check_positioning.py` used it. No call touched this repository. |
+
+The four gap rows cite her confirmation, as in `searched resume.txt; A1; A2`, which 0.2.3 allows.
