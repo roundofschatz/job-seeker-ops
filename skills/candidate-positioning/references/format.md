@@ -45,7 +45,7 @@ Labelled lines, then the firm facts.
 - `- **Reader:**` reads cold, warm with the referrer's name and what they agreed to, or not given.
 - `- **What matters to the person:**` gives what to lead with, what to avoid and any limits on the search, with its source, or not given.
 
-Under `### Firm facts`, each fact gets a row with these columns: `#` (F1, F2 and on), `Fact`, `Why it matters here`, `Source` and `Checked`. A fact comes from the posting or from the firm's other pages, never from the home page, since every applicant reads the home page. The source is the page's address. When the person saved the page, the saved file and line follow in brackets, like `https://www.example.org/news/plan (firm-pages.md L11)`, so the fact can be checked both ways. A fact from the posting gives the posting's file and line. A fact the person told you gives the answer's ID, after their link when they gave one. Two facts is the floor and there's no ceiling. Each one says in a line why it matters to this case, so whoever writes the letter can pick by relevance. With fewer than two, write the ones there are, or "None.", and say so to the person.
+Under `### Firm facts`, each fact gets a row with these columns: `#` (F1, F2 and on), `Fact`, `Why it matters here`, `Source` and `Checked`. A fact comes from the posting or from the firm's other pages, never from the home page, since every applicant reads the home page. The source is the page's address. When the person saved the page, the saved file and line follow in brackets, like `https://www.example.org/news/plan (firm-pages.md L11)`, so the fact can be checked both ways. When the saved pages include the home page, `check_positioning.py --sources` fails a fact that shares a number with it, such as a store count or a founding year, whichever page the fact cites. A fact from the posting gives the posting's file and line. A fact the person told you gives the answer's ID, after their link when they gave one. Two facts is the floor and there's no ceiling. Each one says in a line why it matters to this case, so whoever writes the letter can pick by relevance. With fewer than two, write the ones there are, or "None.", and say so to the person.
 
 ### 2. Requirement map
 
@@ -58,7 +58,7 @@ Every required qualification, preferred qualification and responsibility in the 
 | `Line` | The posting line it comes from, like `L13` |
 | `Kind` | required, preferred or responsibility |
 | `Evidence` | The quoted words that answer it, with a short note when one helps, such as years worked out from the dates |
-| `Source` | Where each quote sits. For a gap, `searched` and the files searched |
+| `Source` | Where each quote sits. For a gap, `searched` and the files searched, then the answer's ID when the person confirmed the gap, like `searched resume.txt; A2` |
 | `Strength` | strong, partial, or gap with its owner: `gap, owned by the role` or `gap, shared with <team>` |
 | `Show on` | resume, letter, both, or `off` for a gap |
 
@@ -248,7 +248,7 @@ None.
 | positioning-notes.md | notes | 2026-10-02 (file date) | 7a4cbb96790b |
 
 - **Built:** 2026-10-05 by candidate-positioning 0.2.0
-- **Voice check:** plainspeak-writer 1.4.1, letter surface, no HARD hits
+- **Voice check:** plainspeak-writer 1.6.2, letter surface, no HARD hits
 - **Confirmed:** 2026-10-05, "Yes, that's my case. Keep Planning Analyst, and keep freight off everything."
 
 ### Answers in this session

@@ -37,7 +37,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
 
-__version__ = "0.2.0"
+__version__ = "0.2.3"
 FORMAT = "1"
 
 SECTIONS = ["Target", "Requirement map", "The hiring team's view", "The case in four lines",
@@ -334,9 +334,21 @@ class Positioning:
     def refs(self, text, line, tag, allow_searched=False):
         """Parse a Source cell: file and line refs, answer IDs, or a searched list."""
         text = text.strip()
-        if allow_searched and text.lower().startswith("searched "):
-            names = [x.strip() for x in re.split(r",|\band\b", text[9:]) if x.strip()]
-            return {"searched": names, "files": [], "answers": []}
+        parts = [p.strip() for p in text.split(";") if p.strip()]
+        if allow_searched and any(p.lower().startswith("searched ") for p in parts):
+            # A gap names what was searched, and the answer that confirmed it when
+            # the person gave one, in either order: 'searched resume.txt; A2'.
+            names, answers = [], []
+            for part in parts:
+                if part.lower().startswith("searched "):
+                    names += [x.strip() for x in re.split(r",|\band\b", part[9:]) if x.strip()]
+                elif ANSWER_REF.match(part):
+                    answers.append(part)
+                else:
+                    self.report.fail(line, tag, f"Can't read '{part}' in a gap's source. A gap names "
+                                     "what was searched, and the person's answer when they confirmed "
+                                     "it, like 'searched resume.txt; A2'.")
+            return {"searched": names, "files": [], "answers": answers}
         files, answers = [], []
         for part in [p.strip() for p in text.split(";") if p.strip()]:
             if ANSWER_REF.match(part.split()[0] if part.split() else ""):
@@ -836,7 +848,52 @@ class Sources:
         return " ".join(lines[a-1:b])
 
 
+def home_page_text(pos, src):
+    """The text of each home page saved in a firm pages file, found by the address above it."""
+    out = []
+    for f in pos.files:
+        if "firm pages" not in f["role"]:
+            continue
+        lines = src.lines(f["file"]) or []
+        inside = False
+        for text in lines:
+            url = re.search(r"https?://[^\s)>\]]+", text)
+            if url or text.lstrip().startswith("#"):
+                inside = bool(url) and is_home_page(url.group(0).rstrip(".,"))
+                continue
+            if inside:
+                out.append(text)
+    return norm(" ".join(out))
+
+
+def home_claims(text):
+    """A number with the word after it ("42 stores") and a founding year ("since 1987"),
+    each keyed without commas and kept as written."""
+    text = norm(text)
+    found = {}
+    for m in re.finditer(r"(?<![\w.])(\d[\d,]*(?:\.\d+)?%?)\s+([a-z]+)", text):
+        found[f"{m.group(1).replace(',', '')} {m.group(2)}"] = m.group(0)
+    for m in re.finditer(r"\b(since|founded in|established in|est\.)\s+(1[6-9]\d\d|20\d\d)\b", text):
+        found[m.group(0)] = m.group(0)
+    return found
+
+
+def check_home_facts(pos, src, rep):
+    """A fact the home page also states doesn't count, even when it's cited to another page."""
+    home = home_page_text(pos, src)
+    if not home:
+        return
+    claims = home_claims(home)
+    for fact in pos.facts:
+        mine = home_claims(fact["fact"])
+        shared = sorted(set(mine) & set(claims))
+        if shared:
+            rep.fail(fact["line"], "facts", f"{fact['id']} states \"{mine[shared[0]]}\", which the home "
+                     "page states too. Every applicant reads the home page, so leave that part out.")
+
+
 def check_sources(pos, src, rep):
+    check_home_facts(pos, src, rep)
     posting = next((f["file"] for f in pos.files if "posting" in f["role"]), None)
     found = missing = 0
 

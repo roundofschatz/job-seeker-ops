@@ -176,6 +176,25 @@ class ShapeTests(Base):
         self.assertFails(out, "'owned by the role'")
         self.assertFails(out, "names what was searched")
 
+    def test_a_gap_can_cite_the_answer_that_confirmed_it(self):
+        searched = "searched resume.txt, career-record.md, positioning-notes.md"
+        self.edit(f"| {searched} | gap, owned by the role |", f"| {searched}; A1 | gap, owned by the role |")
+        code, out, _ = self.check()
+        self.assertEqual(code, 0, out)
+        self.edit(f"| {searched}; A1 |", f"| A1; {searched} |")
+        code, out, _ = self.check()
+        self.assertEqual(code, 0, out)
+
+    def test_a_gap_cites_only_what_was_searched_and_answers(self):
+        searched = "searched resume.txt, career-record.md, positioning-notes.md"
+        self.edit(f"| {searched} | gap, owned by the role |",
+                  f"| {searched}; resume.txt L9 | gap, owned by the role |")
+        code, out, _ = self.check()
+        self.assertFails(out, "Can't read 'resume.txt L9' in a gap's source")
+        self.edit(f"| {searched}; resume.txt L9 |", f"| {searched}; A9 |")
+        code, out, _ = self.check()
+        self.assertFails(out, "A9 is cited but isn't under 'Answers in this session'")
+
     def test_every_gap_is_kept_off_the_page(self):
         text = example()
         text = re.sub(r"^- \*\*Gap \(R7\):\*\*.*\n", "", text, flags=re.M)
@@ -206,6 +225,32 @@ class ShapeTests(Base):
                   "https://www.switchgrass-freight.example/")
         code, out, _ = self.check()
         self.assertFails(out, "F3 comes from a home page")
+
+    def save_firm_pages(self, home):
+        (self.dir / "firm-pages.md").write_text(
+            "# Pages saved from the Switchgrass Freight website\n\n"
+            f"## Home page: https://www.switchgrass-freight.example/\n\n{home}\n\n"
+            "## News: https://www.switchgrass-freight.example/news/saturday-dock-shifts\n\n"
+            "Switchgrass added Saturday dock shifts at six terminals in 2026.\n", encoding="utf-8")
+        self.edit("| positioning-notes.md | notes | 2026-10-02 (file date) | 7a4cbb96790b |",
+                  "| positioning-notes.md | notes | 2026-10-02 (file date) | 7a4cbb96790b |\n"
+                  "| firm-pages.md | firm pages | 2026-10-04 (written in the file) | 0123456789ab |")
+
+    def test_a_fact_the_saved_home_page_states_fails(self):
+        # F1 comes from the posting, but the home page says it too, so every applicant has it.
+        self.save_firm_pages("Moving freight since 1987 for 2,400 shippers across the Midwest.")
+        code, out, _ = self.check("--sources")
+        self.assertFails(out, "F1 states \"2,400 shippers\", which the home page states too")
+
+    def test_a_fact_the_saved_home_page_doesnt_state_passes(self):
+        self.save_firm_pages("Moving freight since 1987 across 14 states.")
+        code, out, _ = self.check("--sources")
+        self.assertEqual(code, 0, out)
+
+    def test_home_claims_are_numbers_with_their_word_and_founding_years(self):
+        claims = cp.home_claims("Gear for every trail since 1987. We run 42 stores, with 1,200 staff.")
+        self.assertEqual(set(claims), {"since 1987", "42 stores", "1200 staff"})
+        self.assertEqual(claims["1200 staff"], "1,200 staff")
 
     def test_one_firm_fact_serves_a_resume_but_not_a_letter(self):
         text = re.sub(r"^\| F[23] \|.*\n", "", example(), flags=re.M)

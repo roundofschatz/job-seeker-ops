@@ -22,6 +22,6 @@ Packet: `a-quintero/letter-seeded.txt` with the posting and the resume as target
 
 If a newer checker moves R01 or R02 from HARD to WARN, that flaw moves to should-fix and the verdict stays Fix first.
 
-Other should-fix findings are fine, such as R41 on "I have long admired," P10 on "just" in the same line as flaw 2, list-of-three warnings, and the one-sentence-paragraph warning. Any of those warnings may also be cleared with a reason on the "Cleared warnings" line. plainspeak-writer 1.4 still lists R01 and R02 under HARD, so flaws 1 and 2 stay must-fix.
+Other should-fix findings are fine, such as R41 on "I have long admired," P10 on "just" in the same line as flaw 2, list-of-three warnings, and the one-sentence-paragraph warning. Any of those warnings may also be cleared with a reason on the "Cleared warnings" line. plainspeak-writer 1.6.2 still lists R01 and R02 under HARD, so flaws 1 and 2 stay must-fix. From 1.6 on, R44 warns only on idioms where the room stands for the people in it, and "keep the room calm" is one of them, so flaw 5 still warns.
 
 **Test 8 passes when** all three runs give the same verdict and their must-fix lists name the same problems: the same quoted words under the same checks. The order and wording of the explanations can differ, and so can the should-fix lists.

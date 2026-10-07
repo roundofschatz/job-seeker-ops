@@ -2,6 +2,26 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.2.3 · Home page facts and confirmed gaps
+
+Two faults in `check_positioning.py` from the Claude Code run on 0.2.1, and three lines that plainspeak-writer 1.6 and the 0.2.2 install left out of date.
+
+In that run, writer E's positioning file kept "now ships to all 42 stores" as a firm fact. The news page says it, and so does the home page, and the skill's step 3 drops any fact the home page states. The checker passed the file, since it looked only at the address a fact cites, and this one cited the news page. In the same run, the helper couldn't cite her confirmation in a gap row. `searched resume.txt; A2` failed because the checker read "A2" as a file missing from the stamp, and `A2; searched resume.txt` failed because a gap's source had to start with "searched".
+
+Changed:
+
+- `skills/candidate-positioning/scripts/check_positioning.py` 0.2.3. With `--sources`, when a firm pages file in the stamp holds the home page, found by its address, a fact that shares a number and the word after it with the home page fails ("42 stores", "2,400 shippers"), and so does a founding year ("since 1987"), whichever page the fact cites. A home page fact with no number, like "free returns", is still left to the skill's reading. A gap's source can name the answer that confirmed it, before or after what was searched, like `searched resume.txt; A2`. Anything else in a gap's source fails with a message that says what's allowed.
+- `skills/candidate-positioning/references/format.md`: the map's Source column allows an answer ID on a gap, the firm facts paragraph says what the checker does with a saved home page, and the example's voice check names plainspeak-writer 1.6.2.
+- `tests/keys/a-seeded.md`: the note on which plainspeak-writer lists R01 and R02 under HARD names 1.6.2, and says flaw 5 still warns under 1.6's narrower R44.
+- `tests/RUN-TESTS.md`: setup step 3 names the folder where the Code tab installs an uploaded plugin, where 0.2.2 went.
+- `tests/unit/test_check_positioning.py`: five tests, for a gap citing its answer in either order, a gap source holding something else, a home page fact, a home page that shares nothing, and what counts as a claim. Four of them fail on 0.2.2's script, and the fifth passes on both.
+- `.claude-plugin/plugin.json`: version 0.2.3.
+
+Checked:
+
+- The unit tests pass on Windows with Python 3.12.10, with plainspeak-writer 1.6.2 beside the repository.
+- Against every saved positioning run in `jso-tests/positioning/runs/`, the new script gives the same result as 0.2.2's on all but one: writer E's file from the 0.2.1 run, which now fails on "42 stores". The 2.1.288 run's file for the same writer, which kept the fact out, still passes.
+
 ## 0.2.2 · Voice rules uploaded to the desktop app
 
 The packet script didn't find plainspeak-writer when it was uploaded to the Claude desktop app as a skill. The app keeps uploaded skills in its own folder, `local-agent-mode-sessions\skills-plugin\<ids>\skills\` under `%APPDATA%\Claude\` on Windows, and the script searched only `~/.claude/skills`, `~/.claude/plugins` and `.claude/skills` in the working folder. In both live runs of 0.2.1 in the Code tab, every packet came out "Voice rules: not found. Voice is unchecked." until it was built again with `--voice-dir`. candidate-positioning's `check_positioning.py` already searched the app's folder and found the same copy on its own.

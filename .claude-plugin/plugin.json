@@ -1,7 +1,7 @@
 {
   "name": "job-seeker-ops",
   "displayName": "Job Seeker Ops",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Job-search tools that sit beside plainspeak-writer and resume-ops. Candidate positioning works out the case for one candidate and one posting before anything gets written, and saves it as one file that resume-ops and cover-letter read. Submission review has a separate reviewer read a finished cover letter, resume or outreach note the way its real reader will, without seeing how it was made, and return quoted findings with a verdict.",
   "author": {
     "name": "roundofschatz",
