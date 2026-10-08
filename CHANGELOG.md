@@ -21,6 +21,11 @@ Outside this plugin:
 
 - `plainspeak-change-notes.md` in the tools folder, change 10: the same license line and an Author section for plainspeak-writer, for its next release.
 
+Checked:
+
+- The unit tests: 179 of 179 pass on Windows with Python 3.12.10, once the package is built from the release commit.
+- The pinned voice checker, plainspeak-writer 1.7 at tag v1.7, on every file this version changes, with no HARD hits.
+
 ## 0.4.0 · plainspeak-writer and resume-ops come with the plugin
 
 The owner asked on October 7 for the whole toolset in one install, with plainspeak-writer and resume-ops still available on their own for a leaner setup. Until now, a person who installed only the plugin had no resume skill, and cover letter stopped at its first step for want of plainspeak-writer. The owner waited for plainspeak-writer 1.7, which holds the letter warnings their review of the first cover letters asked for, so the plugin starts with that voice.
