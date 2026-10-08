@@ -2,6 +2,25 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.1 · The owner credited by name
+
+The owner asked on October 8 to be credited by name as the creator of this plugin, plainspeak-writer and resume-ops, and to keep the name out of everything the tools produce and out of every example. Until now this plugin named its author only by the GitHub account.
+
+Changed:
+
+- `LICENSE`: the copyright line names the owner, Ryan Schatzman, in place of "The job-seeker-ops contributors". MIT asks every copy of the code to keep that line, so the credit goes wherever the code goes. Who owns the work doesn't change.
+- README: a new Author section with the owner's name.
+- `.claude-plugin/plugin.json`: the author is the owner's name in place of the account name, and the version is 0.4.1. `marketplace.json` names the owner the same way. Both keep the link to the account.
+
+Not changed:
+
+- The name reaches nothing the skills produce. `build_letter.py` puts the letter writer's own name in a Word file's properties, from the sign-off or `--name`, and no example, rule or test uses the owner's name.
+- The two bundled copies keep their own licenses. resume-ops's already names the owner. plainspeak-writer's still credits "The Plainspeak Writer contributors" until a release of its own changes it, and the next sync brings that in.
+
+Outside this plugin:
+
+- `plainspeak-change-notes.md` in the tools folder, change 10: the same license line and an Author section for plainspeak-writer, for its next release.
+
 ## 0.4.0 · plainspeak-writer and resume-ops come with the plugin
 
 The owner asked on October 7 for the whole toolset in one install, with plainspeak-writer and resume-ops still available on their own for a leaner setup. Until now, a person who installed only the plugin had no resume skill, and cover letter stopped at its first step for want of plainspeak-writer. The owner waited for plainspeak-writer 1.7, which holds the letter warnings their review of the first cover letters asked for, so the plugin starts with that voice.

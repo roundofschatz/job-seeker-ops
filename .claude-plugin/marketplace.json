@@ -2,7 +2,7 @@
   "name": "job-seeker-ops",
   "description": "Job Seeker Ops, a Claude plugin for job-search writing.",
   "owner": {
-    "name": "roundofschatz",
+    "name": "Ryan Schatzman",
     "url": "https://github.com/roundofschatz"
   },
   "plugins": [

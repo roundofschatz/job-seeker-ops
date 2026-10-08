@@ -181,6 +181,10 @@ job-seeker-ops/
 - Give every change to a shipped file a new version. Build the package from the release commit, so it matches the commit byte for byte: `git archive --format=zip --prefix=job-seeker-ops/ -o dist/job-seeker-ops.plugin HEAD .claude-plugin/plugin.json agents skills README.md CHANGELOG.md LICENSE`.
 - Never edit `skills/plainspeak-writer/` or `skills/resume-ops/` here. Change the skill in its own repository and release it there, then copy the release in with `python tools/sync_bundled.py <name> --repo <its clone> --ref <tag>`.
 
+## Author
+
+Ryan Schatzman
+
 ## License
 
 MIT. See `LICENSE`. plainspeak-writer and resume-ops keep their own MIT licenses, in their folders.
