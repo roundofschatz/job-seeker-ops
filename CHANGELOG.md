@@ -2,6 +2,25 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.3 · One marketplace for the three tools
+
+The owner asked on October 8 for the three tools to work on their own and together, through one marketplace. resume-ops's marketplace, `roundofschatz`, now lists plainspeak-writer and this plugin beside resume-ops, so one place installs the whole set or any tool alone.
+
+Changed:
+
+- `skills/resume-ops/`: resume-ops 2.4.3, copied from tag v2.4.3 (commit 2278afc). Its marketplace is the shared one, and its READMEs say what the marketplace lists and to install this plugin or the tools on their own, not both. No rule changed.
+- README: Claude Code installs the plugin with `/plugin marketplace add roundofschatz/resume-ops` and `/plugin install job-seeker-ops@roundofschatz`, and the same marketplace installs either bundled tool on its own.
+- `.claude-plugin/plugin.json`: version 0.4.3.
+
+Removed:
+
+- `.claude-plugin/marketplace.json`, added in 0.4.0. Two marketplaces that list the same plugin give a person two ways to install it twice. The shared marketplace points at this repository's release tags, starting with v0.4.3.
+
+Checked:
+
+- A copy of the shared marketplace, pointed at the tags then current, installed all three plugins in an empty Claude Code setup: plainspeak-writer 1.7 with its one skill, resume-ops with its one, and this plugin with five skills and its reviewer.
+- On Windows, a plugin's files have to fit under the 260-character path limit once installed. This repository's longest path is 134 characters, and Claude Code's install folder in a typical user's home adds about 83.
+
 ## 0.4.2 · resume-ops 2.4.2, and a link beside the author's name
 
 resume-ops 2.4.2 fixes how its PDF checks read the text `pdftotext` writes, and its repository now tags each release, so this version copies it in by tag. The owner also asked on October 8 for the same author credit in all three tools: the name and a LinkedIn link, with no job title or city.

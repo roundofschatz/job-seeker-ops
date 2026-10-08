@@ -30,19 +30,19 @@
       }
     },
     "resume-ops": {
-      "version": "2.4.2",
+      "version": "2.4.3",
       "repository": "https://github.com/roundofschatz/resume-ops",
-      "ref": "v2.4.2",
-      "commit": "a61c493bf13deca7ce5c444659b926b2a2306f80",
+      "ref": "v2.4.3",
+      "commit": "2278afca25d1a3a3073194980e5d75c173875f80",
       "source": "skills/resume-ops",
       "left_out": [
         "tests/"
       ],
       "files": {
-        "CHANGELOG.md": "9f77085004e41d211de2c44cc64f81f5b0a681d74ec5515ab1905857ac8e2096",
+        "CHANGELOG.md": "1e61b646f9bde4c0e40c60361da876472d08b8861df280251565e842544dbe6c",
         "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
-        "README.md": "14ba639a6c317bc3a356988c74d873fb8266e02980a6f1d5d3a0465fb9b71d92",
-        "SKILL.md": "44c767245a20329e46f55da1455b730cd1c49e5d436b588843214781a7ff766b",
+        "README.md": "1de1fe83a155e2852df664021f0e9fefda5d64e196ff988ae212bcde8385c052",
+        "SKILL.md": "8c344aed8874ba846e0100bcfdaa9c0bd1c66142c6efbeb0deea42cee3b117a8",
         "references/document.md": "db395a7d2d66a5c4a001ccef21a182e85e56673a64cf402117c529685d29cdd9",
         "references/intake.md": "5f4a10bdffdfeaa6c8a4c2f6e9a56a970e9bf3fd1cf2b59de266fdc86f8981d0",
         "references/readers.md": "81e09b33b464b7a16f0d71c9d8e893f34eb02b3092ed93c26a9e61b7d7a1c0c7",

@@ -82,11 +82,11 @@ The verdict is Rethink when the first take sees no fit, when there are more than
 
 ## plainspeak-writer and resume-ops
 
-Cover letter can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both. One install gives the whole set. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.2. `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, it checks the hashes against that commit too. Their tests stay in their own repositories, which run them.
+Cover letter can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both. One install gives the whole set. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.3. `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, it checks the hashes against that commit too. Their tests stay in their own repositories, which run them.
 
 The plugin's scripts use its own plainspeak-writer even when another copy is installed, since the plugin is tested with that copy, and cover letter tells Claude to load it from beside its own folder.
 
-For a leaner setup, install plainspeak-writer or resume-ops on its own from its repository. Pick one way for each tool, though. With a separate copy installed beside the plugin, Claude sees two skills with the same job and may load either, so remove the separate copy when you install the plugin.
+For a leaner setup, install plainspeak-writer or resume-ops on its own, from the same marketplace as this plugin. Pick one way for each tool, though. With a separate copy installed beside the plugin, Claude sees two skills with the same job and may load either, so remove the separate copy when you install the plugin.
 
 ## Install
 
@@ -98,12 +98,14 @@ For a leaner setup, install plainspeak-writer or resume-ops on its own from its 
 
 Install it under Plugins, not Skills. A skill upload drops the reviewer, and the review then refuses to run. A plugin on your account also shows up in Claude Code at its next session start.
 
-**Claude Code.** Add this repository as a marketplace, then install the plugin from it:
+**Claude Code.** The author's three tools share one marketplace, `roundofschatz`, which lives in resume-ops's repository. Add it, then install the plugin:
 
 ```
-/plugin marketplace add roundofschatz/job-seeker-ops
-/plugin install job-seeker-ops@job-seeker-ops
+/plugin marketplace add roundofschatz/resume-ops
+/plugin install job-seeker-ops@roundofschatz
 ```
+
+The same marketplace installs `resume-ops@roundofschatz` or `plainspeak-writer@roundofschatz` on its own, for anyone who wants just that tool.
 
 To try it for one session instead, run `claude --plugin-dir ./job-seeker-ops`.
 
@@ -138,7 +140,6 @@ Claude asks once for anything missing, builds the packet, starts the reviewer an
 ```
 job-seeker-ops/
 ├── .claude-plugin/plugin.json      name, version and description
-├── .claude-plugin/marketplace.json the listing Claude Code installs from
 ├── agents/submission-reviewer.md   the reviewer's instructions
 ├── skills/candidate-positioning/
 │   ├── SKILL.md                    the ten steps that build a positioning file
