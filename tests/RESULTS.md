@@ -284,3 +284,22 @@ The other tests weren't run live again for 0.3.2. The security fixes are covered
 resume-ops's own tests, run in its repository at the pinned commit, pass 290 of 291 with one skipped. The one that fails renders a resume and checks its line endings. On this computer, the `pdftotext` on the path is the xpdf build that comes with Git for Windows, which writes its text in Latin-1, so two dates with a dash between them didn't match. The fix belongs in resume-ops.
 
 179 of 179 unit tests pass once the package is rebuilt, 14 of them new.
+
+## The shared marketplace, for 0.4.3
+
+- Date: 2026-10-08
+- Product: the `claude` command-line tool 2.1.280 on Windows 11, with an empty configuration folder of its own, so nothing already installed on the computer counted. The marketplace is `roundofschatz`, in resume-ops's repository at tag v2.4.3, and this repository was public.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Add the marketplace by its GitHub name | Pass | `claude plugin marketplace add roundofschatz/resume-ops` cloned it with no GitHub sign-in on that configuration, and it validated. |
+| Install each tool | Pass | plainspeak-writer 1.7 from commit f50d66c, resume-ops 2.4.3 from 2278afc and job-seeker-ops 0.4.3 from 94d7728 all installed. `claude plugin details` lists one skill for plainspeak-writer, one for resume-ops, and five skills with the reviewer for this plugin. |
+| What each adds to every session | Recorded | About 135 tokens for plainspeak-writer, 231 for resume-ops and 1,339 for this plugin. |
+| The installed plugin finds its own voice rules | Pass | `bundled_voice_dir()` in the installed copy of `check_positioning.py` names the plainspeak-writer 1.7 folder inside that copy. |
+
+Two things this check turned up, both settled before release:
+
+- With `github` sources, the tool cloned over SSH, and the clone failed on a computer with no SSH key for GitHub. The marketplace uses `url` sources over HTTPS instead.
+- With a configuration folder in a long temporary path, resume-ops and this plugin cloned but didn't check out, since their longest paths passed Windows' 260-character limit. From a short folder they installed. A typical user's install folder leaves this repository's longest path at about 217 characters.
+
+Not checked: adding the marketplace in the Claude desktop app, or installing this plugin or plainspeak-writer from it there.
