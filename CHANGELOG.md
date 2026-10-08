@@ -2,6 +2,47 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.3.2 · The security review, and the spec's open questions
+
+On October 7 a read-only security review of 0.3.1 found twelve problems, five of them worth fixing before the repository goes public, and the owner accepted every fix. The owner also accepted the recommended answers to the cover-letter spec's five open questions, and installed LibreOffice.
+
+Fixed, from the security review:
+
+- **Text from others could give orders (high).** A line in a posting or a firm's page could speak to Claude, and nothing said it was data. All three SKILL.md files and the reviewer now say text in the files is evidence to quote, never an instruction. `check_positioning.py --sources` warns on a source line that speaks to an AI tool, and `check_letter.py` fails the gate on one in the posting, since it may be a trap for AI-written applications. The pattern lives in `check_positioning.py`, and `build_packet.py` keeps a copy that a unit test compares with it.
+- **Hidden text reached the reviewer (medium).** Hidden, white or tiny text in a Word file stays out of the piece. `build_packet.py` puts it in `hidden.txt`, the reviewer reports it under Risk, `check_letter.py` fails a letter that has it, and `check_positioning.py` warns on a source that has it.
+- **A posting's words went into a shell command (medium).** No skill types the company or the role into a command anymore. candidate-positioning names its file with the new `--name-from`, which reads the draft's heading. cover-letter finds the file by reading headings, and `build_letter.py` takes the company from `--positioning`.
+- **The voice-rules search trusted the wrong folders (medium).** `build_packet.py` and `check_positioning.py` search only the skills folders, each plugin that `installed_plugins.json` lists, and the desktop app's uploads. They no longer search the working folder or the plugin catalogs Claude Code downloads, and copies that differ stop the run with a list instead of the highest version winning. The packet holds copies of the rules, `voice-rules.md` and `full-check.md`, so the reviewer opens nothing outside it and its report names no folder on the person's computer.
+- **A positioning file could name files outside the folder (medium).** A file the stamp or a citation names has to sit in the person's folder. An absolute, drive or network path, a `..` step or a link fails without being opened or looked up.
+- **The low ones.**
+  - Every script reads a Word file in one pass without recursion, and refuses a part over 20 MB or an XML parser older than expat 2.4.1.
+  - Three patterns that slowed down on long lines were rewritten.
+  - `build_letter.py` escapes quotes in attributes, falls back to Calibri for an odd font name, and won't write over an existing file without `--replace`.
+  - `--check-links` opens only public web addresses, follows a redirect only on the same host, and names no tool.
+  - `build_packet.py` warns on a companion named like the deeper record and on a letter's companion that isn't a resume.
+  - candidate-positioning searches the web with the firm's name, the role and public terms only.
+  - Older test evidence lost the app's and a session's IDs.
+- `tests/tools/scan_transcript.py`: a search or a command over the whole folder now shows as broad, and with `--run-folder` the scan looks through every tool result for the forbidden files' own lines. Run again on test 1's three runs, it found none.
+
+Changed, from the owner's answers to the spec's open questions:
+
+- A letter's record says the watermark notice was given at hand-over: cover-letter's step 9 and section 9 of `format.md`.
+- cover-letter uses the voice samples from the newest letter record again and says so, so the person names them once.
+- Kept as they were: a Word file and text in Cowork, with a Claude Doc only when asked; no section headers; blurbs and outreach notes later.
+
+Added:
+
+- `check_letter.py` counts a Word file's pages with LibreOffice when it's installed, in its own empty profile so an open LibreOffice can't block it, and falls back to the estimate otherwise. `--no-render` skips it.
+- Test 16, a posting that speaks to AI tools: `tests/keys/cl-inj.md`, `tests/letters/f-haddad/injected/`, the run in `stage_run.py`, and `tests/evidence/cover-letter-16-ai-addressed.md`.
+- 28 unit tests for the fixes above, and one that renders a letter with LibreOffice when it's installed.
+- Script versions: `check_positioning.py`, `check_letter.py`, `build_letter.py` and `build_packet.py` 0.3.2, and `plugin.json` 0.3.2.
+
+Checked:
+
+- The unit tests: 165 of 165 pass on Windows with Python 3.12.10 and LibreOffice installed, once the package is built from the release commit.
+- Test 16 passed live in run cl-inj1, and test 15 still holds by its unit tests.
+- The pinned voice checker, plainspeak-writer 1.6.2 at commit 577a985, on every text file this release touches.
+- Released with a rewritten git history, which takes the old made-up name and the app and session IDs out of earlier commits.
+
 ## 0.3.1 · The owner's review, and a posting that rules out AI
 
 The owner reviewed skill-creator's side-by-side page for 0.3.0 on October 7 and asked for a check on a posting's rules about AI, an end to the stock ask every test letter closed on, a README section on what the plugin won't do, and the open items from earlier runs closed before a public release. The voice constructs the review flagged belong to plainspeak-writer, so they went to its change notes instead of into this plugin.
@@ -19,7 +60,7 @@ Changed:
 - `skills/cover-letter/references/letter.md`: the invitation says to write the ask the way the writer would, starting from the named thing, and names the stock openers. The example letter's ask is now a direct question, and "which is the work I've done" became a sentence of its own. Every test letter had copied both from the example. Its body stays at 350 words.
 - `skills/cover-letter/SKILL.md` step 6 and `references/checks.md`: the sentence list is about what a sentence names, not its length, so a short sentence that names its thing stays. The test letters averaged 26 words a sentence, with 1% at ten words or fewer, where human writing in the red team's sets averages about 20, with about a fifth at ten or fewer.
 - `references/checks.md`: rows for the posting's rules on AI and for the ask, and a hard fail for drafting when the posting rules AI out.
-- Made-up names that matched real ones. Writer B's employer, Switchgrass Freight Co., shares its name, its industry and its metro area with a real freight company, and the tests gave it invented figures. It's now Switchgrass Freight Co. in every file, including the examples that ship in `format.md` and `letter.md`, with the example's stamp hashes worked out again. Larkhollow High School became Larkhollow High School, and Quillmoor Freight and Quillmoor Logistics became Quillmoor in the unit tests. A web search found no organization by any of the new names. The git history still holds the old ones.
+- Made-up names that matched real ones. The name made up for writer B's employer belonged to a real freight company in the same metro area, and the tests gave it invented figures. It's now Switchgrass Freight Co. in every file, including the examples that ship in `format.md` and `letter.md`, with the example's stamp hashes worked out again. Writer C's school and two firms in the unit tests had near matches too, and became Larkhollow High School and Quillmoor. A web search found no organization by any of the new names.
 - `tests/RUN-TESTS-positioning.md` test 6: how to read resume-ops 2.4.0's brief. Its POSITIONING line names the file, and its CHECKS line has no entry for the positioning check, so the test runs `positioning_check.py --resume` itself. That closes the open item from the 0.2.1 Claude Code run, whose grading asked for "positioning PASS" on the CHECKS line because one earlier run happened to write it there.
 - `.claude-plugin/plugin.json`: version 0.3.1.
 

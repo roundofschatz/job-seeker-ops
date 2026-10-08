@@ -3,7 +3,7 @@
 writes a resume: by hand, with every part Word itself writes, and with the
 writer's name in the author field.
 
-    python build_letter.py letter.txt --company "Silver Larch School District" \\
+    python build_letter.py letter.txt --positioning positioning-silver-larch-...md \\
         --resume Nadia-Haddad-Resume.docx --out .
 
 The letter's text is the upload form: the contact block, the date, the
@@ -11,14 +11,18 @@ salutation, the body, the sign-off and the name, with a blank line between
 paragraphs. The Word file takes the resume's font, size and margins when the
 resume is a Word file; from a text resume it uses Calibri 11 with one-inch
 margins and says so. The file is named FirstName_LastName_CoverLetter_Company.docx,
-and a plain-text copy with straight quotes goes beside it for pasting.
+and a plain-text copy with straight quotes goes beside it for pasting. The
+company comes from the positioning file's heading, so a posting's words never
+have to go into a command; --company gives it by hand.
 
 It never makes a PDF. When a posting asks for one, the person exports it from
 the Word file.
 
 The build refuses, and writes nothing, when the letter has no salutation or
 sign-off, holds a placeholder, has no contact block, or runs past one page by
-estimate. After writing, it checks the file with check_letter.py.
+estimate, and when the Word file or its text copy already exists, unless
+--replace says to write over them. After writing, it checks the file with
+check_letter.py, which counts its pages with LibreOffice when it's installed.
 
 Exit code 0 means the file was written and passed, 1 means a refusal or a
 FAIL in the check, and 2 means the input needs fixing. Python 3.8 or newer,
@@ -35,7 +39,7 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
 
-__version__ = "0.3.0"
+__version__ = "0.3.2"
 
 HERE = Path(__file__).resolve().parent
 _spec = importlib.util.spec_from_file_location("check_letter", HERE / "check_letter.py")
@@ -48,6 +52,8 @@ NS_R = 'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relations
 XML_HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
 DEFAULT = {"font": "Calibri", "size": 11.0, "margins": (1440, 1440, 1440, 1440), "name_size": 14.0}
 SERIF = {"georgia", "garamond", "times new roman"}
+# A font name goes into XML attributes; a name with other characters falls back to Calibri.
+FONT_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9 .-]{0,60}")
 STRAIGHT = str.maketrans({chr(0x201C): '"', chr(0x201D): '"', chr(0x2018): "'", chr(0x2019): "'"})
 
 
@@ -59,24 +65,22 @@ def resume_layout(path):
     layout = dict(DEFAULT, source="defaults")
     if not path or Path(path).suffix.lower() != ".docx":
         return layout
+    cp = cl.cp_module()
     try:
+        cp.check_expat()
         with zipfile.ZipFile(path) as archive:
-            doc = ET.fromstring(archive.read("word/document.xml"))
-            styles = ET.fromstring(archive.read("word/styles.xml"))
-    except (zipfile.BadZipFile, KeyError, ET.ParseError):
+            doc = ET.fromstring(cp.read_part(archive, "word/document.xml", Path(path).name))
+            styles = ET.fromstring(cp.read_part(archive, "word/styles.xml", Path(path).name))
+    except (zipfile.BadZipFile, KeyError, ET.ParseError, cp.InputError):
         return layout
     fonts = styles.find(f"{W}docDefaults/{W}rPrDefault/{W}rPr/{W}rFonts")
-    if fonts is not None and fonts.get(W + "ascii"):
+    if fonts is not None and FONT_NAME.fullmatch(fonts.get(W + "ascii") or ""):
         layout["font"] = fonts.get(W + "ascii")
-    sizes = []
-    for p in doc.iter(W + "p"):
-        text = "".join(t.text or "" for t in p.iter(W + "t"))
-        szs = [int(s.get(W + "val")) / 2 for s in p.iter(W + "sz")]
-        if text.strip() and szs:
-            sizes.append((text, max(szs)))
     sz = styles.find(f"{W}docDefaults/{W}rPrDefault/{W}rPr/{W}sz")
     if sz is not None:
         layout["size"] = int(sz.get(W + "val")) / 2
+    sizes = [(text, size) for text, size, _before, _after in cl.layout_paragraphs(doc, None)
+             if text.strip() and size is not None]
     if sizes:
         body = [s for t, s in sizes[1:] if len(t.split()) > 8]
         if body:
@@ -112,6 +116,11 @@ def paragraphs(letter, layout):
     return out
 
 
+def attr(value):
+    """A value for an XML attribute, with its quotes escaped too."""
+    return escape(value, {'"': "&quot;"})
+
+
 def para_xml(text, size, bold, before, after):
     half = int(round(size*2))
     rpr = f'<w:rPr>{"<w:b/>" if bold else ""}<w:sz w:val="{half}"/><w:szCs w:val="{half}"/></w:rPr>'
@@ -135,7 +144,7 @@ def styles(font, size):
     half = int(round(size*2))
     return (
         f'{XML_HEAD}<w:styles {NS}><w:docDefaults><w:rPrDefault><w:rPr>'
-        f'<w:rFonts w:ascii="{escape(font)}" w:eastAsia="{escape(font)}" w:hAnsi="{escape(font)}" w:cs="{escape(font)}"/>'
+        f'<w:rFonts w:ascii="{attr(font)}" w:eastAsia="{attr(font)}" w:hAnsi="{attr(font)}" w:cs="{attr(font)}"/>'
         f'<w:sz w:val="{half}"/><w:szCs w:val="{half}"/>'
         '<w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-SA"/></w:rPr></w:rPrDefault>'
         '<w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr>'
@@ -168,7 +177,7 @@ def numbering():
 
 def font_table(font):
     family = "roman" if font.lower() in SERIF else "swiss"
-    return (f'{XML_HEAD}<w:fonts {NS} {NS_R}><w:font w:name="{escape(font)}"><w:charset w:val="00"/>'
+    return (f'{XML_HEAD}<w:fonts {NS} {NS_R}><w:font w:name="{attr(font)}"><w:charset w:val="00"/>'
             f'<w:family w:val="{family}"/><w:pitch w:val="variable"/></w:font></w:fonts>')
 
 
@@ -178,7 +187,7 @@ def theme(font):
         ("dk2", "44546A"), ("lt2", "E7E6E6"), ("accent1", "4472C4"), ("accent2", "ED7D31"),
         ("accent3", "A5A5A5"), ("accent4", "FFC000"), ("accent5", "5B9BD5"), ("accent6", "70AD47"),
         ("hlink", "0563C1"), ("folHlink", "954F72")))
-    face = f'<a:latin typeface="{escape(font)}"/><a:ea typeface=""/><a:cs typeface=""/>'
+    face = f'<a:latin typeface="{attr(font)}"/><a:ea typeface=""/><a:cs typeface=""/>'
     return (f'{XML_HEAD}<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
             'name="Office Theme"><a:themeElements><a:clrScheme name="Office">'
             '<a:dk1><a:sysClr val="windowText" lastClr="000000"/></a:dk1>'
@@ -285,13 +294,25 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="build_letter.py", allow_abbrev=False,
                                  description="Write a cover letter's Word file from its checked text.")
     ap.add_argument("letter", help="the letter's text, in the upload form")
-    ap.add_argument("--company", required=True, help="the firm, for the file name")
+    ap.add_argument("--positioning", help="the positioning file, whose heading gives the firm for the file name")
+    ap.add_argument("--company", help="the firm, for the file name, when there's no positioning file")
     ap.add_argument("--resume", help="the resume that goes with the letter, for its font, size and margins")
     ap.add_argument("--out", default=".", help="the folder to write into (default: here)")
     ap.add_argument("--name", help="the writer's name, when the sign-off doesn't give it")
+    ap.add_argument("--replace", action="store_true",
+                    help="write over a Word file or text copy of the same name; ask the person first")
     ap.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     args = ap.parse_args(argv)
+    company = args.company
     try:
+        if args.positioning and not company:
+            cp = cl.cp_module()
+            try:
+                company = cp.Positioning(args.positioning).target.get("Company", {}).get("text", "")
+            except cp.InputError as exc:
+                raise cl.InputError(str(exc))
+        if not company:
+            raise cl.InputError("the firm isn't known. Give the positioning file with --positioning, or --company")
         letter = cl.Letter(args.letter)
     except cl.InputError as exc:
         print(f"The letter can't be built, because {exc}", file=sys.stderr)
@@ -319,9 +340,13 @@ def main(argv=None):
                        "not spacing, until it fits on one page."])
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    stem = file_stem(name, args.company)
+    stem = file_stem(name, company)
     docx = out / f"{stem}.docx"
     text = out / f"{stem}.txt"
+    there = [p.name for p in (docx, text) if p.exists()]
+    if there and not args.replace:
+        return refuse([f"{' and '.join(there)} already in {out}. The person may have edited the Word file by hand, "
+                       "so ask before writing over it, then run again with --replace."])
     docx.write_bytes(docx_bytes(paras, layout, cl.strip_credentials(name)))
     text.write_bytes((letter.raw.strip("\n").translate(STRAIGHT) + "\n").encode("utf-8"))
     if layout["source"] != "defaults":

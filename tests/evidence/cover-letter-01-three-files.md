@@ -10,6 +10,8 @@ Runs on October 7, 2026, each in a fresh helper following `skills/cover-letter/`
 | cl-g1 | `linkedin.md` | None | The skill's files, the positioning file, `posting.txt`, `resume.txt`, plainspeak-writer and submission-review |
 | cl-b1 | `career-record.md`, `positioning-notes.md` | None | The skill's files, the positioning file, `posting.txt`, `resume.txt`, plainspeak-writer and submission-review |
 
+**Rechecked for 0.3.2.** The security review found that the scan only caught a call that names the file, so a search over the whole folder could read it unnoticed. The scan now also takes `--run-folder` and looks through every tool result for the deeper record's own lines, the ones no other file in the folder or the plugin holds. Run again on the three runs above, it found none of them in any result: 13 lines for cl-f1, 7 for cl-g1 and 14 for cl-b1.
+
 The deeper record still reached the letters through the positioning file. cl-f1's letter tells three proofs only her master resume holds, and cl-g1's tells his LinkedIn text's "specifications the utility still uses" through his P1 story (test 12).
 
 One script call touches the record's bytes: `check_positioning.py --current` hashes every stamped source to prove the case is still current. It prints no text from the record, and the owner agreed to it in the plan.

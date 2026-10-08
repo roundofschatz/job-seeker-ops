@@ -4,13 +4,13 @@ One Markdown file per posting holds the case for one candidate. This page is the
 
 ## The file name
 
-The file is named `positioning-<company>-<role>.md` and saved in the folder that holds the person's resume. The company and the role go in lowercase with hyphens between the words, and a legal ending such as "Inc." or "Co." comes off. This command prints the name:
+The file is named `positioning-<company>-<role>.md` and saved in the folder that holds the person's resume. The company and the role go in lowercase with hyphens between the words, and a legal ending such as "Inc." or "Co." comes off. This command reads them from a saved draft's heading and prints the name, so the posting's words never go into a command:
 
 ```
-python scripts/check_positioning.py --name "Switchgrass Freight Co." "Supply Chain Planning Analyst"
+python scripts/check_positioning.py --name-from positioning-draft.md
 ```
 
-It gives `positioning-switchgrass-freight-supply-chain-planning-analyst.md`.
+For a draft that opens `# Positioning: Switchgrass Freight Co. · Supply Chain Planning Analyst`, it gives `positioning-switchgrass-freight-supply-chain-planning-analyst.md`.
 
 ## How the file starts
 
@@ -146,7 +146,7 @@ A record is a draft while the map stands and the letter isn't finished. It's rea
 Three parts follow, each under its own `####` heading:
 
 - `#### Map`, a table with the columns `Movement`, `What it says` and `From`, and a row each for Frame, Proof, Fit and why now, Invitation, Referral and Off the page. `From` names the parts of this file the row draws on, such as `P1; P3` or `F2; section 3`. The Referral row reads "None." for a cold reader. The Off the page row names the concern and the proof that answers it without naming it.
-- `#### Checks`, one line for each check with its result: the voice check, the body's word count, `check_letter.py`, the sentence list, the two swap tests, any sentence from the person's earlier writing, and each review's verdict.
+- `#### Checks`, one line for each check with its result: the voice check, the body's word count, `check_letter.py`, the sentence list, the two swap tests, any sentence from the person's earlier writing, each review's verdict, what the posting says about AI, and the watermark notice given at hand-over.
 - `#### Text`, the letter as the person got it, word for word, in a fenced block that opens with three backticks and `text`.
 
 A draft record needs its labelled lines and its map. Past draft, it also needs its checks and its text. `check_positioning.py` checks both, and a heading inside the fenced text never counts as a record.

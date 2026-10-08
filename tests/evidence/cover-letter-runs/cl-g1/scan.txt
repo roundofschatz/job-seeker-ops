@@ -100,3 +100,4 @@ agent a4459f25583d4217d: 72 tool call(s)
     Read: file_path='C:/Users/<user>/repos/tools/jso-tests/cover-letter/runs/cl-g1/fresh-reader-packet.txt'
     SubagentHandback: {"message": "Scope note: I treated the positioning file as given. It quotes a fourth file, linkedin.md, that was not among the three files. Anything resting on 
 No call names a forbidden file.
+None of the forbidden files' 7 own line(s) shows up in any tool result.
