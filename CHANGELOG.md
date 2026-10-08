@@ -2,6 +2,37 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.3.1 · The owner's review, and a posting that rules out AI
+
+The owner reviewed skill-creator's side-by-side page for 0.3.0 on October 7 and asked for a check on a posting's rules about AI, an end to the stock ask every test letter closed on, a README section on what the plugin won't do, and the open items from earlier runs closed before a public release. The voice constructs the review flagged belong to plainspeak-writer, so they went to its change notes instead of into this plugin.
+
+Added:
+
+- `skills/cover-letter/scripts/check_letter.py` 0.3.1, before drafting: it quotes any posting line about AI in application materials. It fails a line that rules them out, warns on one that asks for disclosure or for the applicant's own words, and notes one about the employer's own use. A line that names AI only as a skill or a product isn't listed.
+- `check_letter.py`, on a letter: a warning when the ask opens on a stock phrase such as "I'd like to talk about", and with `--compare`, a warning when two letters' asks open with the same four words.
+- `skills/cover-letter/SKILL.md` step 1, item 4, and call 10: when the posting rules out AI-written materials, the skill doesn't draft. It quotes the line, offers the person's case as notes and the fact checks on a letter they write, and drafts only if the person says the employer allows it. A line asking for disclosure gets a reminder at hand-over, and the record says what the posting said and what the person decided.
+- `README.md`: "What it won't do", with the watermark.
+- Test 15, a posting that rules out AI: the key `tests/keys/cl-ai.md`, the pieces in `tests/letters/f-haddad/no-ai/`, the run in `tests/tools/stage_run.py`, and `tests/evidence/cover-letter-15-no-ai.md`. Seven unit tests cover the posting's rules, the stock ask and two asks that open alike.
+
+Changed:
+
+- `skills/cover-letter/references/letter.md`: the invitation says to write the ask the way the writer would, starting from the named thing, and names the stock openers. The example letter's ask is now a direct question, and "which is the work I've done" became a sentence of its own. Every test letter had copied both from the example. Its body stays at 350 words.
+- `skills/cover-letter/SKILL.md` step 6 and `references/checks.md`: the sentence list is about what a sentence names, not its length, so a short sentence that names its thing stays. The test letters averaged 26 words a sentence, with 1% at ten words or fewer, where human writing in the red team's sets averages about 20, with about a fifth at ten or fewer.
+- `references/checks.md`: rows for the posting's rules on AI and for the ask, and a hard fail for drafting when the posting rules AI out.
+- Made-up names that matched real ones. Writer B's employer, Switchgrass Freight Co., shares its name, its industry and its metro area with a real freight company, and the tests gave it invented figures. It's now Switchgrass Freight Co. in every file, including the examples that ship in `format.md` and `letter.md`, with the example's stamp hashes worked out again. Larkhollow High School became Larkhollow High School, and Quillmoor Freight and Quillmoor Logistics became Quillmoor in the unit tests. A web search found no organization by any of the new names. The git history still holds the old ones.
+- `tests/RUN-TESTS-positioning.md` test 6: how to read resume-ops 2.4.0's brief. Its POSITIONING line names the file, and its CHECKS line has no entry for the positioning check, so the test runs `positioning_check.py --resume` itself. That closes the open item from the 0.2.1 Claude Code run, whose grading asked for "positioning PASS" on the CHECKS line because one earlier run happened to write it there.
+- `.claude-plugin/plugin.json`: version 0.3.1.
+
+Outside this plugin:
+
+- `plainspeak-change-notes.md` in the tools folder, changes 6 to 9: "what the [noun] [verb]", "that's the [thing]", "do what ours did" and sentences that run long and flat, each with counts from the red team's sets. plainspeak-writer's next build takes them up, so the letters' voice changes when it ships.
+
+Checked:
+
+- The unit tests: 136 of 136 pass on Windows with Python 3.12.10, once the package is built from the release commit.
+- Test 15 passed live in run cl-ai1. Tests 1 to 14 weren't run again: the changes to the draft are the ask and the example, which the unit tests cover.
+- plainspeak-writer 1.6.2's checker, pinned at commit 577a985, on every text file this release adds or changes.
+
 ## 0.3.0 · Cover letter
 
 The third skill, built from the cover-letter spec. It writes one letter for one posting from three files, the positioning file, the posting and the resume that goes with the letter, in plainspeak-writer's voice. It checks every fact against those files by script, has submission-review's blind reviewer read the draft before the person sees it, and saves the letter in the channel's form, with its record in a ninth section of the positioning file.

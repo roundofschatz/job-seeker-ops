@@ -42,9 +42,13 @@ Run them in order. The person hears from the skill once at most before the draft
    - Not confirmed yet: offer candidate-positioning's confirmation step, and wait.
    - A source changed since the stamp: candidate-positioning rebuilds the file first.
    - Fewer than two firm facts, or fewer than two proofs marked for the letter: stop and say which. candidate-positioning can find more, or the person can give two firm facts with where each came from.
-3. **Check the proofs against the resume.** Run `check_letter.py --positioning FILE --resume RESUME`. A FAIL means the positioning file and that resume disagree on a date or a figure. Stop, tell the person which facts differ, and offer candidate-positioning to bring the file in line with the resume they're sending, since the resume being sent decides the facts. The letter waits.
-4. **Ask once for the rest.** Take the channel, the reader and what to lead with from section 1 of the file. In one message, ask for whatever's still missing: the channel and any character limit, the reader and any referral, the hiring manager's name if they know it, and which resume goes with the letter when it isn't clear. Offer voice samples in the same message. When nothing's missing, don't stop just to offer samples.
-5. **plainspeak-writer is the voice.** When it isn't installed, stop and say the letter needs it, since this skill keeps no copy of its rules.
+3. **Check the proofs against the resume.** Run `check_letter.py --positioning FILE --resume RESUME`. A FAIL marked `gate` means the positioning file and that resume disagree on a date or a figure. Stop, tell the person which facts differ, and offer candidate-positioning to bring the file in line with the resume they're sending, since the resume being sent decides the facts. The letter waits.
+4. **Check the posting's rules on AI.** The same run quotes any posting line about AI in application materials, marked `ai-policy`. Some employers rule out AI-written materials, and a letter this skill drafts is Claude's writing and may have its watermark.
+   - **A FAIL: the posting rules them out.** Don't draft. Tell the person, quoting the line, that the letter would be Claude's writing, so sending it would go against the employer's stated rule. Offer what keeps Claude's words out of the letter: the map of their confirmed case as notes to write from, and the fact checks on a letter they write themselves, if the posting's wording allows that. Draft only if the person says the employer allows it after all, as when a recruiter has said so in writing, and note that in the record.
+   - **A warning that the posting asks applicants to disclose AI use:** draft as usual. At hand-over, quote the line and remind the person to disclose.
+   - **A warning on a line the script can't place,** like "in your own words": quote it in the one message of item 5 and ask how the person reads it before drafting.
+5. **Ask once for the rest.** Take the channel, the reader and what to lead with from section 1 of the file. In one message, ask for whatever's still missing: the channel and any character limit, the reader and any referral, the hiring manager's name if they know it, and which resume goes with the letter when it isn't clear. Offer voice samples in the same message. When nothing's missing, don't stop just to offer samples.
+6. **plainspeak-writer is the voice.** When it isn't installed, stop and say the letter needs it, since this skill keeps no copy of its rules.
 
 ### 2. Read whole
 
@@ -92,7 +96,7 @@ Whatever the file says about the channel and the referrer is used, and `--channe
 
 `references/checks.md` lists every check and says which ones the script runs. By reading:
 
-- **The sentence list.** Every sentence of the body beside the thing it names: a firm, a number, a tool, a person or a result. Cut or fix any sentence with nothing beside it. Start from the script's `--sentences` list, and write the finished list into the record.
+- **The sentence list.** Every sentence of the body beside the thing it names: a firm, a number, a tool, a person or a result. Cut or fix any sentence with nothing beside it. The list is about what a sentence names, not its length: a short sentence that names its thing ("The rate hit 98%.") stays, and a long one that names nothing goes. Start from the script's `--sentences` list, and write the finished list into the record.
 - **The resume.** Every title, company, date and figure agrees with the resume, and no line of it is restated. A result the resume leaves out has its source in a proof.
 - **The two swap tests.** Could another applicant send this letter? Could the writer send it to another firm with the name swapped? A yes on either goes back to step 3. A proof sentence the person has used before can stay, but the Frame, the Fit and the Invitation have to break when the name is swapped.
 - **Earlier writing.** Every sentence the script lists as shared with a sample or another letter states a fact the three files hold, and is still true today.
@@ -114,7 +118,8 @@ Do step 9's export first, so this message can say where the files are. Then give
 2. The results: plainspeak-writer's checker, the body's word count, the review's verdict with its report as it came back, and any open finding. Add plainspeak-writer's notes when it has any.
 3. The two sentences worth putting in their own words: the opener and the named topic, quoted, with a line saying they're the two only the person can write. The reason, for you rather than for the message: on one freelance platform, more time spent editing an AI-drafted letter went with a better chance of winning the job, though the study doesn't show the editing caused it [C15]. Most hiring managers in two surveys said they can tell when AI wrote an application, or that AI makes a candidate's authenticity harder to judge [C21, C22], and the guides say to rewrite an AI draft in your own voice [C01].
 4. One line on the watermark, word for word: "Current Claude models put an invisible watermark in the text they write, which stays with copied text, so this letter's text may carry one." Anthropic's help page says so [C24]. Never try to remove, hide or get around the mark, and never suggest a way to.
-5. Where the files are, and a note to attach the resume when the channel is email.
+5. When the posting asks applicants to disclose AI use, its line, quoted, with a reminder to disclose.
+6. Where the files are, and a note to attach the resume when the channel is email.
 
 When the person edits the letter, their version stands. Run both scripts on it, export it again, and tell them what the scripts found. A hard fail in their version, such as a placeholder or a wrong company name, still holds the Word file back, and you say which one. A third review runs only if they ask.
 
@@ -124,7 +129,7 @@ When the person edits the letter, their version stands. Run both scripts on it, 
 - **Text box:** the checked text file is the letter, from the salutation on, inside the limit.
 - **Email:** the checked text file is the email, with the subject on its first line.
 
-Then finish the record in section 9: the status (`ready`, `open findings` or `not reviewed`), the checks with their results and every cleared warning, and the letter's text exactly as the person got it. Run `check_positioning.py FILE` once more, and save the file beside the person's other files.
+Then finish the record in section 9: the status (`ready`, `open findings` or `not reviewed`), the checks with their results and every cleared warning, what the posting says about AI and what the person decided, and the letter's text exactly as the person got it. Run `check_positioning.py FILE` once more, and save the file beside the person's other files.
 
 ## The calls
 
@@ -137,6 +142,7 @@ Then finish the record in section 9: the status (`ready`, `open findings` or `no
 7. **The form follows the channel.** Never a PDF.
 8. **Voice samples are the person's pick.** Each one goes through plainspeak-writer's checker first. A sample is never a source of facts and never a template.
 9. **The writer has the final say.** The skill hands over a checked draft and clear findings, and the person decides what goes out.
+10. **The employer's rule on AI comes first.** When the posting rules out AI-written materials, the skill drafts nothing unless the person says the employer allows it, and it never hides that Claude wrote the draft.
 
 ## Files
 

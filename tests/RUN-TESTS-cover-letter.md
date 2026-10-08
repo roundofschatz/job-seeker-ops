@@ -58,6 +58,7 @@ For skill-creator's side-by-side comparison, cl-f1 and cl-e1 also run once with 
 | 12 | Deeper proof | cl-f1, cl-g1 | A proof the resume leaves out shows in the letter, told from its story, and the letter still agrees with the resume |
 | 13 | Voice samples | cl-f1 | The note's two blocked sentences set aside before drafting and absent from the letter |
 | 14 | Its own files | the plugin | plainspeak-writer's checker on every file, a search for anything personal, and the changelog |
+| 15 | A posting that rules out AI | cl-ai1 | New in 0.3.1, from the owner's review. The stop message quotes the posting's line and offers her case as notes, and the folder holds no letter, draft or new record |
 
 ## Finish
 

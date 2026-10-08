@@ -31,6 +31,8 @@ The word ranges are working budgets, and the 500-word cap is the rule. The Proof
 
 **Invitation.** The last paragraph opens on section 4's line 4, said as "I". Then the ask: a conversation about one named thing, taken from the measure or a firm fact, like "the lanes your forecasts miss most". "The role", "my qualifications" and "how I can contribute" aren't named things. The ask is the last sentence, a direct call to act with nothing trailing after it [C01, C10].
 
+Write the ask the way this writer would say it to the reader, starting from the named thing: a direct question, or a plain request in the writer's words. A stock opener such as "I'd like to talk about", "I'd welcome the chance to discuss" or "I look forward to" reads as a template, and every letter in the first live runs ended on one. `check_letter.py` warns on a stock opener, and on an ask that opens with the same four words as the writer's earlier letter.
+
 ## What never goes on the page
 
 Anything the writer lacks: a missing title, market, tool, credential, or anything they "have to learn" [C10]. The gap and the concern decide which proof leads and stay in the file. Two sources say to explain a gap or an unusual path in the letter [C07, C09]. This skill doesn't, since on a letter a gap reads as a reason to say no. Also: a reason for leaving, a complaint, salary [C10], the resume's lines restated [C02, C03, C09, C10], a sentence about how honest the letter is being, an internal method name (section 6 gives the plain description to use instead), and a quote from a client or a colleague.
@@ -41,7 +43,7 @@ Before drafting, write the map into the letter's record in section 9 of the posi
 
 | Movement | What it says | From |
 |---|---|---|
-| Frame | Last year's 24% miss and its cost in the posting's words; the analyst's job, which is the work he's done since 2021 | Section 1, measure; section 3 |
+| Frame | Last year's 24% miss and its cost in the posting's words; the analyst's job, the same work he's done since 2021 | Section 1, measure; section 3 |
 | Proof | The forecast rebuilt around store promotions, 31% to 19%; the dashboard 14 buyers order from | P1; P2 |
 | Fit and why now | Lanes and terminals, and the Saturday dock shifts staffed from the weekly forecast in 2026; his warehouse years answer the freight concern | F2; F3; P3; section 3 |
 | Invitation | Line 4 in his voice, then the lanes that miss most and the Saturday docks | Section 4, line 4; F3 |
@@ -101,13 +103,13 @@ October 7, 2026
 
 Dear Switchgrass Freight hiring team,
 
-Last year Switchgrass's forecasts missed by 24% on average, and your posting puts the cost plainly: idle docks one day and overtime the next. Your planning analyst will build the weekly volume forecasts for 38 terminals, find the lanes where they miss most and fix the inputs, which is the work I've done at Brightwell Grocers Distribution since 2021.
+Last year Switchgrass's forecasts missed by 24% on average, and your posting puts the cost plainly: idle docks one day and overtime the next. Your planning analyst will build the weekly volume forecasts for 38 terminals, find the lanes where they miss most and fix the inputs. I've done that work at Brightwell Grocers Distribution since 2021.
 
 Brightwell's weekly forecast used to miss by 31% across 1,900 items in three distribution centers. I rebuilt it in SQL and Excel and added store promotions as an input, since the old forecast never saw them. The first quarter after the rebuild still missed by 24%, and over 52 weeks the error came down to 19%. Brightwell's 14 buyers now set their orders every Monday from a Power BI dashboard I built for the buying team, and I write the one-page weekly note that tells them where the forecast missed that week.
 
 Switchgrass moves less-than-truckload freight for 2,400 shippers across the Midwest and plans by lane and by terminal, so docks get staffed and trailers placed before the freight shows up. This year you added Saturday dock shifts at six terminals and staff them from the weekly forecast, so a miss now lands on a Saturday crew as well as a weekday one. Before I forecast anything, I was Brightwell's inventory coordinator, on the floor where a miss lands. I ran the cycle counts in Manhattan WMS for a Brightwell warehouse, and count variance fell from 2.8% to 0.9% once its high-value items were counted every week. In your seat I'd start the way I started at Brightwell, with the lanes that miss most and the inputs behind them, and your terminal managers would get the same kind of weekly note on what missed, written for people who don't work with data.
 
-I find the input behind a forecast miss and fix it, and I can do that for Switchgrass's lanes. I'd like to talk about the lanes your forecasts miss most, and what the weekly forecast would need to get right to staff the Saturday docks at your six terminals.
+I find the input behind a forecast miss and fix it, and I can do that for Switchgrass's lanes. Could we set up a call about the lanes your forecasts miss most, and which of those lanes decide how many people you put on the Saturday docks at your six terminals?
 
 Best,
 Dmitri Okafor
@@ -115,10 +117,10 @@ Dmitri Okafor
 
 How it meets the shape:
 
-- **Frame.** It opens on the posting's own measure, the 24% miss and what it costs, and names Switchgrass in the first sentence. His credential comes in the second.
+- **Frame.** It opens on the posting's own measure, the 24% miss and what it costs, and names Switchgrass in the first sentence. His credential comes in the third, in ten words, once the job is set out.
 - **Proof.** P1, told from its story, including the first quarter that still missed, which only the career record holds. P2 ends on what the buyers do with the dashboard.
 - **Fit and why now.** F2 and F3, each used: the forecast now staffs Saturday crews. P3's warehouse years answer the freight concern without naming it, and the why-now rests on the firm's moment, since his reason for looking is on section 7's list.
-- **Invitation.** Line 4 in his voice, then one named topic.
+- **Invitation.** Line 4 in his voice, then the ask as a direct question about one named topic, the lanes that miss most.
 - **Off the page.** No freight gap, no reorganization, no reason for looking, no pay.
 
 `check_letter.py` gives a body of 350 words and two warnings, both cleared by reading in the record: the warehouse sentence follows resume lines 14 and 15, and it tells them as a story that ends on the result rather than restating either line.

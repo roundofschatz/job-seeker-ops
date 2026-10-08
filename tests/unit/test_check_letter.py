@@ -126,6 +126,7 @@ class ExampleTests(Base):
         self.assertIn("Body: 350 words in 4 paragraph(s)", out)
         self.assertIn("Paragraph 3 follows resume line 14 closely", out)
         self.assertIn("52 (paragraph 2) comes from P1's deeper record", out)
+        self.assertNotIn("stock phrase", out)
 
     def test_before_drafting(self):
         code, out, _ = self.check(letter=False)
@@ -192,14 +193,14 @@ class FactTests(Base):
         self.assertNotIn("Excel and Power BI", out)
 
     def test_a_stale_count_of_years_fails(self):
-        self.edit("which is the work I've done at Brightwell Grocers Distribution since 2021.",
-                  "which is the work I've done at Brightwell Grocers Distribution for eight years.")
+        self.edit("I've done that work at Brightwell Grocers Distribution since 2021.",
+                  "I've done that work at Brightwell Grocers Distribution for eight years.")
         code, out, _ = self.check()
         self.assertFails(out, "a count of 8 years that the three files don't give")
 
     def test_a_count_of_years_the_file_works_out_passes(self):
-        self.edit("which is the work I've done at Brightwell Grocers Distribution since 2021.",
-                  "which is the work I've done at Brightwell Grocers Distribution for about five years.")
+        self.edit("I've done that work at Brightwell Grocers Distribution since 2021.",
+                  "I've done that work at Brightwell Grocers Distribution for about five years.")
         code, out, _ = self.check()
         self.assertNotIn("count of 5 years", out)
 
@@ -224,11 +225,18 @@ class FactTests(Base):
         self.assertFails(out, "The referral, Dana Ruiz, belongs in the first two sentences")
 
     def test_the_last_sentence_asks(self):
-        self.edit("I'd like to talk about the lanes your forecasts miss most, and what the weekly forecast "
-                  "would need to get right to staff the Saturday docks at your six terminals.",
+        self.edit("Could we set up a call about the lanes your forecasts miss most, and which of those lanes "
+                  "decide how many people you put on the Saturday docks at your six terminals?",
                   "Thank you for reading about the Saturday docks at your six terminals.")
         code, out, _ = self.check()
         self.assertIn("The last sentence should ask for a conversation", out)
+
+    def test_a_stock_ask_warns(self):
+        self.edit("Could we set up a call about the lanes your forecasts miss most, and which of those lanes "
+                  "decide how many people you put on the Saturday docks at your six terminals?",
+                  "I'd like to talk about the lanes your forecasts miss most.")
+        code, out, _ = self.check()
+        self.assertIn("The ask opens on a stock phrase, \"I'd like to talk\"", out)
 
 
 class ShapeTests(Base):
@@ -342,6 +350,66 @@ class ReuseTests(Base):
 
     def voice_again(self):
         return self.dir / "skills" / "plainspeak-writer"
+
+    def test_an_ask_that_opens_like_the_last_letter_warns(self):
+        other = self.dir / "letter-other.txt"
+        body = "Dear Quillmoor Freight hiring team,\n\nQuillmoor's lanes run late.\n\n{}\n\nBest,\nDmitri Okafor\n"
+        other.write_text(body.format("Could we set up a call about your late lanes?"), encoding="utf-8")
+        code, out, _ = self.check("--compare", other)
+        self.assertIn("The ask opens the same way as in letter-other.txt", out)
+        other.write_text(body.format("Which of your lanes runs latest on a Friday?"), encoding="utf-8")
+        code, out, _ = self.check("--compare", other)
+        self.assertNotIn("opens the same way", out)
+
+
+class AIPolicyTests(Base):
+    def add_to_posting(self, line):
+        with open(self.dir / "posting.txt", "a", encoding="utf-8") as f:
+            f.write("\n" + line + "\n")
+
+    def test_a_posting_that_rules_out_ai_stops_the_draft(self):
+        self.add_to_posting("Applications written with AI tools will not be considered.")
+        code, out, _ = self.check(letter=False)
+        self.assertEqual(code, 1, out)
+        self.assertFails(out, "The posting rules out AI-written application materials")
+        self.assertIn("\"Applications written with AI tools will not be considered.\"", out)
+
+    def test_a_disclosure_rule_warns(self):
+        self.add_to_posting("If you used AI in preparing your application, please disclose how.")
+        code, out, _ = self.check(letter=False)
+        self.assertEqual(code, 0, out)
+        self.assertIn("asks applicants to disclose AI use", out)
+
+    def test_own_words_is_asked_about(self):
+        self.add_to_posting("Please describe in your own words why you want this job.")
+        code, out, _ = self.check(letter=False)
+        self.assertEqual(code, 0, out)
+        self.assertIn("speaks to AI use or the applicant's own words", out)
+
+    def test_a_posting_with_no_rule_says_so(self):
+        code, out, _ = self.check(letter=False)
+        self.assertIn("The posting says nothing about AI in application materials", out)
+
+    def test_the_lines_it_lists(self):
+        cases = {
+            "Applications written with AI tools will not be considered.": "bars",
+            "Please do not use ChatGPT or other generative AI to write your cover letter.": "bars",
+            "Your application materials must be your own work, without the use of AI.": "bars",
+            "Candidates may not use AI-generated responses in the assessment.": "bars",
+            "If you used AI in preparing your application, please disclose how.": "disclose",
+            "Our policy on the use of AI in application materials is on our careers page.": "unclear",
+            "Your cover letter must be written entirely by you.": "unclear",
+            "We use AI to help screen applications.": "employer",
+            "We never use AI to make hiring decisions.": "employer",
+            "Experience with generative AI tools is a plus.": None,
+            "You will build AI-powered dashboards for our planners.": None,
+            "Familiarity with LLMs and prompt design preferred.": None,
+            "Take ownership of your own work and deadlines.": None,
+            "Submit your resume and a cover letter.": None,
+        }
+        for sentence, kind in cases.items():
+            with self.subTest(sentence):
+                self.assertEqual([k for _n, k, _s in cl.ai_policy_lines(sentence)], [kind] if kind else [])
 
 
 class VoiceTests(Base):

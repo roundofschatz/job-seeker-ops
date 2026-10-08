@@ -6,6 +6,7 @@ Every letter passes all of these before the person sees it. Most run by script, 
 
 | Check | How it runs | What fails |
 |---|---|---|
+| The posting's rules on AI in application materials | `check_letter.py` before drafting, then the person | A posting that rules out AI-written materials, unless the person says the employer allows it |
 | The first sentence is content: the reader's problem, the posting's measure or a shared world | Reading, with plainspeak-writer's opener rules by code | An announcement of what the letter will do, or the writer's name |
 | The firm or the seat is named in the first two sentences, along with any referral | `check_letter.py` | Neither in the first two sentences, or a referrer the file names left out |
 | Two firm facts, each put to use | Reading. candidate-positioning already kept home-page facts out | A fact listed with nothing the writer would do with it |
@@ -14,7 +15,7 @@ Every letter passes all of these before the person sees it. Most run by script, 
 | No resume line restated [C02, C03], and every title, company, date and figure matches the resume | `check_letter.py` | A number, date or name in no file; a figure the file and the resume disagree on; a sentence that copies a resume line |
 | A result the resume leaves out has its source in the positioning file | `check_letter.py` | A number found nowhere, or only in the file's working notes |
 | No internal method name, only its plain description; no quote from a client or a colleague | Reading, with section 6's plain descriptions | Either one on the page |
-| The last paragraph opens on line 4 in first person, and the last sentence asks for a conversation about one named thing | `check_letter.py` warns, and reading decides | A thank-you or "look forward" close, or an ask with no named thing |
+| The last paragraph opens on line 4 in first person, and the last sentence asks for a conversation about one named thing, in the writer's own words | `check_letter.py` warns, and reading decides | A thank-you or "look forward" close, an ask with no named thing, a stock opener such as "I'd like to talk about", or an ask that opens like the writer's last letter |
 | Body of 500 words or fewer, one page, one column, no letter text in a table, text box, header or footer | `check_letter.py` | Any of them |
 | plainspeak-writer's checker finds no HARD hits | `check_letter.py --voice` | A HARD hit |
 | Both swap tests come back no | Reading | A yes on either |
@@ -30,6 +31,7 @@ Each of these blocks the letter until it's fixed. When only the person can fix i
 | Hard fail | Caught by |
 |---|---|
 | No positioning file | Step 1 |
+| A posting that rules out AI-written materials, with no word from the person that the employer allows it | Step 1, with `check_letter.py` before drafting |
 | A sentence from earlier writing whose fact the three files don't hold, or that's no longer true | `check_letter.py --sample` and `--compare`, then reading |
 | A claim with no source in the three files | `check_letter.py` for what it can count; plainspeak-writer's fresh reader for the rest |
 | A wrong company, role or place name | `check_letter.py`, in the salutation and the body |
@@ -39,12 +41,13 @@ Each of these blocks the letter until it's fixed. When only the person can fix i
 
 ## The sentence list
 
-List every sentence of the body beside the thing it names: a firm, a number, a tool, a person or a result. In one study, application materials with more detail and clarity drew more interviews per application [C17]. `check_letter.py --sentences` prints a first pass. A sentence with nothing beside it gets its thing or gets cut. Write the finished list into the record's checks:
+List every sentence of the body beside the thing it names: a firm, a number, a tool, a person or a result. In one study, application materials with more detail and clarity drew more interviews per application [C17]. `check_letter.py --sentences` prints a first pass. A sentence with nothing beside it gets its thing or gets cut. Length isn't the test: a short sentence that names its thing stays. Write the finished list into the record's checks:
 
 ```text
 - **Sentences:**
   1. "Last year Switchgrass's forecasts missed by 24% on average..." · Switchgrass, 24%, the posting's measure
-  2. "Your planning analyst will build the weekly volume forecasts for 38 terminals..." · 38 terminals, Brightwell, 2021
+  2. "Your planning analyst will build the weekly volume forecasts for 38 terminals..." · 38 terminals
+  3. "I've done that work at Brightwell Grocers Distribution since 2021." · Brightwell, 2021
 ```
 
 ## The two swap tests

@@ -236,3 +236,19 @@ The four gap rows cite her confirmation, as in `searched resume.txt; A1; A2`, wh
 ### The skill-creator benchmark
 
 skill-creator graded cl-f1 and cl-e1 against the same two requests run without the skill, on ten checks each. With the skill, the letters passed every check. Without it, they passed 3 and 2 of the 10, or 25% on average. The skill's runs took 1,469.5 seconds and 257,256 tokens on average, against 132.5 seconds and 80,708 tokens, because each one runs the checks, a fresh reader and two blind reviews. The workspace and its review page are in `..\jso-tests\cover-letter\workspace\`.
+
+### The owner's review of that page
+
+The owner read the four letters on October 7. Writer E's letter with the skill was "Great letter". Writer F's had three constructs that read as AI: "by what the unit tests showed", "and that's the coaching I'd bring" and "do what ours did". The letter for writer E without the skill was "a stronger human example with diversified sentence constructs" than the one with it. Measured afterward, the five letters written with the skill average 26 words a sentence, with 1% at ten words or fewer, where the two written without it average 17.5, with 25%. The review is saved as `feedback.json` in the workspace, outside the repository. 0.3.1 and plainspeak-writer's change notes 6 to 9 answer it.
+
+## Cover letter, for 0.3.1
+
+- Date: 2026-10-07
+- Product: as for 0.3.0. The run followed `skills/cover-letter/` from this repository's working tree.
+- Evidence: `tests/evidence/cover-letter-15-no-ai.md`, with the hand-back and scan in `tests/evidence/cover-letter-runs/cl-ai1/`.
+
+| Test | Result | Evidence |
+|---|---|---|
+| 15. A posting that rules out AI | Pass | `check_letter.py` failed the posting's added line before drafting. The helper stopped on one message that quotes it, offers her case as notes and the fact checks on a letter she writes, and offers no way around the rule. The folder holds no letter, draft or record. |
+
+Tests 1 to 14 weren't run again for 0.3.1. The draft changes only in its ask and the example it learns from, which the unit tests cover: 136 of 136 pass once the package is rebuilt.

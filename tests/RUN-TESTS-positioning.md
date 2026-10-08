@@ -51,7 +51,7 @@ The plugin's tests also run each prompt once more with no skill at all, for skil
 | 3 | What the firm is buying | E | Line 1 of the case and P1, against the key |
 | 4 | Firm facts | E, G, H | E's home-page trap, G's request for facts without web access, and H's links under `--check-links` |
 | 5 | Reuse | F | A second helper with the same first message, and the file's SHA-256 before and after |
-| 6 | Off the page | E | A resume built by resume-ops 2.4.0 from E's file, checked with `positioning_check.py --resume` and by reading. The letter half runs in cover-letter's build |
+| 6 | Off the page | E | A resume built by resume-ops 2.4.0 from E's file, checked with `positioning_check.py --resume` and by reading. The brief shows the file on its POSITIONING line, the format resume-ops 2.4.0 gives; its CHECKS line has no entry for the positioning check, so the test runs `positioning_check.py --resume` itself. The letter half runs in cover-letter's build |
 | 7 | One confirmation | E, F, G, H | The number of stops in each run, and G's two readings |
 | 8 | Deeper proof | F | Summer Bridge Math in the proof bank |
 | 9 | Gap search | F | The professional development row |

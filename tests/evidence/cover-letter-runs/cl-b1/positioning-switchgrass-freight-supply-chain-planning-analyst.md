@@ -109,10 +109,10 @@ None.
 
 | File | Role | Date | SHA-256 |
 |---|---|---|---|
-| posting.txt | posting | 2026-10-05 (read) | 5bc4bf94f8b5 |
+| posting.txt | posting | 2026-10-05 (read) | 4c476626e7b7 |
 | resume.txt | resume being sent | 2026-10-02 (file date) | 8d312d2052e2 |
 | career-record.md | deeper record | 2026-10-02 (file date) | 14935e046b70 |
-| positioning-notes.md | notes | 2026-10-02 (file date) | 7a4cbb96790b |
+| positioning-notes.md | notes | 2026-10-02 (file date) | 871a2e7b577f |
 
 - **Built:** 2026-10-05 by candidate-positioning 0.2.0
 - **Voice check:** plainspeak-writer 1.6.2, letter surface, no HARD hits

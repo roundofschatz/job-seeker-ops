@@ -11,10 +11,11 @@ rests on: the positioning file, the posting and the resume that goes with it.
     python check_letter.py letter.txt --positioning P --voice --sentences
     python check_letter.py Nadia_Haddad_CoverLetter_SilverLarch.docx --resume R
 
-Before drafting, it compares the proofs marked for the letter with the resume
-that goes with it, so a date or figure the two disagree on is caught at the
-gate, and it lists any sentence in a voice sample that plainspeak-writer's
-checker blocks.
+Before drafting, it quotes any line in the posting about AI in application
+materials and fails one that rules them out, compares the proofs marked for
+the letter with the resume that goes with it, so a date or figure the two
+disagree on is caught at the gate, and lists any sentence in a voice sample
+that plainspeak-writer's checker blocks.
 
 On a letter, it finds the header, the salutation, the body and the sign-off,
 counts the body's words and the letter's characters, and fails a placeholder,
@@ -22,8 +23,9 @@ a sentence said twice, a body over 500 words, a header that doesn't match the
 resume's contact block, and a channel's broken rule. With the positioning file
 it also checks every number, date and name in the body against the three
 files, a phrase from the keep-off list, a resume line restated, the firm or
-the seat in the first two sentences, a referral in them, a blocked sentence
-from a voice sample, and sentences shared with another letter.
+the seat in the first two sentences, a referral in them, an ask that opens on
+a stock phrase, a blocked sentence from a voice sample, and sentences shared
+with another letter, along with an ask that opens the same way.
 
 On a Word file, it checks the author field, tables, text boxes, columns,
 headers and footers, and estimates whether the letter fits on one page.
@@ -44,7 +46,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 HERE = Path(__file__).resolve().parent
 CP_PATH = HERE.parents[1] / "candidate-positioning" / "scripts" / "check_positioning.py"
@@ -86,6 +88,32 @@ TIME_WORDS = re.compile(r"\b(?:years?|months?|current(?:ly)?|now|today|recent(?:
 ASK_WORDS = re.compile(r"\?|\b(?:talk|conversation|discuss|call|meet|meeting|chat|walk you through|"
                        r"hear how|compare notes)\b", re.I)
 CLOSE_TELLS = re.compile(r"\bthank(?:s| you)\b|\blook(?:ing)? forward\b", re.I)
+# The ask every letter ended on in the first live runs. It reads as a template.
+STOCK_ASK = re.compile(r"^\s*I(?:'d| would) (?:(?:like|love) to (?:talk|discuss|speak|chat|connect|meet)|"
+                       r"(?:welcome|appreciate|value|love|like) (?:the|a|an) (?:chance|opportunity|"
+                       r"conversation|call|meeting))\b", re.I)
+# A posting's rules on AI in application materials.
+AI_TERM = re.compile(r"(?<![\w.])(?:AI(?:-\w+)?|A\.I\.|GenAI|LLMs?)(?![\w])|(?i:\b(?:artificial intelligence|"
+                     r"generative|ChatGPT|GPT-?\d*|chatbots?|large language models?|Copilot|Gemini)\b)")
+AI_MATERIALS = re.compile(r"\b(?:applications?|cover letters?|letters?|resumes?|r\u00e9sum\u00e9s?|CVs?|materials?|"
+                          r"submissions?|responses?|answers?|essays?|writing|statements?|documents?|"
+                          r"portfolios?|work samples?|assessments?|questions?)\b", re.I)
+AI_BAR = re.compile(r"\b(?:do not|don't|must not|may not|should not|cannot|can't|never|"
+                    r"not (?:be )?(?:permitted|allowed|accepted|considered|reviewed)|prohibit\w*|forbid\w*|"
+                    r"disqualif\w*|(?:will|would) be (?:rejected|disqualified|removed)|"
+                    r"won't be (?:considered|reviewed|accepted)|without (?:the )?(?:use|help|aid|assistance) of|"
+                    r"without using|free (?:of|from)|written (?:entirely )?by you|your own (?:work|words|writing))\b",
+                    re.I)
+AI_DISCLOSE = re.compile(r"\b(?:disclose|disclosure|(?:tell us|let us know|indicate|note|state) "
+                         r"(?:if|whether|how))\b", re.I)
+AI_EMPLOYER = re.compile(r"\b(?:we|our (?:team|system|systems|process|recruiters?|hiring team))\b[^.]{0,40}"
+                         r"\b(?:use|uses|may use|using|rely on)\b", re.I)
+AI_UNCLEAR = re.compile(r"\b(?:policy|guidance|guidelines|permitted|allowed|acceptable|appropriate|"
+                        r"responsib\w*|use of)\b", re.I)
+OWN_WORDS = re.compile(r"\b(?:in your own words|written (?:entirely )?by you|your own (?:work|writing))\b", re.I)
+# These two read as a rule on their own; "your own work" also turns up in a job's duties.
+OWN_WORDS_ALONE = re.compile(r"\b(?:in your own words|written (?:entirely )?by you)\b", re.I)
+WHO = re.compile(r"\b(?:applicants?|candidates?|you|your)\b", re.I)
 CONNECTORS = {"of", "and", "&", "the", "for", "de", "la", "du", "von", "van", "on", "at"}
 PRONOUNS = {"i", "i'm", "i've", "i'd", "i'll"}
 YEAR_COUNT = re.compile(r"\b(\d+|" + "|".join(sorted(
@@ -778,6 +806,10 @@ def check_opening(letter, src, rep, referral):
         if not ASK_WORDS.search(last):
             rep.warn("close", f"The last sentence should ask for a conversation about one named thing: "
                      f"\"{last[:90]}\"")
+        stock = STOCK_ASK.search(last.translate(CURLY))
+        if stock:
+            rep.warn("close", f"The ask opens on a stock phrase, \"{stock.group(0).strip()}\". Write it the way "
+                     "this writer would ask, starting from the named thing.")
         if letter.paragraphs and CLOSE_TELLS.search(letter.paragraphs[-1]):
             rep.warn("close", "The last paragraph thanks the reader or looks forward. The ask is the "
                      "last sentence.")
@@ -949,6 +981,13 @@ def check_compare(letter, src, rep, other_path):
             shared_sentence(k, s, Path(other_path).name, letter, src, rep)
     rep.info("reuse", f"{shared} sentence(s) shared with {Path(other_path).name}. Any in a fit paragraph "
              "fails too; the map says which paragraph that is.")
+    # Two letters whose asks open on the same words read as one template.
+    mine = letter.sentences()
+    if mine and other.paragraphs:
+        ours, yours = (words_only(x).split()[:4] for x in (mine[-1][1], other.sentences()[-1][1]))
+        if len(ours) == 4 and ours == yours:
+            rep.warn("reuse", f"The ask opens the same way as in {Path(other_path).name}: "
+                     f"\"{' '.join(mine[-1][1].split()[:4])}\". Write each letter's ask for its firm.")
 
 
 def check_voice_on(letter, rep, voice, keep):
@@ -966,6 +1005,55 @@ def check_voice_on(letter, rep, voice, keep):
 
 
 # Before drafting
+
+def ai_policy_lines(posting):
+    """Each posting sentence about AI in application materials, as (line, kind, sentence).
+
+    kind is "bars" (the posting rules out AI-written materials), "disclose" (it
+    asks applicants to say how they used AI), "unclear" (it speaks to AI use or
+    the applicant's own words without a clear rule) or "employer" (it says the
+    employer uses AI). A sentence that only names AI as a skill or a product,
+    like "experience with generative AI tools", isn't listed."""
+    found = []
+    for n, line in enumerate(posting.translate(CURLY).splitlines(), 1):
+        for s in text_sentences(line):
+            if AI_TERM.search(s):
+                bars = AI_BAR.search(s) and (AI_MATERIALS.search(s) or WHO.search(s))
+                if AI_EMPLOYER.search(s) and not bars:
+                    found.append((n, "employer", s))
+                elif bars:
+                    found.append((n, "bars", s))
+                elif AI_DISCLOSE.search(s):
+                    found.append((n, "disclose", s))
+                elif AI_MATERIALS.search(s) and AI_UNCLEAR.search(s):
+                    found.append((n, "unclear", s))
+            elif OWN_WORDS.search(s) and (AI_MATERIALS.search(s) or OWN_WORDS_ALONE.search(s)):
+                found.append((n, "unclear", s))
+    return found
+
+
+def check_ai_policy(src, rep):
+    if not src.posting:
+        rep.warn("ai-policy", "No posting to read for its rules on AI. Read the posting for them.")
+        return
+    lines = ai_policy_lines(src.posting)
+    for n, kind, s in lines:
+        quote = f"Posting line {n}: \"{s[:160]}\""
+        if kind == "bars":
+            rep.fail("ai-policy", f"The posting rules out AI-written application materials. {quote} Don't "
+                     "draft. Tell the person, as SKILL.md step 1 says.")
+        elif kind == "disclose":
+            rep.warn("ai-policy", f"The posting asks applicants to disclose AI use. {quote} Remind the person "
+                     "at hand-over.")
+        elif kind == "unclear":
+            rep.warn("ai-policy", f"The posting speaks to AI use or the applicant's own words. {quote} Quote "
+                     "it to the person and ask how they read it before drafting.")
+        else:
+            rep.info("ai-policy", f"The posting says the employer uses AI. {quote} That's no rule on the "
+                     "applicant's materials.")
+    if not lines:
+        rep.info("ai-policy", "The posting says nothing about AI in application materials.")
+
 
 def check_proofs(src, rep):
     """The proofs marked for the letter against the resume that goes with it."""
@@ -1213,6 +1301,7 @@ def main(argv=None):
             if not (src and src.pos):
                 print("Name the letter to check, or give --positioning to check before drafting.", file=sys.stderr)
                 return 2
+            check_ai_policy(src, rep)
             check_proofs(src, rep)
             check_samples(None, src, rep, args.sample, voice)
             print_report(Path(args.positioning).name + " (before drafting)", rep)

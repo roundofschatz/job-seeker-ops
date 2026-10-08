@@ -38,6 +38,8 @@ RUNS = {
     "cl-n1": [(WRITERS / "f-haddad", F_FILES)],
     "cl-n2": [(WRITERS / "f-haddad", F_FILES), (LETTERS / "f-haddad" / "one-fact", [F_POS])],
     "cl-f2": [],
+    "cl-ai1": [(WRITERS / "f-haddad", ["resume.txt", "master-resume.md", "letter-2021.txt"]),
+               (LETTERS / "f-haddad" / "no-ai", ["posting.txt", F_POS])],
 }
 
 

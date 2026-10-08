@@ -2,6 +2,14 @@
 
 Job Seeker Ops is a Claude plugin for job-search writing. It sits beside two tools that stay separate: plainspeak-writer, which writes in a plain human voice, and resume-ops, which builds resumes. Version 0.3 holds three pieces. Candidate positioning works out the case for a posting before anything gets written, cover letter writes the letter from that case, and submission review checks a finished piece before it goes out.
 
+## What it won't do
+
+- **Make anything up.** Every fact in a letter comes from the person's own files, and a script checks each one against them. When the files don't hold a fact, Claude asks for it.
+- **Claim what the person doesn't have.** A gap stays off the page. It decides which proof leads, and nothing dresses it up as something else.
+- **Hide that Claude drafted the text.** Current Claude models put an invisible watermark in the text they write, so a letter from this plugin may have one. Cover letter tells the person at hand-over and leaves the mark alone, as "The watermark" below explains. Its voice rules aim at clear, specific writing, not at getting past a detector.
+- **Write a letter the posting rules out.** When a posting bars AI-written application materials, cover letter stops before drafting and offers the person's own case as notes to write from. Some employers state their rule somewhere other than the posting, so check before you apply.
+- **Send anything.** It never submits, uploads or emails for the person. They decide what goes out, and their edits stand.
+
 ## Candidate positioning
 
 Before a resume or a letter gets written, candidate positioning works out the case for one candidate and one posting and saves it in one positioning file. resume-ops 2.4.0 reads the file to decide which proof leads and where the summary points, and cover letter reads it for the reasoning behind the letter and keeps each letter's record in it. So the case gets settled once, from the evidence, rather than twice in two drafts.
@@ -25,7 +33,7 @@ Cover letter writes one letter for one posting from three files: the positioning
 
 It:
 
-1. Checks that the positioning file is confirmed and current, holds two firm facts, and agrees with the resume going with the letter on every figure the letter will use.
+1. Checks that the posting doesn't rule out AI-written materials, and that the positioning file is confirmed and current, holds two firm facts, and agrees with the resume going with the letter on every figure the letter will use.
 2. Maps the four movements (the frame, the proof, the fit and why now, and the invitation) before writing a sentence, and saves the map in the positioning file.
 3. Drafts with plainspeak-writer, matching the person's own writing when they share some. A phrase plainspeak-writer blocks in that writing never comes back, and a sentence from it moves into the letter only with a fact the files still hold.
 4. Checks every number, date and name in the letter against the three files by script, along with the length, the channel's rules and every phrase on the positioning file's keep-off list.
