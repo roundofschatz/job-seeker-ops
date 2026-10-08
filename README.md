@@ -82,7 +82,7 @@ The verdict is Rethink when the first take sees no fit, when there are more than
 
 ## plainspeak-writer and resume-ops
 
-Cover letter can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both. One install gives the whole set. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.0. `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, it checks the hashes against that commit too. Their tests stay in their own repositories, which run them.
+Cover letter can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both. One install gives the whole set. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.2. `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, it checks the hashes against that commit too. Their tests stay in their own repositories, which run them.
 
 The plugin's scripts use its own plainspeak-writer even when another copy is installed, since the plugin is tested with that copy, and cover letter tells Claude to load it from beside its own folder.
 
@@ -183,7 +183,7 @@ job-seeker-ops/
 
 ## Author
 
-Ryan Schatzman
+Ryan Schatzman · [LinkedIn](https://www.linkedin.com/in/ryanschatzman)
 
 ## License
 

@@ -2,6 +2,23 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.2 · resume-ops 2.4.2, and a link beside the author's name
+
+resume-ops 2.4.2 fixes how its PDF checks read the text `pdftotext` writes, and its repository now tags each release, so this version copies it in by tag. The owner also asked on October 8 for the same author credit in all three tools: the name and a LinkedIn link, with no job title or city.
+
+Changed:
+
+- `skills/resume-ops/`: resume-ops 2.4.2, copied from tag v2.4.2 (commit a61c493) with `tools/sync_bundled.py`. `widow_check.py` and `requirement_check.py` now ask `pdftotext` for UTF-8. The `pdftotext` that comes with Git for Windows wrote Latin-1, so the dates in a resume's role lines came back unmatched. That was the failing test 0.4.0 left for resume-ops to fix. The other changes are version numbers and resume-ops's changelog. `bundled.json` records the tag, the commit and each file's hash.
+- resume-ops's history was rewritten on October 8 to take out a made-up company name that belonged to a real company, the rename this plugin made in 0.3.1. Its 2.4.0 is now commit f51607b, with the tag v2.4.0. The commit that 0.4.0's entry names, 23a6a5d, is gone from the public repository, and the files copied from it held no trace of the name.
+- README: the Author section adds a LinkedIn link to the owner's name, and the section on the bundled copies names resume-ops 2.4.2.
+- `.claude-plugin/plugin.json`: version 0.4.2.
+
+Checked:
+
+- The unit tests: 179 of 179 pass on Windows with Python 3.12.10, once the package is built from the release commit. `tools/sync_bundled.py --check` finds no problem with either copy.
+- resume-ops's own tests at v2.4.2: 295 tests, 1 skipped, no failures.
+- The pinned voice checker, plainspeak-writer 1.7 at tag v1.7, on every file this version changes outside the two copies, with no HARD hits.
+
 ## 0.4.1 · The owner credited by name
 
 The owner asked on October 8 to be credited by name as the creator of this plugin, plainspeak-writer and resume-ops, and to keep the name out of everything the tools produce and out of every example. Until now this plugin named its author only by the GitHub account.

@@ -30,19 +30,19 @@
       }
     },
     "resume-ops": {
-      "version": "2.4.0",
+      "version": "2.4.2",
       "repository": "https://github.com/roundofschatz/resume-ops",
-      "ref": "23a6a5da421aade6648cb55fd04024e4674bcba1",
-      "commit": "23a6a5da421aade6648cb55fd04024e4674bcba1",
+      "ref": "v2.4.2",
+      "commit": "a61c493bf13deca7ce5c444659b926b2a2306f80",
       "source": "skills/resume-ops",
       "left_out": [
         "tests/"
       ],
       "files": {
-        "CHANGELOG.md": "fb6ee518fb167b4cc7a1ded30bb8db3aa504524d7e3958fd2c4fe8d7963a5545",
+        "CHANGELOG.md": "9f77085004e41d211de2c44cc64f81f5b0a681d74ec5515ab1905857ac8e2096",
         "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
-        "README.md": "b56f42663df6dba09cae1df7a0c03a271833a834b709bff31960efe14a505c07",
-        "SKILL.md": "c3ac9e259a75594678250b0ba9a4e7aa917a5a7f151322e8568ce6ade2ec134e",
+        "README.md": "14ba639a6c317bc3a356988c74d873fb8266e02980a6f1d5d3a0465fb9b71d92",
+        "SKILL.md": "44c767245a20329e46f55da1455b730cd1c49e5d436b588843214781a7ff766b",
         "references/document.md": "db395a7d2d66a5c4a001ccef21a182e85e56673a64cf402117c529685d29cdd9",
         "references/intake.md": "5f4a10bdffdfeaa6c8a4c2f6e9a56a970e9bf3fd1cf2b59de266fdc86f8981d0",
         "references/readers.md": "81e09b33b464b7a16f0d71c9d8e893f34eb02b3092ed93c26a9e61b7d7a1c0c7",
@@ -58,9 +58,9 @@
         "scripts/positioning_check.py": "81bea42aae35c21b0b678a49407247a62ed5299e95f533bcb3d7bf2b952039d1",
         "scripts/profile_check.py": "8644c94896410434a6dbfb8c431846155ad3e961baa48b86a4099ecaa60003b5",
         "scripts/render_pdf.py": "2a70ab543b64fb91e692bb9e979a46f1fc7b6decb4a5bf34bdbb9f47735a3de6",
-        "scripts/requirement_check.py": "d927a65da2a3bad8604332597a5e54ff91184f3add2c12a5422a390b9d8d305c",
+        "scripts/requirement_check.py": "00dea3815dbbee78b2fc64d8e25a3d1ad75f29bc75bed4c403bda733ec5af6a4",
         "scripts/term_coverage.py": "aa58e8400c1ca6d5cfb181ab1598c19329a6be1a10bbc9f5f5d53b93bf900cd1",
-        "scripts/widow_check.py": "6ab6c56907a96c90070d5f0ccb028def6beca05689cf77997805a2b96c248e83",
+        "scripts/widow_check.py": "fc4ed9f29676c97df78ce54fc22e60938f25d03824090cfefa37b51ea49e74f3",
         "templates/candidate-facts.md": "21cf14c53c8dfd7419eaf0b27235517d752a6809c5dcdaef8974a429c3dc8de4",
         "templates/rulings.md": "692513f87f0eab1aa645c51ad0504a1f147f97d56a79e5b42b54cbbc8115b371"
       }
