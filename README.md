@@ -1,6 +1,6 @@
 # Job Seeker Ops
 
-Job Seeker Ops is a Claude plugin for job-search writing. It sits beside two tools that stay separate: plainspeak-writer, which writes in a plain human voice, and resume-ops, which builds resumes. Version 0.3 holds three pieces. Candidate positioning works out the case for a posting before anything gets written, cover letter writes the letter from that case, and submission review checks a finished piece before it goes out.
+Job Seeker Ops is a Claude plugin for job-search writing. Version 0.4 holds five skills. Three are its own: candidate positioning works out the case for a posting before anything gets written, cover letter writes the letter from that case, and submission review checks a finished piece before it goes out. Two come with it as exact copies of their own releases: plainspeak-writer, which writes in a plain human voice, and resume-ops, which builds resumes. Either of those two also installs on its own, for anyone who wants just that tool.
 
 ## What it won't do
 
@@ -80,6 +80,14 @@ A finding is must-fix when it's a HARD hit from plainspeak-writer's checker, a b
 
 The verdict is Rethink when the first take sees no fit, when there are more than five must-fix findings, or when more than half the must-have requirements are missing. It's Fix first for one to five must-fix findings, and Send for none.
 
+## plainspeak-writer and resume-ops
+
+Cover letter can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both. One install gives the whole set. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.0. `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, it checks the hashes against that commit too. Their tests stay in their own repositories, which run them.
+
+The plugin's scripts use its own plainspeak-writer even when another copy is installed, since the plugin is tested with that copy, and cover letter tells Claude to load it from beside its own folder.
+
+For a leaner setup, install plainspeak-writer or resume-ops on its own from its repository. Pick one way for each tool, though. With a separate copy installed beside the plugin, Claude sees two skills with the same job and may load either, so remove the separate copy when you install the plugin.
+
 ## Install
 
 **Cowork and the Claude desktop app.**
@@ -90,9 +98,16 @@ The verdict is Rethink when the first take sees no fit, when there are more than
 
 Install it under Plugins, not Skills. A skill upload drops the reviewer, and the review then refuses to run. A plugin on your account also shows up in Claude Code at its next session start.
 
-**Claude Code.** Run `claude --plugin-dir ./job-seeker-ops` to load it for one session. A marketplace listing comes with the first public release.
+**Claude Code.** Add this repository as a marketplace, then install the plugin from it:
 
-**What it needs.** Python 3.8 or newer runs the scripts. Reading a Word file also needs Python's XML parser, expat, at 2.4.1 or newer, which Python 3.9.7 and later include; with an older one the scripts ask for the text instead. LibreOffice, when it's installed, gives cover letter a real page count for the Word file, and without it the script estimates. plainspeak-writer runs the voice checks; without it, the review marks voice as unchecked and runs everything else, and a positioning file's stamp says its voice check didn't run. Cover letter needs plainspeak-writer for the voice, and stops without it. resume-ops reads a positioning file from version 2.4.0 on, and an older resume-ops builds without it. Chat on claude.ai doesn't run plugin helpers, so the review needs Cowork or Claude Code.
+```
+/plugin marketplace add roundofschatz/job-seeker-ops
+/plugin install job-seeker-ops@job-seeker-ops
+```
+
+To try it for one session instead, run `claude --plugin-dir ./job-seeker-ops`.
+
+**What it needs.** Python 3.8 or newer runs the scripts. Reading a Word file also needs Python's XML parser, expat, at 2.4.1 or newer, which Python 3.9.7 and later include; with an older one the scripts ask for the text instead. LibreOffice, when it's installed, gives cover letter a real page count for the Word file, and without it the script estimates. Nothing else needs installing, since plainspeak-writer and resume-ops come with the plugin. resume-ops's page check has needs of its own, LibreOffice and `pdftotext`, which its README lists. Chat on claude.ai doesn't run plugin helpers, so the review needs Cowork or Claude Code.
 
 ## Use
 
@@ -123,6 +138,7 @@ Claude asks once for anything missing, builds the packet, starts the reviewer an
 ```
 job-seeker-ops/
 ├── .claude-plugin/plugin.json      name, version and description
+├── .claude-plugin/marketplace.json the listing Claude Code installs from
 ├── agents/submission-reviewer.md   the reviewer's instructions
 ├── skills/candidate-positioning/
 │   ├── SKILL.md                    the ten steps that build a positioning file
@@ -139,6 +155,10 @@ job-seeker-ops/
 ├── skills/submission-review/
 │   ├── SKILL.md                    the steps Claude follows to start a review
 │   └── scripts/build_packet.py     builds the packet
+├── skills/plainspeak-writer/       a copy of plainspeak-writer 1.7, never edited here
+├── skills/resume-ops/              a copy of resume-ops 2.4.0, never edited here
+├── bundled.json                    where each copy came from, with every file's hash
+├── tools/sync_bundled.py           copies a release of either skill into skills/
 ├── tests/                          tests and test pieces, left out of the install zip
 ├── README.md
 ├── CHANGELOG.md
@@ -147,7 +167,7 @@ job-seeker-ops/
 
 ## Tests
 
-- `python3 tests/unit/run_tests.py` runs every unit test: the packet script's, the positioning checker's, cover letter's two scripts and its sources, and the check that `plugin.json`, the changelog and a built package agree.
+- `python3 tests/unit/run_tests.py` runs every unit test: the packet script's, the positioning checker's, cover letter's two scripts and its sources, the check that `plugin.json`, the changelog and a built package agree, and the check that each bundled copy matches its release.
 - `tests/RUN-TESTS.md` holds submission review's live tests: isolation, leaks, seeded flaws, repeat runs and the rest.
 - `tests/RUN-TESTS-positioning.md` holds candidate positioning's live tests. Every test piece comes from made-up writers, and writer H applies to a real posting, which isn't stored here.
 - `tests/RUN-TESTS-cover-letter.md` holds cover letter's live tests, with made-up writers too.
@@ -158,9 +178,9 @@ job-seeker-ops/
 - Build on what's here instead of replacing it.
 - Log every change in `CHANGELOG.md`: what was added, changed or removed, and why.
 - Run plainspeak-writer's checker on every file you change.
-- Give every change to a shipped file a new version. Build the package from the release commit, so it matches the commit byte for byte: `git archive --format=zip --prefix=job-seeker-ops/ -o dist/job-seeker-ops.plugin HEAD .claude-plugin agents skills README.md CHANGELOG.md LICENSE`.
-- The voice rules live in plainspeak-writer. This plugin keeps no copy of them.
+- Give every change to a shipped file a new version. Build the package from the release commit, so it matches the commit byte for byte: `git archive --format=zip --prefix=job-seeker-ops/ -o dist/job-seeker-ops.plugin HEAD .claude-plugin/plugin.json agents skills README.md CHANGELOG.md LICENSE`.
+- Never edit `skills/plainspeak-writer/` or `skills/resume-ops/` here. Change the skill in its own repository and release it there, then copy the release in with `python tools/sync_bundled.py <name> --repo <its clone> --ref <tag>`.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See `LICENSE`. plainspeak-writer and resume-ops keep their own MIT licenses, in their folders.

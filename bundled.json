@@ -1,0 +1,69 @@
+{
+  "about": "Skills this plugin carries as exact copies of one commit of their own repositories. tools/sync_bundled.py writes them and this record, and tests/unit/test_bundled.py checks both. Change a skill in its own repository, never here.",
+  "skills": {
+    "plainspeak-writer": {
+      "version": "1.7",
+      "repository": "https://github.com/roundofschatz/plainspeak-writer",
+      "ref": "v1.7",
+      "commit": "f50d66ca7e01eafefe047bc21e882ed46f3faa59",
+      "source": ".",
+      "left_out": [
+        ".gitignore",
+        "tests/"
+      ],
+      "files": {
+        "CHANGELOG.md": "fce58c567444725ee7fb8a3f9e77f3da23d90ea7c089bee78823dafb6588a5bc",
+        "LICENSE": "56a5093a0df55a29f7a489508db2c33852cfeda9a92e7312ab1e1ee31f054959",
+        "README.md": "fc72017ddca27be05c68969adea28de78b001854274a79f2994309f119b2c003",
+        "SKILL.md": "d556d9d40e58dbd46c0b63521ae6206b275c3c467eda0ef57f3f10edbc0979e7",
+        "references/formats/brand-narrative.md": "ce9c6c0a5fa0daccaa24ef586b8fe247cecb70f5ddf28dedff4c9ae6f583f3d8",
+        "references/formats/letter.md": "5e3fece1539f061fb85dfe0ebecaa2139253074559ad5214bf6cf3a95add1091",
+        "references/formats/linkedin.md": "d16c907cde90c9a0670bbb496f0a163eda50b7f5647022557ec1fcef35d0e28e",
+        "references/formats/proposal.md": "146fc0864fcd9b04aec7657e93222e594cf2be2e50789041874492989d23c053",
+        "references/formats/think-piece.md": "0121e6bcedf4632b7cc399ca9caf8e428d8cfef41b55b83200bcb437b888aa5a",
+        "references/formats/workshop.md": "1c5539a22e0b354cea0b67c8631e1a03b447528d6dc394297f209711f783ae7f",
+        "references/full-check.md": "6799072e9a92c6878ea0aabd0f12715963e8b7b7b0a1f99a526dd270309f812b",
+        "references/samples.md": "681344d98622fcd2d3269ab5cef3c6f67368b1cbc4714b6347288c8ce01c1f5e",
+        "references/tells.md": "ab65b70e8308f6e579f5a91addbd84b7d1fa94b08971c8bcafc97dbe70de123c",
+        "references/voice.md": "7595d6d8f13a2726981ac6fb4715ff61d9e6a8738cd7f540ddc9251e6083d2b7",
+        "scripts/check_voice.py": "529f8d65c0dbbee27abbc3350d7e157e05cf150a448724816150705eafd27100"
+      }
+    },
+    "resume-ops": {
+      "version": "2.4.0",
+      "repository": "https://github.com/roundofschatz/resume-ops",
+      "ref": "23a6a5da421aade6648cb55fd04024e4674bcba1",
+      "commit": "23a6a5da421aade6648cb55fd04024e4674bcba1",
+      "source": "skills/resume-ops",
+      "left_out": [
+        "tests/"
+      ],
+      "files": {
+        "CHANGELOG.md": "fb6ee518fb167b4cc7a1ded30bb8db3aa504524d7e3958fd2c4fe8d7963a5545",
+        "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
+        "README.md": "b56f42663df6dba09cae1df7a0c03a271833a834b709bff31960efe14a505c07",
+        "SKILL.md": "c3ac9e259a75594678250b0ba9a4e7aa917a5a7f151322e8568ce6ade2ec134e",
+        "references/document.md": "db395a7d2d66a5c4a001ccef21a182e85e56673a64cf402117c529685d29cdd9",
+        "references/intake.md": "5f4a10bdffdfeaa6c8a4c2f6e9a56a970e9bf3fd1cf2b59de266fdc86f8981d0",
+        "references/readers.md": "81e09b33b464b7a16f0d71c9d8e893f34eb02b3092ed93c26a9e61b7d7a1c0c7",
+        "references/sources.md": "a9357be7e34d91c905e607c632a9559d6e13232540ad869d7c1f7d8850a65568",
+        "references/tailoring.md": "4c0aaaffc288238f610cbeb0c0c658a53a43ec61bce21459ee748c8ea902e1c5",
+        "references/writing.md": "e60652bbbce79ece162359bee5120c56412beb46f0e1229054bd7a9802676ca9",
+        "scripts/_docx.py": "71dcb56ed3c898b003f960174d8c067332998aa8e73df12401ce2e90f57a9914",
+        "scripts/build_resume.py": "d11ff677dbfce451266caba3c91832af8224dcd0e4f2fcb409b51f60aa45a13a",
+        "scripts/corpus_triage.py": "cf475d10065e149210de2269c8727c9058b99fa0a1d172b4c0be3e8262b3f760",
+        "scripts/detect_ats.py": "3fb0f46473130cfc1b345c8d4dd7e7fc242b39b809b5fb81a3a49ce0f36a8d29",
+        "scripts/draft_review.py": "e5bf4ab9da132fe4df97a7409047a24eb5bb674e5231886793dd161c65bc5c55",
+        "scripts/parse_check.py": "2e31fc1bbe56ed8ffaf315dd610a4ba7a88c1e0783e18ec8fb035ae36f2bc418",
+        "scripts/positioning_check.py": "81bea42aae35c21b0b678a49407247a62ed5299e95f533bcb3d7bf2b952039d1",
+        "scripts/profile_check.py": "8644c94896410434a6dbfb8c431846155ad3e961baa48b86a4099ecaa60003b5",
+        "scripts/render_pdf.py": "2a70ab543b64fb91e692bb9e979a46f1fc7b6decb4a5bf34bdbb9f47735a3de6",
+        "scripts/requirement_check.py": "d927a65da2a3bad8604332597a5e54ff91184f3add2c12a5422a390b9d8d305c",
+        "scripts/term_coverage.py": "aa58e8400c1ca6d5cfb181ab1598c19329a6be1a10bbc9f5f5d53b93bf900cd1",
+        "scripts/widow_check.py": "6ab6c56907a96c90070d5f0ccb028def6beca05689cf77997805a2b96c248e83",
+        "templates/candidate-facts.md": "21cf14c53c8dfd7419eaf0b27235517d752a6809c5dcdaef8974a429c3dc8de4",
+        "templates/rulings.md": "692513f87f0eab1aa645c51ad0504a1f147f97d56a79e5b42b54cbbc8115b371"
+      }
+    }
+  }
+}

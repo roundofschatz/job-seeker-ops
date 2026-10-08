@@ -1,0 +1,15 @@
+{
+  "name": "job-seeker-ops",
+  "description": "Job Seeker Ops, a Claude plugin for job-search writing.",
+  "owner": {
+    "name": "roundofschatz",
+    "url": "https://github.com/roundofschatz"
+  },
+  "plugins": [
+    {
+      "name": "job-seeker-ops",
+      "source": "./",
+      "description": "Job-search writing tools: candidate positioning, cover letter and submission review, with plainspeak-writer and resume-ops included."
+    }
+  ]
+}

@@ -18,8 +18,9 @@ plainspeak-writer's rules are copied into the packet, so the reviewer opens
 nothing outside it. Text a Word file hides from a human reader (hidden, white
 or tiny) is left out of the piece and put in hidden.txt, and the manifest
 names any line that speaks to an AI tool, so the reviewer reports both as text
-and never takes them as instructions. The script looks for plainspeak-writer
-only where skills and plugins get installed, never in the working folder, and
+and never takes them as instructions. The script uses the plugin's own copy
+of plainspeak-writer. Installed without the plugin, it looks for one only
+where skills and plugins get installed, never in the working folder, and
 stops when it finds copies that differ.
 """
 import argparse
@@ -40,7 +41,7 @@ try:
 except ImportError:  # a Python built without expat can't read Word files at all
     pyexpat = None
 
-__version__ = "0.3.2"
+__version__ = "0.4.0"
 
 # type: (label for the manifest, checker surface, default readers)
 TYPES = {
@@ -349,6 +350,13 @@ def choose_voice_dir(found):
     return found[0] if found else None
 
 
+def bundled_voice_dir():
+    """The copy of plainspeak-writer this plugin carries, beside this skill in
+    the plugin's skills folder, or None when the script runs outside the plugin."""
+    folder = Path(__file__).resolve().parents[2] / "plainspeak-writer"
+    return folder if is_voice_dir(folder) else None
+
+
 def run_checker(voice_dir, surface, piece_path):
     """Return (checker text, surface used, exit code) or (None, reason, None)."""
     checker = voice_dir / "scripts" / "check_voice.py"
@@ -450,7 +458,9 @@ def build(args):
             raise PacketError(f"{voice_dir} doesn't hold plainspeak-writer "
                               "(it needs SKILL.md and references/tells.md).")
     else:
-        voice_dir = choose_voice_dir(find_voice_dirs(default_roots()))
+        # The plugin's own copy first. The search runs only when this skill was
+        # installed without the plugin.
+        voice_dir = bundled_voice_dir() or choose_voice_dir(find_voice_dirs(default_roots()))
 
     full_check = None
     if voice_dir:

@@ -2,6 +2,37 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.0 · plainspeak-writer and resume-ops come with the plugin
+
+The owner asked on October 7 for the whole toolset in one install, with plainspeak-writer and resume-ops still available on their own for a leaner setup. Until now, a person who installed only the plugin had no resume skill, and cover letter stopped at its first step for want of plainspeak-writer. The owner waited for plainspeak-writer 1.7, which holds the letter warnings their review of the first cover letters asked for, so the plugin starts with that voice.
+
+Added:
+
+- `skills/plainspeak-writer/`: plainspeak-writer 1.7, copied from tag v1.7 of its repository, commit f50d66c.
+- `skills/resume-ops/`: resume-ops 2.4.0, copied from commit 23a6a5d of its repository, which has no release tags yet.
+- Both copies leave out their tests, which stay in their own repositories, and plainspeak-writer's `.gitignore`. Nothing in them is edited here.
+- `bundled.json`: for each copy, its repository, the tag or commit, its version and a hash for every file.
+- `tools/sync_bundled.py`: copies one commit of either skill into `skills/` with git, and writes its record. It won't replace a folder the record doesn't list, and `--check` compares every copy with the record.
+- `.claude-plugin/marketplace.json`, so Claude Code installs the plugin from this repository with `/plugin marketplace add roundofschatz/job-seeker-ops`. `claude plugin validate` passes it. Installed from this folder into an empty Claude Code setup, the plugin listed all five skills and the reviewer, and its scripts found the copy of plainspeak-writer installed with them.
+- README: "plainspeak-writer and resume-ops", which says where the copies come from, why the plugin uses its own plainspeak-writer, and to keep one copy of each tool installed.
+
+Changed:
+
+- `check_positioning.py`, `check_letter.py` and `build_packet.py` 0.4.0 use the plugin's own plainspeak-writer, beside their skill in the plugin's skills folder, before any search. A copy installed elsewhere doesn't change that, so a person with both installed no longer gets stopped by the check for copies that differ. The search from 0.3.2 runs only when a skill was installed without the plugin, and `--voice-dir` still picks another copy.
+- The SKILL.md files of cover-letter, candidate-positioning and submission-review point Claude at the plugin's copy, at `${CLAUDE_SKILL_DIR}/../plainspeak-writer/`, and cover-letter loads submission-review from beside it too.
+- The unit tests that ran plainspeak-writer's real checker used a clone next to this repository and skipped without one. They now run the plugin's copy every time.
+- `plugin.json` 0.4.0 says what comes with the plugin. The package leaves out `marketplace.json`, which only Claude Code's marketplace reads, so the build command in the README names `.claude-plugin/plugin.json`.
+- README: the opening paragraph, the Claude Code install, what it needs, the file list, the tests and the rules for contributors.
+- `tests/RUN-TESTS-cover-letter.md`: the helper loads the plugin's other skills from beside cover-letter, and test 17 checks that the run used the plugin's plainspeak-writer. `tests/RUN-TESTS.md` test 11 and the positioning tests' message say the same.
+- Six instructions in the three SKILL.md files lost a "what the X did" phrase that 1.7 now warns on, such as "what the writer meant", which became "the writer's intent". Each says what it said before.
+
+Checked:
+
+- The unit tests: 179 of 179 pass on Windows with Python 3.12.10 and LibreOffice installed, once the package is built from the release commit. 14 are new. `tests/unit/test_bundled.py` holds 9: each copy matches its record, the record matches the commit in the skill's own clone, the copies hold no tests, an edited copy gets caught, a folder the record doesn't list is never replaced, and the bundled resume-ops reads the example positioning file and checks a resume against its keep-off list. The other 5 cover the plugin's copy coming first and the search running when a skill sits outside the plugin.
+- Test 17 passed live in run cl-f1-040: the helper read plainspeak-writer only from the plugin's copy, every voice check named it, and the letter met cl-f1's key again. 1.7's warning for long, flat letters fired on three drafts, and the letter it handed over averages 19.8 words a sentence, with 11% at ten words or fewer, where the 0.3.0 letters averaged 26 with 1%.
+- resume-ops's own tests at the pinned commit pass 290 of 291, with one skipped. The one that fails reads a rendered page through the `pdftotext` that comes with Git for Windows, which can't write the dash in two resume dates. That's for resume-ops to fix.
+- The pinned voice checker, plainspeak-writer 1.7 at tag v1.7, on every text file this release adds or changes outside the two copies.
+
 ## 0.3.2 · The security review, and the spec's open questions
 
 On October 7 a read-only security review of 0.3.1 found twelve problems, five of them worth fixing before the repository goes public, and the owner accepted every fix. The owner also accepted the recommended answers to the cover-letter spec's five open questions, and installed LibreOffice.

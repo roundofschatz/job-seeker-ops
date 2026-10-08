@@ -27,7 +27,7 @@ You're helping a person who's looking for a job. Use the skill in this folder:
 
 Read its SKILL.md first and follow it, and read its references when it says to. Where it writes ${CLAUDE_SKILL_DIR}, use that folder. Run Python as `python`.
 
-The person's files are in <the run's folder>. Open only the skill's own files, plainspeak-writer's files if the skill needs them, and the files in that folder. Save what you write in that folder.
+The person's files are in <the run's folder>. Open only the skill's own files, the plugin's plainspeak-writer beside it if the skill needs it, and the files in that folder. Save what you write in that folder.
 
 You can't talk with the person directly. Whenever the skill tells you to ask them something or to confirm something with them, end your turn with exactly the message you'd send them, and nothing after it. Their reply will come to you as your next message.
 

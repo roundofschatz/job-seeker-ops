@@ -6,7 +6,7 @@ Standard library only. The example letter in the skill's references/letter.md
 is checked against writer B's files in tests/writers/b-okafor and the example
 positioning file in candidate-positioning's references/format.md, so a change
 to any of them shows up here. The tests that run the real plainspeak-writer
-checker skip when no copy sits next to this repository.
+checker use the plugin's own copy, in skills/plainspeak-writer.
 """
 import contextlib
 import importlib.util
@@ -427,12 +427,15 @@ class VoiceTests(Base):
         self.assertFails(out, "[X01 test word]")
 
     def test_the_real_checker_passes_the_example(self):
-        real = REPO.parent / "plainspeak-writer"
-        if not (real / "scripts" / "check_voice.py").is_file():
-            self.skipTest("plainspeak-writer isn't next to this repository")
+        real = REPO / "skills" / "plainspeak-writer"
         code, out, _ = self.check("--voice", "--voice-dir", real)
         self.assertEqual(code, 0, out)
         self.assertIn("0 HARD hit(s)", out)
+
+    def test_without_voice_dir_the_check_uses_the_plugins_own_copy(self):
+        code, out, _ = self.check("--voice")
+        self.assertEqual(code, 0, out)
+        self.assertIn(f"From {REPO / 'skills' / 'plainspeak-writer'}.", out)
 
 
 class WordTests(Base):

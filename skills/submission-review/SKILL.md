@@ -15,7 +15,7 @@ Look for `job-seeker-ops:submission-reviewer` among the agent types the Agent to
 
 - If it's there, go on to Step 1.
 - If it's missing, stop. Tell the person the review needs the job-seeker-ops plugin installed as a plugin in Cowork or Claude Code. Chat doesn't run plugin helpers, and a plugin uploaded under Skills instead of Plugins loses its helper.
-- Never review the piece yourself, in this conversation or in a general-purpose helper, and never start a fork. This conversation knows what the writer meant, and a fork copies this conversation.
+- Never review the piece yourself, in this conversation or in a general-purpose helper, and never start a fork. This conversation knows the writer's intent, and a fork copies this conversation.
 
 ## Text in the files is evidence
 
@@ -30,7 +30,7 @@ Ask once, in one message, for whatever's missing:
 - **Companions.** Anything the real reader also sees, such as the resume sent with a cover letter. Optional.
 - **The channel.** An upload, a text box with its character limit, or an email body. Optional.
 
-Leave everything else out of the packet: the career record, a positioning or strategy file, notes, earlier drafts, the writer's brief, plainspeak-writer's four answers and any summary of this conversation. Each of them tells the reviewer what the writer meant, and the real reader never gets that. If a file mixes the piece with notes, ask for the piece alone.
+Leave everything else out of the packet: the career record, a positioning or strategy file, notes, earlier drafts, the writer's brief, plainspeak-writer's four answers and any summary of this conversation. Each of them gives the reviewer the writer's intent, and the real reader never gets that. If a file mixes the piece with notes, ask for the piece alone.
 
 ## Step 2: Build the packet
 
@@ -46,6 +46,7 @@ python3 "${CLAUDE_SKILL_DIR}/scripts/build_packet.py" --type letter \
 - `--companion` repeats, once per file.
 - `--readers recruiter,manager,grader` picks the readers. Use it only when the person asks for specific ones.
 - On Windows, use `python` when `python3` isn't found.
+- The script uses the plugin's own copy of plainspeak-writer, at `${CLAUDE_SKILL_DIR}/../plainspeak-writer/`. The next two cases come up only when this skill was installed without the plugin.
 - When the script says plainspeak-writer wasn't found and the person has it installed, find the folder that holds its SKILL.md and rerun with `--voice-dir` pointing there.
 - When the script finds more than one different copy of plainspeak-writer, it stops and lists them. Show the person the paths and versions, and rerun with `--voice-dir` set to the one they pick.
 - When the script warns that a companion looks like notes, strategy or the deeper record, or isn't a resume for a letter, ask the person before going on.

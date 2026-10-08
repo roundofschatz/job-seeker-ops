@@ -266,3 +266,21 @@ Tests 1 to 14 weren't run again for 0.3.1. The draft changes only in its ask and
 | 4. Shape, the page | Pass | With LibreOffice installed, `check_letter.py` renders the three Word files from cl-f1, cl-e1 and cl-f2, and each lays out on one page. |
 
 The other tests weren't run live again for 0.3.2. The security fixes are covered by 28 new unit tests, and 165 of 165 pass once the package is rebuilt.
+
+## The bundle, for 0.4.0
+
+- Date: 2026-10-07
+- Product: as for 0.3.2. The run followed `skills/cover-letter/` from this repository's working tree, with the plugin's other skills beside it, plainspeak-writer 1.7 among them. A separate plainspeak-writer 1.7 was also installed as an uploaded skill.
+- Evidence: `tests/evidence/cover-letter-17-plugin-voice.md`, with the run's files in `tests/evidence/cover-letter-runs/cl-f1-040/`.
+
+| Test | Result | Evidence |
+|---|---|---|
+| 17. The plugin's own plainspeak-writer | Pass | The helper read plainspeak-writer's four files only from `skills/plainspeak-writer/` beside the skill and made no Skill tool call. Every voice check and the review packet name that copy and version 1.7. |
+| 1, 4, 5, 7 to 13, run again on cl-f1 | Pass | A body of 357 words on one page, 0 HARD hits and 0 warnings from 1.7, both blocked sample sentences set aside, no section 7 phrase, one blind review with a verdict of Send, and the record passes. |
+| 14. Its own files | Pass | plainspeak-writer 1.7's checker finds HARD hits only in the run's `scan.txt`, which lists the helper's tool calls word for word, with their command flags. The bundled copies aren't checked or edited here, since they're plainspeak-writer's and resume-ops's own files. A search for anything personal finds the owner's name once, in the copyright line of resume-ops's own `LICENSE`, copied as it is. |
+
+1.7's warning for long, flat letters fired on three drafts, and the helper split sentences until it cleared. The letter it handed over averages 19.8 words a sentence, with 11% at ten words or fewer, where the 0.3.0 letters averaged 26 with 1%.
+
+resume-ops's own tests, run in its repository at the pinned commit, pass 290 of 291 with one skipped. The one that fails renders a resume and checks its line endings. On this computer, the `pdftotext` on the path is the xpdf build that comes with Git for Windows, which writes its text in Latin-1, so two dates with a dash between them didn't match. The fix belongs in resume-ops.
+
+179 of 179 unit tests pass once the package is rebuilt, 14 of them new.

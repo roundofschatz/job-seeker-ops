@@ -4,8 +4,8 @@
 
 Standard library only. The full example in references/format.md is checked
 against writer B's files in tests/writers/b-okafor, so a change to either one
-shows up here. The last tests run the real plainspeak-writer checker when a
-copy sits next to this repository, and skip otherwise.
+shows up here. The voice tests run the checker of the plugin's own copy of
+plainspeak-writer, in skills/plainspeak-writer.
 """
 import contextlib
 import http.server
@@ -22,6 +22,7 @@ import time
 import unittest
 import zipfile
 from pathlib import Path
+from unittest import mock
 
 REPO = Path(__file__).resolve().parents[2]
 SKILL = REPO / "skills" / "candidate-positioning"
@@ -534,17 +535,14 @@ class VoiceTests(Base):
         self.assertIn("doesn't hold plainspeak-writer", err)
 
     def test_the_real_checker_passes_the_example(self):
-        real = REPO.parent / "plainspeak-writer"
-        if not cp.is_voice_dir(real):
-            self.skipTest("plainspeak-writer isn't next to this repository")
+        real = REPO / "skills" / "plainspeak-writer"
+        self.assertTrue(cp.is_voice_dir(real))
         code, out, _ = self.check("--voice", "--voice-dir", real)
         self.assertEqual(code, 0, out)
         self.assertIn("0 HARD hit(s)", out)
 
     def test_the_real_checker_catches_a_dash(self):
-        real = REPO.parent / "plainspeak-writer"
-        if not cp.is_voice_dir(real):
-            self.skipTest("plainspeak-writer isn't next to this repository")
+        real = REPO / "skills" / "plainspeak-writer"
         self.edit("Our concern was freight.", "Our concern was freight — and lanes.")
         code, out, _ = self.check("--voice", "--voice-dir", real)
         self.assertEqual(code, 1, out)
@@ -774,6 +772,29 @@ class VoiceSearchTests(unittest.TestCase):
         with self.assertRaises(cp.InputError) as caught:
             cp.find_voice_dir([one, two])
         self.assertIn("--voice-dir", str(caught.exception))
+
+    def test_the_plugins_own_copy_comes_first(self):
+        bundled = REPO / "skills" / "plainspeak-writer"
+        self.assertEqual(cp.bundled_voice_dir(), bundled)
+        # Two installed copies that differ would stop a search. The plugin's own copy skips it.
+        one, two = self.dir / "one", self.dir / "two"
+        make_voice(one, "print('one')\n")
+        make_voice(two, "print('two')\n")
+        with mock.patch.object(cp, "default_roots", return_value=[one, two]):
+            self.assertEqual(cp.locate_voice_dir(), bundled)
+
+    def test_installed_without_the_plugin_the_search_runs(self):
+        alone = self.dir / "alone" / "skills" / "candidate-positioning" / "scripts"
+        alone.mkdir(parents=True)
+        shutil.copy(SCRIPT, alone)
+        spec = importlib.util.spec_from_file_location("check_positioning_alone", alone / SCRIPT.name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.assertIsNone(module.bundled_voice_dir())
+        installed = self.dir / "installed"
+        make_voice(installed, "print('installed')\n")
+        with mock.patch.object(module, "default_roots", return_value=[installed]):
+            self.assertEqual(module.locate_voice_dir(), installed / "plainspeak-writer")
 
 
 if __name__ == "__main__":

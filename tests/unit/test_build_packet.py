@@ -2,8 +2,8 @@
 
     python3 tests/unit/test_build_packet.py
 
-Standard library only. The last test runs the real plainspeak-writer checker
-when a copy sits next to this repository, and skips otherwise.
+Standard library only. The last test runs the checker of the plugin's own
+copy of plainspeak-writer, in skills/plainspeak-writer.
 """
 import contextlib
 import importlib.util
@@ -11,6 +11,7 @@ import io
 import json
 import os
 import re
+import shutil
 import sys
 import tempfile
 import textwrap
@@ -309,6 +310,10 @@ class BuildPacketTests(unittest.TestCase):
         self.assertIn(home / ".config" / "Claude" / "local-agent-mode-sessions", roots)
 
     def test_packet_finds_a_skill_uploaded_to_the_desktop_app_on_its_own(self):
+        # Installed without the plugin, so no copy sits beside the script.
+        patcher = mock.patch.object(bp, "bundled_voice_dir", return_value=None)
+        patcher.start()
+        self.addCleanup(patcher.stop)
         appdata = self.dir / "AppData" / "Roaming"
         sessions = appdata / "Claude" / "local-agent-mode-sessions"
         make_voice(sessions / "skills-plugin" / "org-id" / "user-id" / "skills", version="1.5",
@@ -324,6 +329,30 @@ class BuildPacketTests(unittest.TestCase):
         self.assertIn("Voice rules: plainspeak-writer 1.5, in voice-rules.md", manifest)
         self.assertIn("local-agent-mode-sessions", out)
         self.assertIn("- Full check: full-check.md", manifest)
+
+    def test_the_plugins_own_copy_comes_first(self):
+        bundled = REPO / "skills" / "plainspeak-writer"
+        self.assertEqual(bp.bundled_voice_dir(), bundled)
+        # Two installed copies that differ would stop a search. The plugin's own copy skips it.
+        roots = self.dir / "roots"
+        make_voice(roots / "a", version="99.0")
+        other = make_voice(roots / "b")
+        (other / "scripts" / "check_voice.py").write_text("print('other')\n", encoding="utf-8")
+        with mock.patch.object(bp, "default_roots", return_value=[roots]):
+            code, out, err = run(["--type", "letter", "--piece", str(self.piece), "--out", str(self.out)])
+        self.assertEqual(code, 0, err)
+        manifest = (packet_from(out) / "manifest.md").read_text(encoding="utf-8")
+        self.assertIn(f"Voice rules: plainspeak-writer {bp.voice_version(bundled)}, in voice-rules.md", manifest)
+        self.assertIn(f"Voice rules from: {bundled}", out)
+
+    def test_a_copy_of_the_script_outside_the_plugin_finds_no_copy_beside_it(self):
+        alone = self.dir / "alone" / "skills" / "submission-review" / "scripts"
+        alone.mkdir(parents=True)
+        shutil.copy(SCRIPT, alone)
+        spec = importlib.util.spec_from_file_location("build_packet_alone", alone / SCRIPT.name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.assertIsNone(module.bundled_voice_dir())
 
     def test_discovery_skips_a_folder_with_another_skill_name(self):
         impostor = make_voice(self.dir / "roots")
@@ -412,10 +441,9 @@ class BuildPacketTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("older than 2.4.1", err)
 
-    def test_real_checker_when_available(self):
-        real = REPO.parent / "plainspeak-writer"
-        if not bp.is_voice_dir(real):
-            self.skipTest("plainspeak-writer isn't next to this repository")
+    def test_real_checker(self):
+        real = REPO / "skills" / "plainspeak-writer"
+        self.assertTrue(bp.is_voice_dir(real))
         self.piece.write_text("Dear team,\nI ran the clinic — every shift.\n", encoding="utf-8")
         code, out, _ = run(["--type", "letter", "--piece", str(self.piece), "--out", str(self.out),
                             "--voice-dir", str(real)])

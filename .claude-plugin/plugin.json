@@ -1,8 +1,8 @@
 {
   "name": "job-seeker-ops",
   "displayName": "Job Seeker Ops",
-  "version": "0.3.2",
-  "description": "Job-search tools that sit beside plainspeak-writer and resume-ops. Candidate positioning works out the case for one candidate and one posting before anything gets written, and saves it as one file that resume-ops and cover-letter read. Cover letter writes the letter for that posting from three files, checks every fact against them, and saves it as a Word file, a text box's text or an email. Submission review has a separate reviewer read a finished cover letter, resume or outreach note the way its real reader will, without seeing how it was made, and return quoted findings with a verdict.",
+  "version": "0.4.0",
+  "description": "Job-search writing tools, with plainspeak-writer and resume-ops included so one install gives the whole set. Candidate positioning works out the case for one candidate and one posting before anything gets written, and saves it as one file that resume-ops and cover-letter read. Cover letter writes the letter for that posting from three files, checks every fact against them, and saves it as a Word file, a text box's text or an email. Submission review has a separate reviewer read a finished cover letter, resume or outreach note the way its real reader will, without seeing how it was made, and return quoted findings with a verdict. resume-ops builds the resume, and plainspeak-writer keeps every piece in a plain human voice.",
   "author": {
     "name": "roundofschatz",
     "url": "https://github.com/roundofschatz"

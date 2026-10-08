@@ -47,7 +47,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.3.2"
+__version__ = "0.4.0"
 
 HERE = Path(__file__).resolve().parent
 CP_PATH = HERE.parents[1] / "candidate-positioning" / "scripts" / "check_positioning.py"
@@ -869,7 +869,7 @@ def find_voice(cp, voice_dir):
         if not cp.is_voice_dir(folder):
             raise InputError(f"{folder} doesn't hold plainspeak-writer.")
         return folder
-    return cp.find_voice_dir(cp.default_roots())
+    return cp.locate_voice_dir()
 
 
 def run_voice(folder, text, surface="letter", keep=()):

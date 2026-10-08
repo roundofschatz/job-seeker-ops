@@ -55,7 +55,7 @@ try:
 except ImportError:  # a Python built without expat can't read Word files at all
     pyexpat = None
 
-__version__ = "0.3.2"
+__version__ = "0.4.0"
 FORMAT = "1"
 
 SECTIONS = ["Target", "Requirement map", "The hiring team's view", "The case in four lines",
@@ -1396,6 +1396,20 @@ def find_voice_dir(roots):
     return found[0] if found else None
 
 
+def bundled_voice_dir():
+    """The copy of plainspeak-writer this plugin carries, beside this skill in
+    the plugin's skills folder, or None when the script runs outside the plugin."""
+    folder = Path(__file__).resolve().parents[2] / "plainspeak-writer"
+    return folder if is_voice_dir(folder) else None
+
+
+def locate_voice_dir():
+    """The plugin's own copy first, since the plugin was tested with it and it
+    sits where the scripts do. Another installed copy doesn't change that, and
+    the search runs only when this skill was installed without the plugin."""
+    return bundled_voice_dir() or find_voice_dir(default_roots())
+
+
 def voice_extract(pos):
     """The sentences other pages reuse: sections 3 and 4, each proof's result
     and story, and the plain descriptions. Returns the text and, for each of
@@ -1713,7 +1727,7 @@ def main(argv=None):
                 src.report_refused(rep, "against")
             check_against(pos, paths, rep)
         if args.voice:
-            voice_dir = Path(args.voice_dir).resolve() if args.voice_dir else find_voice_dir(default_roots())
+            voice_dir = Path(args.voice_dir).resolve() if args.voice_dir else locate_voice_dir()
             if args.voice_dir and not is_voice_dir(voice_dir):
                 raise InputError(f"{voice_dir} doesn't hold plainspeak-writer.")
             check_voice(pos, voice_dir, rep)
