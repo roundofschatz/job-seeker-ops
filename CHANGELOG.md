@@ -2,6 +2,19 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.6 · The marketplace says which tool to install
+
+The owner asked on October 9 why the marketplace lists resume-ops on its own when this plugin includes it. That's by design, so a person can take the whole set or one tool. But the listing didn't say that resume-ops and plainspeak-writer are already inside this plugin, and someone who installs both gets two resume skills or two writing skills, with Claude free to load either.
+
+Changed:
+
+- `.claude-plugin/marketplace.json`: each entry says who it's for. This plugin is "the full job-search set" with the other two included, "so install this one alone". resume-ops and plainspeak-writer each say they're "already included in job-seeker-ops, so skip this if you install that". The marketplace's own description says the same in one line. Nothing in the marketplace format lets one plugin block another, so the descriptions do the steering.
+- `skills/plainspeak-writer/`: plainspeak-writer 1.7.2, copied from tag v1.7.2 (commit 8e51313). Its README now covers installing it as a plugin and says not to install it beside this plugin. No rule changed. Its marketplace entry moves to v1.7.2.
+- README: the section on the bundled copies names plainspeak-writer 1.7.2.
+- `.claude-plugin/plugin.json`: version 0.4.6.
+
+resume-ops's READMEs already said to install it or this plugin, not both, so resume-ops doesn't change.
+
 ## 0.4.5 · Fixes from the live suites on 0.4.4
 
 On October 8 every live suite ran on 0.4.4 as the desktop app installed it, and `tests/RESULTS.md` named four things to fix. The owner said yes to all four.

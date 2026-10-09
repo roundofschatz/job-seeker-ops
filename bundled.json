@@ -2,19 +2,19 @@
   "about": "Skills this plugin carries as exact copies of one commit of their own repositories. tools/sync_bundled.py writes them and this record, and tests/unit/test_bundled.py checks both. Change a skill in its own repository, never here.",
   "skills": {
     "plainspeak-writer": {
-      "version": "1.7.1",
+      "version": "1.7.2",
       "repository": "https://github.com/roundofschatz/plainspeak-writer",
-      "ref": "v1.7.1",
-      "commit": "9465a33250185b3d966e6dd43e71a3ad56f28740",
+      "ref": "v1.7.2",
+      "commit": "8e51313647e135cb8189b71fde243ab6f95e77e4",
       "source": ".",
       "left_out": [
         ".gitignore",
         "tests/"
       ],
       "files": {
-        "CHANGELOG.md": "123a28d0ac77dfeab77bcdf105369a4b8d6993166de24f5c004a4445fab99097",
+        "CHANGELOG.md": "b9e42efdeac62bbb3b9a707b5d4f8734dd055e2abb217202f575502619e269a4",
         "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
-        "README.md": "30476406cc03552aa6be9e0f44bf915b36f8c61eeeb7aa5cc6bf0558bb8a0ab5",
+        "README.md": "97f4bdf0be6643deec3c4e7f4072796754629298462b91305b5b15679dbe2923",
         "SKILL.md": "d556d9d40e58dbd46c0b63521ae6206b275c3c467eda0ef57f3f10edbc0979e7",
         "references/formats/brand-narrative.md": "ce9c6c0a5fa0daccaa24ef586b8fe247cecb70f5ddf28dedff4c9ae6f583f3d8",
         "references/formats/letter.md": "5e3fece1539f061fb85dfe0ebecaa2139253074559ad5214bf6cf3a95add1091",
@@ -26,7 +26,7 @@
         "references/samples.md": "681344d98622fcd2d3269ab5cef3c6f67368b1cbc4714b6347288c8ce01c1f5e",
         "references/tells.md": "ab65b70e8308f6e579f5a91addbd84b7d1fa94b08971c8bcafc97dbe70de123c",
         "references/voice.md": "7595d6d8f13a2726981ac6fb4715ff61d9e6a8738cd7f540ddc9251e6083d2b7",
-        "scripts/check_voice.py": "b7cadf24bdd274b7c897d99ae1b2670a322da5e728ab45ae087f0452c968d2c7"
+        "scripts/check_voice.py": "a6a41e4e38d3d1968073759cddc27ea32d8da5ca6710769b560010fc7449a9e5"
       }
     },
     "resume-ops": {

@@ -1,6 +1,6 @@
 {
   "name": "roundofschatz",
-  "description": "Claude plugins by Ryan Schatzman: job-seeker-ops, resume-ops and plainspeak-writer.",
+  "description": "Claude plugins by Ryan Schatzman. job-seeker-ops is the full job-search set and includes the other two; resume-ops and plainspeak-writer install on their own.",
   "owner": {
     "name": "Ryan Schatzman",
     "url": "https://github.com/roundofschatz"
@@ -9,11 +9,11 @@
     {
       "name": "job-seeker-ops",
       "source": "./",
-      "description": "Job-search writing: works out the case for one posting, writes the cover letter from it, and has a blind reviewer read a finished piece. Includes resume-ops and plainspeak-writer."
+      "description": "The full job-search set: works out your case for a posting, writes the cover letter from it, and has a blind reviewer check a finished piece. resume-ops and plainspeak-writer are included, so install this one alone."
     },
     {
       "name": "resume-ops",
-      "description": "Builds a US resume for one job posting from whatever you have, for the four readers who decide on it: the application form, the AI grader, the recruiter and the hiring manager.",
+      "description": "Resumes on their own: builds a US resume for one job posting from whatever you have, for the application form, the AI grader, the recruiter and the hiring manager. Already included in job-seeker-ops, so skip this if you install that.",
       "source": {
         "source": "url",
         "url": "https://github.com/roundofschatz/resume-ops.git",
@@ -22,8 +22,8 @@
     },
     {
       "name": "plainspeak-writer",
-      "version": "1.7.1",
-      "description": "Writes and rewrites prose so it reads like a sharp human writer instead of an AI, in a plain, specific, warm voice, matched to your own writing when you share some.",
+      "version": "1.7.2",
+      "description": "Plain-voice writing on its own: writes and rewrites prose so it reads like a sharp human writer, matched to your own writing when you share some. Already included in job-seeker-ops, so skip this if you install that.",
       "author": {
         "name": "Ryan Schatzman",
         "url": "https://github.com/roundofschatz"
@@ -34,7 +34,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/roundofschatz/plainspeak-writer.git",
-        "ref": "v1.7.1"
+        "ref": "v1.7.2"
       }
     }
   ]
