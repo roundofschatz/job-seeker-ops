@@ -56,7 +56,7 @@ The plugin's tests also run each prompt once more with no skill at all, for skil
 | 8 | Deeper proof | F | Summer Bridge Math in the proof bank |
 | 9 | Gap search | F | The professional development row |
 | 10 | Conflict | F | 61% against 63% at step 9 |
-| 11 | Aging facts | F | 13 years, worked out from the dates |
+| 11 | Aging facts | F | Her years of teaching, worked out from the dates: her chair years counted from a source that shows her teaching then, or left out with a question at step 9 |
 | 12 | Past letters | F | `check_positioning.py --against letter-2021.txt` |
 | 13 | Its own files | the plugin | plainspeak-writer's checker on every file, a search for anything personal, and the changelog |
 

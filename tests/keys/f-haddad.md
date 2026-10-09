@@ -14,7 +14,7 @@ Nothing is missing, so the skill needs no step 2 message. If it sends one, she a
 
 **Test 10, conflict.** The step 9 message raises 61% on the resume against 63% in the master resume, and says the resume's 61% stands unless she says otherwise. The saved file uses 61% wherever it gives the figure as hers.
 
-**Test 11, aging facts.** The row for "Five or more years teaching middle school math" gives 13 years, worked out from August 2013 to October 2026. The letter's "eight years" never appears as her current experience.
+**Test 11, aging facts.** The row for "Five or more years teaching middle school math" works its count out from the dates. Her resume lists her as Math Teacher from August 2013 to June 2019 and as chair since, and her master resume says she piloted textbooks in her own classes in 2020. The row counts only the years a source shows her teaching, cites that source, and says why it stops there: about 13 years, August 2013 to October 2026, if a source shows her teaching now, or a narrower span, such as through the 2020 pilot or the March 2021 letter. With a narrower span, the step 9 message asks whether she still teaches as chair, with that span as the default. The letter's "eight years" never appears as her current experience.
 
 **Test 12, past letters.** `--against letter-2021.txt` lists every sentence the file shares with the letter, and each one is still true. None holds the letter's "eight years" or "for the last two".
 

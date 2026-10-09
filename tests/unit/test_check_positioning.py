@@ -797,5 +797,44 @@ class VoiceSearchTests(unittest.TestCase):
             self.assertEqual(module.locate_voice_dir(), installed / "plainspeak-writer")
 
 
+class ListTests(unittest.TestCase):
+    """The list option finds the positioning files by their headings and shows
+    nothing of another file named the same way, such as someone's notes."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_only_positioning_headings_are_shown(self):
+        shutil.copy(WRITER / "positioning-notes.md", self.dir / "positioning-notes.md")
+        (self.dir / NAME).write_bytes(example().encode("utf-8"))
+        code, out, _ = run(["--list", self.dir])
+        self.assertEqual(code, 0, out)
+        heading = example().splitlines()[0]
+        self.assertIn(f"{NAME}: {heading}", out)
+        notes_head = (WRITER / "positioning-notes.md").read_text(encoding="utf-8").splitlines()[0]
+        self.assertNotIn(notes_head, out)
+        self.assertNotIn("positioning-notes.md", out)
+        self.assertIn("Skipped 1 other file(s)", out)
+
+    def test_a_heading_after_a_blank_line_and_a_bom_still_counts(self):
+        (self.dir / "positioning-acme-planner.md").write_bytes(
+            "﻿\n# Positioning: Acme Co. · Demand Planner\n".encode("utf-8"))
+        code, out, _ = run(["--list", self.dir])
+        self.assertIn("positioning-acme-planner.md: # Positioning: Acme Co. · Demand Planner", out)
+        self.assertNotIn("Skipped", out)
+
+    def test_an_empty_folder_and_a_missing_one(self):
+        code, out, _ = run(["--list", self.dir])
+        self.assertEqual(code, 0)
+        self.assertIn("No positioning file here.", out)
+        code, _, err = run(["--list", self.dir / "nowhere"])
+        self.assertEqual(code, 2)
+        self.assertIn("isn't a folder", err)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

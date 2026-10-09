@@ -12,9 +12,12 @@
     python check_positioning.py FILE --json
     python check_positioning.py --name-from positioning-draft.md
     python check_positioning.py --name "Acme Co." "Demand Planner"
+    python check_positioning.py --list FOLDER
 
 --name-from reads the company and the role from a file's own heading, so the
-words of a posting never have to go into a command.
+words of a posting never have to go into a command. --list prints each
+positioning file in a folder with its heading. Another file whose name starts
+the same way, such as positioning-notes.md, is counted and none of it shown.
 
 The shape check always runs. It wants the eight sections in order, a source on
 every requirement row and every proof, a story and a date on every proof, each
@@ -55,7 +58,7 @@ try:
 except ImportError:  # a Python built without expat can't read Word files at all
     pyexpat = None
 
-__version__ = "0.4.0"
+__version__ = "0.4.5"
 FORMAT = "1"
 
 SECTIONS = ["Target", "Requirement map", "The hiring team's view", "The case in four lines",
@@ -345,6 +348,28 @@ def slug(text):
 
 def file_name(company, role):
     return f"positioning-{slug(company)}-{slug(role)}.md"
+
+
+HEADING = re.compile(r"^#\s+Positioning:\s+(.+?)\s+·\s+(.+?)\s*$")
+
+
+def list_positioning(folder):
+    """Each positioning file in the folder with its heading, and how many other
+    files share the name pattern. A notes file can be called positioning-notes.md,
+    so a file whose first line isn't a positioning heading is counted and none of
+    its text is shown."""
+    found, skipped = [], 0
+    for path in sorted(Path(folder).glob("positioning-*.md")):
+        try:
+            head = next((t for t in text_lines(decode(path.read_bytes())) if t.strip()), "")
+        except OSError:
+            skipped += 1
+            continue
+        if HEADING.match(head):
+            found.append((path.name, head.strip()))
+        else:
+            skipped += 1
+    return found, skipped
 
 
 def is_home_page(url):
@@ -1397,7 +1422,7 @@ def find_voice_dir(roots):
 
 
 def bundled_voice_dir():
-    """The copy of plainspeak-writer this plugin carries, beside this skill in
+    """The copy of plainspeak-writer this plugin holds, beside this skill in
     the plugin's skills folder, or None when the script runs outside the plugin."""
     folder = Path(__file__).resolve().parents[2] / "plainspeak-writer"
     return folder if is_voice_dir(folder) else None
@@ -1674,6 +1699,8 @@ def parser():
     ap.add_argument("--name", nargs=2, metavar=("COMPANY", "ROLE"), help="print the file name to use")
     ap.add_argument("--name-from", metavar="FILE",
                     help="print the file name to use, from FILE's '# Positioning: Company · Role' heading")
+    ap.add_argument("--list", nargs="?", const=".", metavar="FOLDER",
+                    help="list the positioning files in FOLDER by their headings, showing nothing of any other file")
     ap.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     return ap
 
@@ -1695,12 +1722,26 @@ def main(argv=None):
         except OSError as exc:
             print(f"Can't read {args.name_from}: {exc}", file=sys.stderr)
             return 2
-        m = re.match(r"^#\s+Positioning:\s+(.+?)\s+·\s+(.+?)\s*$", head)
+        m = HEADING.match(head)
         if not m:
             print(f"{Path(args.name_from).name} doesn't open with '# Positioning: <Company> · <Role>'.",
                   file=sys.stderr)
             return 2
         print(file_name(m.group(1), m.group(2)))
+        return 0
+    if args.list is not None:
+        folder = Path(args.list)
+        if not folder.is_dir():
+            print(f"{args.list} isn't a folder.", file=sys.stderr)
+            return 2
+        found, skipped = list_positioning(folder)
+        for name, head in found:
+            print(f"{name}: {head}")
+        if not found:
+            print("No positioning file here.")
+        if skipped:
+            print(f"Skipped {skipped} other file(s) named positioning-*.md without a positioning "
+                  "heading. None of their text is shown, and they aren't positioning files.")
         return 0
     if not args.file:
         print("Name the positioning file to check.", file=sys.stderr)

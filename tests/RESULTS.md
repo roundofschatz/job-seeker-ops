@@ -348,3 +348,19 @@ What to fix next:
 4. **`tests/RUN-TESTS.md`.** Its title still says 0.1.0, and its setup doesn't name the desktop app's account install folder.
 
 The letters average 19 to 23 words a sentence, with 11% to 21% at ten words or fewer. The 0.3.0 letters averaged 26 words with 1%.
+
+## The fixes, for 0.4.5
+
+- Date: 2026-10-08
+- Product: as for 0.4.4. The two runs followed the skills from this repository's working tree, with the plugin's other skills beside them, since 0.4.5 wasn't installed yet.
+- Evidence: `tests/evidence/cover-letter-runs/v045/cl-b1/` and `tests/evidence/positioning-runs/v045/f1/`.
+
+| Test | Result | Evidence |
+|---|---|---|
+| Cover letter 1, run cl-b1 again | Pass | Step 1 ran `check_positioning.py --list`, which printed the Switchgrass file's heading and "Skipped 1 other file(s) named positioning-*.md". No call names `career-record.md` or `positioning-notes.md`, and none of their 14 lines shows up in a tool result. The email letter passes `check_letter.py --voice --channel email --given "Maria Lopez"` with 0 HARD hits, its body is 351 words, and it holds no phrase from the key's list. |
+| Positioning 11, writer F again | Pass | The row counts her teaching through March 2021, about seven and a half years. It cites her Math Teacher dates, the 2020 pilot "in my classes" and the March 2021 letter, which counts her chair years as classroom years, and says nothing later shows her classes. Step 9 asked whether she still teaches as chair, with that count as the default. The file passes `--sources --current --against`. |
+
+cl-b1's second review said Fix first, over the line "The first quarter after the rebuild still missed by 24%", which the first review had let stand. The run stopped after two reviews and handed the finding over, as test 9 asks.
+
+The unit tests: 184 of 184 pass once the package is built from the release commit.
+

@@ -33,7 +33,7 @@ Read `references/format.md` before writing the file, since it holds the format a
 
 ### 1. Check for an existing file
 
-List the `positioning-*.md` files beside the person's files and read each one's first line, `# Positioning: <Company> · <Role>`. The one whose company and role match the posting's own first lines is this posting's file. If it's there, run `check_positioning.py FILE --current`. Never type the posting's words into a command: a company line can hold characters a shell would run.
+Run `check_positioning.py --list <the person's folder>`. It prints each positioning file there with its first line, `# Positioning: <Company> · <Role>`, and skips any other file whose name starts the same way, such as someone's notes, without showing a line of it. The one whose company and role match the posting's own first lines is this posting's file. If it's there, run `check_positioning.py FILE --current`. Never open a file the list skips, and never type the posting's words into a command: a company line can hold characters a shell would run.
 
 - **Current and confirmed, with no new evidence or correction from the person:** reuse it. Tell the person the file is current and what it says the reader should believe, and stop.
 - **Saved but not yet confirmed:** go to step 9 with it.
@@ -73,7 +73,7 @@ Every required qualification, preferred qualification and responsibility gets a 
 - **Partial:** the evidence covers part of it, and the row says which part.
 - **Gap:** nothing in any source shows it. Name it, and mark whether the role owns it or another team shares it. A near miss is a gap, not a partial match. Excel doesn't answer a requirement for SQL.
 
-Where sources disagree, the resume being sent wins on titles, dates and figures, and the conflict goes to the person at step 9. A fact that ages, such as years of experience or a current title, gets worked out from the dates, never copied from an old source. Quote the words that state the fact, and mark where each row should show.
+Where sources disagree, the resume being sent wins on titles, dates and figures, and the conflict goes to the person at step 9. A fact that ages, such as years of experience or a current title, gets worked out from the dates, never copied from an old source. When a later role may or may not include the work being counted, as a department chair may still teach, count its years only where a source shows that work in them, and cite that source in the row. Otherwise count the narrower span, say why in the row, and ask at step 9. Quote the words that state the fact, and mark where each row should show.
 
 A posting line that doesn't belong to this role, such as another unit's requirement in a posting several units share, or a heading over the duties, gets no row. List it under the map with the reason, as `references/format.md` shows.
 
@@ -114,6 +114,7 @@ Show the person, in one message:
    - a conflict between sources, with the resume's version as the default
    - two readings of the case, with your recommendation as the default
    - a requirement no source shows: "If it's true, tell me where the work happened. Otherwise it stays a gap."
+   - a count of years left open by a later role, with the narrower count as the default
    - fewer than two firm facts, when the person might know more
 3. The requirement map underneath, as the receipt.
 

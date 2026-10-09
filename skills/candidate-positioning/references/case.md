@@ -4,7 +4,7 @@ How to find what the firm is buying, write the hiring team's view and the four l
 
 ## What the firm is buying
 
-A posting holds two kinds of writing. The duties list says what the person will do each week. The rest says why the job exists now: the opening paragraph, a number about what's going wrong, a change the firm is making, and the measure the job is judged on. The firm's own pages often say it more plainly than the posting does.
+A posting holds two kinds of writing. The duties list gives the person's weekly work. The rest says why the job exists now: the opening paragraph, a number about what's going wrong, a change the firm is making, and the measure the job is judged on. The firm's own pages often say it more plainly than the posting does.
 
 The case follows the problem. The duties still matter, since they show where the proof has to land, but a case built on them reads like every other applicant's.
 
@@ -51,7 +51,7 @@ Keep three to five. When the evidence holds fewer than three, keep what there is
 
 A result from a deeper source that the resume leaves out still goes in the bank, marked "On the resume being sent: no". Mark it for the letter, or for both when it belongs on the resume too. resume-ops decides from the evidence whether it goes on the resume.
 
-The story gives the problem, what the candidate did and what changed, in two to four sentences, all from the source. When the source doesn't give the problem, leave it out rather than supply one.
+The story gives the problem, the candidate's action and the change it made, in two to four sentences, all from the source. When the source doesn't give the problem, leave it out rather than supply one.
 
 ## Words to use
 

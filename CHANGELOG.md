@@ -2,6 +2,32 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.5 · Fixes from the live suites on 0.4.4
+
+On October 8 every live suite ran on 0.4.4 as the desktop app installed it, and `tests/RESULTS.md` named four things to fix. The owner said yes to all four.
+
+Changed:
+
+- **Finding the positioning file shows no other file's text.** Cover letter's step 1 printed the first line of every `positioning-*.md` file to find the one for the posting. Writer B keeps notes in `positioning-notes.md`, so its heading reached the conversation and cover-letter test 1 failed in run cl-b1. `check_positioning.py` 0.4.5 adds `--list FOLDER`, which prints each file whose first line is a positioning heading and only counts any other file named the same way. Step 1 of cover-letter and of candidate-positioning now runs it, never opens a file it skips, and cover-letter's search for earlier voice samples uses the same list.
+- **A count of years that a later role leaves open.** In positioning test 11, writer F's file counted about six years of teaching, her Math Teacher dates, and left her years as chair out, though her own proof showed her teaching her own classes in 2020. candidate-positioning now counts a later role's years only where a source shows the same work in them, cites that source, and otherwise counts the narrower span, says why, and asks at step 9 with the narrower count as the default. The key for test 11 accepts either result, and `RUN-TESTS-positioning.md` says so.
+- **plainspeak-writer 1.7's "what the X did" warning.** Ten such phrases in files 0.4.0 didn't touch are reworded with the same meaning, such as "what the writer meant" to "the writer's intent":
+  - five in cover-letter's `letter.md`, which the drafting learns from;
+  - two in candidate-positioning's `case.md`;
+  - three in the reviewer's instructions.
+- **`tests/RUN-TESTS.md`.** Its title said "Live tests for job-seeker-ops 0.1.0". It now says what it tests, and its setup names the folder where the desktop app installs a plugin on the account from a marketplace.
+- `plugin.json`: version 0.4.5.
+
+Added:
+
+- Three unit tests for `--list`: a notes file named `positioning-notes.md` is counted and none of it shown, a heading after a byte-order mark and a blank line still counts, and an empty or missing folder gets a plain answer.
+
+Checked:
+
+- The unit tests: 184 of 184 pass on Windows with Python 3.12.10, once the package is built from the release commit.
+- Cover-letter run cl-b1 again, from this repository's working tree: step 1 used `--list`, and nothing from writer B's notes or career record reached the conversation, so test 1 passes.
+- Writer F's positioning run again: her teaching counts through March 2021 from the sources that show it, and step 9 asked about the rest, so test 11 passes under its new key.
+- plainspeak-writer 1.7.1's checker, the copy in `skills/`, on every file this version changes outside the two copies, with no HARD hits.
+
 ## 0.4.4 · The marketplace lives here, and plainspeak-writer 1.7.1
 
 The owner chose on October 8 to move the shared marketplace into this repository. In resume-ops it made a loop: this plugin releases whenever plainspeak-writer or resume-ops does, to bring the new copy in, and each of those releases moved a tag in resume-ops's marketplace. That was a resume-ops release, which changed the copy of resume-ops this plugin holds and needed another release here. Here, the tag moves in the same release that brings the copy in, and changes flow one way, from the tools into this plugin. The same day, plainspeak-writer 1.7.1 credited its author by name, change 10 in the tools folder's change notes.

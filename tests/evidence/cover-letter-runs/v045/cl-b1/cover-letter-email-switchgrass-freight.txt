@@ -1,0 +1,16 @@
+Subject: Supply Chain Planning Analyst application
+
+Dear Maria Lopez,
+
+At Switchgrass Freight a missed forecast means idle docks one day and overtime the next, and last year your forecasts missed by 24% on average. I treat a miss like that as a question with an answer. I've been a Planning Analyst at Brightwell Grocers Distribution since 2021. Over 52 weeks there, I brought our weekly forecast's mean absolute percentage error down from 31% to 19%.
+
+I went looking for the input Brightwell's old forecast never saw, across 1,900 items in three distribution centers, and found it in store promotions. I rebuilt the forecast in SQL and Excel around them. The first quarter after the rebuild still missed by 24%. Every Monday, all 14 of Brightwell's buyers set their orders from a Power BI dashboard I built for the buying team. I also write them a one-page note each week on where Brightwell's forecast missed.
+
+Before I moved into planning, I was an inventory coordinator from 2019 to 2021 on the floor of a 410,000-square-foot Brightwell warehouse. Moving high-value items to weekly cycle counts in Manhattan WMS took count variance there from 2.8% to 0.9%.
+
+Switchgrass moves freight for 2,400 shippers across the Midwest and plans it by lane and by terminal, so docks are staffed and trailers placed before the freight shows up. At Brightwell my forecasts became buying plans. With your operations team, I'd turn the Switchgrass forecast into dock staffing and trailer plans, terminal by terminal. This year you added Saturday dock shifts at six terminals and staff them from the weekly forecast, so Saturday staffing at those terminals now depends on the forecast being right by terminal. Those six terminals are where I'd start, with their lanes that miss most and the inputs behind those misses. Your terminal managers would get a one-page note from me every week on forecast accuracy, written like the one Brightwell's buyers read.
+
+I find the input behind a forecast miss and fix it, and I can do that for Switchgrass's lanes. Could we find a time to go through how last year's 24% miss breaks down by lane and by terminal?
+
+Best,
+Dmitri Okafor
