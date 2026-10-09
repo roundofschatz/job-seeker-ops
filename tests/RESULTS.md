@@ -303,3 +303,16 @@ Two things this check turned up, both settled before release:
 - With a configuration folder in a long temporary path, resume-ops and this plugin cloned but didn't check out, since their longest paths passed Windows' 260-character limit. From a short folder they installed. A typical user's install folder leaves this repository's longest path at about 217 characters.
 
 Not checked: adding the marketplace in the Claude desktop app, or installing this plugin or plainspeak-writer from it there.
+
+## The marketplace moved here, for 0.4.4
+
+- Date: 2026-10-08
+- Product: as for 0.4.3, with an empty configuration folder of its own and no GitHub sign-in.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Add the marketplace from this repository | Pass | `claude plugin marketplace add roundofschatz/job-seeker-ops` added `roundofschatz`. |
+| Install each tool | Pass | plainspeak-writer 1.7.1 from commit 9465a33, resume-ops 2.4.4 from b25d535 and job-seeker-ops 0.4.4 from eef810d. `claude plugin details` lists one skill for plainspeak-writer, one for resume-ops, and five skills with the reviewer for this plugin. |
+| The installed plugin finds its own voice rules | Pass | The installed copy of `check_positioning.py` finds the plainspeak-writer 1.7.1 folder inside it. |
+
+Not checked: the Claude desktop app's own Add marketplace.
