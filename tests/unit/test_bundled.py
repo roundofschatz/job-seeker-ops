@@ -121,6 +121,34 @@ class Copies(unittest.TestCase):
         self.assertTrue(any("notes.md is in the copy and not in the record" in p for p in found), found)
 
 
+class Marketplace(unittest.TestCase):
+    """The marketplace for the three tools lists the releases this plugin copies,
+    so a person who installs one tool on its own gets the version in the bundle."""
+
+    def test_it_lists_the_three_tools_by_the_copies_tags(self):
+        market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+        self.assertEqual(market["name"], "roundofschatz")
+        entries = {p["name"]: p for p in market["plugins"]}
+        self.assertEqual(sorted(entries), ["job-seeker-ops", "plainspeak-writer", "resume-ops"])
+        self.assertIn(entries["job-seeker-ops"]["source"], ("./", "."))
+        for name, entry in record().items():
+            with self.subTest(name):
+                source = entries[name]["source"]
+                # HTTPS, since a github source clones over SSH and fails without a key.
+                self.assertEqual(source["source"], "url")
+                self.assertEqual(source["url"], entry["repository"] + ".git")
+                self.assertEqual(source["ref"], entry["ref"])
+        # plainspeak-writer has no plugin manifest, so its entry states the version.
+        self.assertEqual(entries["plainspeak-writer"]["version"], record()["plainspeak-writer"]["version"])
+
+    def test_the_readme_names_each_copys_version(self):
+        text = (REPO / "README.md").read_text(encoding="utf-8")
+        section = text.split("## plainspeak-writer and resume-ops", 1)[1].split("\n## ", 1)[0]
+        for name, entry in record().items():
+            with self.subTest(name):
+                self.assertRegex(section, rf"\[{re.escape(name)}\]\([^)]*\) {re.escape(entry['version'])}(?!\.?\d)")
+
+
 class ResumeOpsReadsPositioning(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

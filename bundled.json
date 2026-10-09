@@ -2,19 +2,19 @@
   "about": "Skills this plugin carries as exact copies of one commit of their own repositories. tools/sync_bundled.py writes them and this record, and tests/unit/test_bundled.py checks both. Change a skill in its own repository, never here.",
   "skills": {
     "plainspeak-writer": {
-      "version": "1.7",
+      "version": "1.7.1",
       "repository": "https://github.com/roundofschatz/plainspeak-writer",
-      "ref": "v1.7",
-      "commit": "f50d66ca7e01eafefe047bc21e882ed46f3faa59",
+      "ref": "v1.7.1",
+      "commit": "9465a33250185b3d966e6dd43e71a3ad56f28740",
       "source": ".",
       "left_out": [
         ".gitignore",
         "tests/"
       ],
       "files": {
-        "CHANGELOG.md": "fce58c567444725ee7fb8a3f9e77f3da23d90ea7c089bee78823dafb6588a5bc",
-        "LICENSE": "56a5093a0df55a29f7a489508db2c33852cfeda9a92e7312ab1e1ee31f054959",
-        "README.md": "fc72017ddca27be05c68969adea28de78b001854274a79f2994309f119b2c003",
+        "CHANGELOG.md": "123a28d0ac77dfeab77bcdf105369a4b8d6993166de24f5c004a4445fab99097",
+        "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
+        "README.md": "30476406cc03552aa6be9e0f44bf915b36f8c61eeeb7aa5cc6bf0558bb8a0ab5",
         "SKILL.md": "d556d9d40e58dbd46c0b63521ae6206b275c3c467eda0ef57f3f10edbc0979e7",
         "references/formats/brand-narrative.md": "ce9c6c0a5fa0daccaa24ef586b8fe247cecb70f5ddf28dedff4c9ae6f583f3d8",
         "references/formats/letter.md": "5e3fece1539f061fb85dfe0ebecaa2139253074559ad5214bf6cf3a95add1091",
@@ -26,23 +26,23 @@
         "references/samples.md": "681344d98622fcd2d3269ab5cef3c6f67368b1cbc4714b6347288c8ce01c1f5e",
         "references/tells.md": "ab65b70e8308f6e579f5a91addbd84b7d1fa94b08971c8bcafc97dbe70de123c",
         "references/voice.md": "7595d6d8f13a2726981ac6fb4715ff61d9e6a8738cd7f540ddc9251e6083d2b7",
-        "scripts/check_voice.py": "529f8d65c0dbbee27abbc3350d7e157e05cf150a448724816150705eafd27100"
+        "scripts/check_voice.py": "b7cadf24bdd274b7c897d99ae1b2670a322da5e728ab45ae087f0452c968d2c7"
       }
     },
     "resume-ops": {
-      "version": "2.4.3",
+      "version": "2.4.4",
       "repository": "https://github.com/roundofschatz/resume-ops",
-      "ref": "v2.4.3",
-      "commit": "2278afca25d1a3a3073194980e5d75c173875f80",
+      "ref": "v2.4.4",
+      "commit": "b25d53582f6b0e3790c8e4084a003f31838dcd2c",
       "source": "skills/resume-ops",
       "left_out": [
         "tests/"
       ],
       "files": {
-        "CHANGELOG.md": "1e61b646f9bde4c0e40c60361da876472d08b8861df280251565e842544dbe6c",
+        "CHANGELOG.md": "12c52ef88286fd361246073fa05db6e3337a4503cef09a0484ba576b29fc9df2",
         "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
-        "README.md": "1de1fe83a155e2852df664021f0e9fefda5d64e196ff988ae212bcde8385c052",
-        "SKILL.md": "8c344aed8874ba846e0100bcfdaa9c0bd1c66142c6efbeb0deea42cee3b117a8",
+        "README.md": "a8d3fef3cd4c2692fe260c5a46fa01d85ea5bbeb9bc6c99e0b967819b873a775",
+        "SKILL.md": "22d06b1287d948be294f3e7f0986fe5d7e5ff8cf361f9b49c8df565aee90d8e6",
         "references/document.md": "db395a7d2d66a5c4a001ccef21a182e85e56673a64cf402117c529685d29cdd9",
         "references/intake.md": "5f4a10bdffdfeaa6c8a4c2f6e9a56a970e9bf3fd1cf2b59de266fdc86f8981d0",
         "references/readers.md": "81e09b33b464b7a16f0d71c9d8e893f34eb02b3092ed93c26a9e61b7d7a1c0c7",

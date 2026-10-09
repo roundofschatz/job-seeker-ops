@@ -82,7 +82,7 @@ The verdict is Rethink when the first take sees no fit, when there are more than
 
 ## plainspeak-writer and resume-ops
 
-Cover letter can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both. One install gives the whole set. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.3. `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, it checks the hashes against that commit too. Their tests stay in their own repositories, which run them.
+Cover letter can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both. One install gives the whole set. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7.1 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.4. `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, it checks the hashes against that commit too. Their tests stay in their own repositories, which run them.
 
 The plugin's scripts use its own plainspeak-writer even when another copy is installed, since the plugin is tested with that copy, and cover letter tells Claude to load it from beside its own folder.
 
@@ -98,14 +98,14 @@ For a leaner setup, install plainspeak-writer or resume-ops on its own, from the
 
 Install it under Plugins, not Skills. A skill upload drops the reviewer, and the review then refuses to run. A plugin on your account also shows up in Claude Code at its next session start.
 
-**Claude Code.** The author's three tools share one marketplace, `roundofschatz`, which lives in resume-ops's repository. Add it, then install the plugin:
+**Claude Code.** The author's three tools share one marketplace, `roundofschatz`, which lives in this repository. Add it, then install the plugin:
 
 ```
-/plugin marketplace add roundofschatz/resume-ops
+/plugin marketplace add roundofschatz/job-seeker-ops
 /plugin install job-seeker-ops@roundofschatz
 ```
 
-The same marketplace installs `resume-ops@roundofschatz` or `plainspeak-writer@roundofschatz` on its own, for anyone who wants just that tool.
+The same marketplace installs `resume-ops@roundofschatz` or `plainspeak-writer@roundofschatz` on its own, for anyone who wants just that tool. It moved here from resume-ops's repository in 0.4.4, so if you added `roundofschatz/resume-ops` as a marketplace before then, remove it before you add this one.
 
 To try it for one session instead, run `claude --plugin-dir ./job-seeker-ops`.
 
@@ -140,6 +140,7 @@ Claude asks once for anything missing, builds the packet, starts the reviewer an
 ```
 job-seeker-ops/
 ├── .claude-plugin/plugin.json      name, version and description
+├── .claude-plugin/marketplace.json the marketplace for the three tools
 ├── agents/submission-reviewer.md   the reviewer's instructions
 ├── skills/candidate-positioning/
 │   ├── SKILL.md                    the ten steps that build a positioning file
@@ -156,8 +157,8 @@ job-seeker-ops/
 ├── skills/submission-review/
 │   ├── SKILL.md                    the steps Claude follows to start a review
 │   └── scripts/build_packet.py     builds the packet
-├── skills/plainspeak-writer/       a copy of plainspeak-writer 1.7, never edited here
-├── skills/resume-ops/              a copy of resume-ops 2.4.0, never edited here
+├── skills/plainspeak-writer/       a copy of plainspeak-writer, never edited here
+├── skills/resume-ops/              a copy of resume-ops, never edited here
 ├── bundled.json                    where each copy came from, with every file's hash
 ├── tools/sync_bundled.py           copies a release of either skill into skills/
 ├── tests/                          tests and test pieces, left out of the install zip

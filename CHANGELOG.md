@@ -2,7 +2,27 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
-## 0.4.3 · One marketplace for the three tools
+## 0.4.4 · The marketplace lives here, and plainspeak-writer 1.7.1
+
+The owner chose on October 8 to move the shared marketplace into this repository. In resume-ops it made a loop: this plugin releases whenever plainspeak-writer or resume-ops does, to bring the new copy in, and each of those releases moved a tag in resume-ops's marketplace. That was a resume-ops release, which changed the copy of resume-ops this plugin holds and needed another release here. Here, the tag moves in the same release that brings the copy in, and changes flow one way, from the tools into this plugin. The same day, plainspeak-writer 1.7.1 credited its author by name, change 10 in the tools folder's change notes.
+
+Added:
+
+- `.claude-plugin/marketplace.json`: the marketplace `roundofschatz`, with the same three tools under the same names. This plugin comes from this repository (`"./"`), and resume-ops and plainspeak-writer come over HTTPS at the tags of the copies in `skills/`, v2.4.4 and v1.7.1. plainspeak-writer's entry states its version, since its repository has no plugin manifest.
+- Two tests in `tests/unit/test_bundled.py`. One fails when the marketplace's tags or plainspeak-writer's version differ from the copies' records in `bundled.json`, so a sync can't leave the marketplace behind. The other fails when the README's section on the copies names another version.
+
+Changed:
+
+- `skills/plainspeak-writer/`: plainspeak-writer 1.7.1, copied from tag v1.7.1 (commit 9465a33). Its license names the author, its README has an Author section, and its checker's version line says 1.7.1. No rule changed.
+- `skills/resume-ops/`: resume-ops 2.4.4, copied from tag v2.4.4 (commit b25d535). It drops its own marketplace file, and its READMEs point at this repository. No rule changed.
+- README: Claude Code adds `roundofschatz/job-seeker-ops` as the marketplace, and a person who added `roundofschatz/resume-ops` before removes it first, since Claude keeps one marketplace for each name. The file list names the marketplace file and no longer gives the copies' versions, which had gone out of date there.
+- `.claude-plugin/plugin.json`: version 0.4.4.
+
+Checked:
+
+- The unit tests: 181 of 181 pass on Windows with Python 3.12.10, once the package is built from the release commit. On 0.4.3 the marketplace test fails, since that version has no marketplace file.
+- resume-ops's own tests at v2.4.4: 295 tests, 1 skipped, no failures. plainspeak-writer 1.7.1's checker gives the same reports as 1.7's, apart from its version line.
+- plainspeak-writer 1.7.1's checker, the copy in `skills/`, on every file this version changes outside the two copies, with no HARD hits.
 
 The owner asked on October 8 for the three tools to work on their own and together, through one marketplace. resume-ops's marketplace, `roundofschatz`, now lists plainspeak-writer and this plugin beside resume-ops, so one place installs the whole set or any tool alone.
 
