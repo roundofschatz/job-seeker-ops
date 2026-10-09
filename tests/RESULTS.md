@@ -316,3 +316,35 @@ Not checked: adding the marketplace in the Claude desktop app, or installing thi
 | The installed plugin finds its own voice rules | Pass | The installed copy of `check_positioning.py` finds the plainspeak-writer 1.7.1 folder inside it. |
 
 Not checked: the Claude desktop app's own Add marketplace.
+
+Later on October 8, the desktop app added the marketplace and installed job-seeker-ops 0.4.4 on the account from it, once an old `roundofschatz` entry pointing at resume-ops was removed from the settings.
+
+## Every live suite on the installed 0.4.4
+
+- Date: 2026-10-08
+- Product: Claude Code 2.1.293 in the Code tab of the Claude desktop app on Windows 11, Python 3.12.10, LibreOffice installed. The `claude` command on the path reports 2.1.295.
+- The build: job-seeker-ops 0.4.4 as the desktop app installed it on the account from the marketplace. Its files match tag v0.4.4, apart from the reviewer file's description header, which the app wrote as one quoted line. Every run used that installed copy, with its own plainspeak-writer 1.7.1 and resume-ops 2.4.4.
+- Who ran what:
+  - **Submission review:** a fresh helper that didn't build the plugin and had never seen the keys, since a session that built it knows the planted flaws.
+  - **Candidate positioning and cover letter:** the coordinating session, through fresh helpers, as before.
+  - **Test 16 and the own-files test:** the coordinating session.
+
+| Suite | Result | Evidence |
+|---|---|---|
+| Submission review, tests 1 to 12 | 12 of 12 pass | `sr-results-claude-code-0.4.4.md` and `01-` to `12-...-claude-code-0.4.4.md` |
+| Submission review, test 14 | Partial | The reviews of five letters people wrote misquote nothing and invent nothing. Two of the three letters with no HARD hits got Send. The third got Fix first, on jargon the writer's own later draft cut. All three drew 12 to 15 should-fix findings, more than "few". The reports stay in the git-ignored `tests/human/`. |
+| Submission review, test 16 | Pass | `16-second-direction-claude-code-0.4.4.md`: blind, and the note against the file covers all four points |
+| Candidate positioning, tests 1 to 13 | 12 of 13 pass | `positioning-claude-code-0.4.4.md`. Test 11 fails as its key is written: writer F's file counts about six years of teaching, leaving her chair years out, where the key expects 13 |
+| Cover letter, tests 1 to 17 | 16 of 17 pass | `cover-letter-claude-code-0.4.4.md`. Test 1 fails in cl-b1: step 1 printed the heading of writer B's `positioning-notes.md`, since it reads the first line of every `positioning-*.md` file |
+| Its own files | Pass | `own-files-0.4.4.md` |
+
+Not run: submission-review test 13, which needs a claude.ai chat, and the side-by-side runs with no skill, which aren't graded.
+
+What to fix next:
+
+1. **Cover letter, step 1.** Find the positioning file with a script that prints only files whose first line is a positioning heading, so another file's first line never reaches the conversation.
+2. **Test 11's open question.** Either candidate positioning asks whether a role change kept the person in the work being counted, or the key accepts the narrower count when the file says why.
+3. **plainspeak-writer 1.7's "what the X did" warning** in `letter.md`, `case.md` and the reviewer's instructions.
+4. **`tests/RUN-TESTS.md`.** Its title still says 0.1.0, and its setup doesn't name the desktop app's account install folder.
+
+The letters average 19 to 23 words a sentence, with 11% to 21% at ten words or fewer. The 0.3.0 letters averaged 26 words with 1%.

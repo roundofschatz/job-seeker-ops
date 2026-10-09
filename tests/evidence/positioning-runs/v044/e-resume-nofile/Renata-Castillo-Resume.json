@@ -1,0 +1,38 @@
+{
+  "name": "Renata Castillo",
+  "blocks": [
+    {"kind": "name", "text": "Renata Castillo"},
+    {"kind": "contact", "text": "Reno, NV | (775) 555-0163 | renata.castillo@example.com"},
+
+    {"kind": "header", "text": "Summary"},
+    {"kind": "para", "text": "Second-shift operations supervisor at a 400,000-square-foot distribution center, with 10 years in warehouse work. Opened a cross-dock in Fernley, NV and took its on-time shipping from 79% to 98% within five months. Moved up at Tumbleweed Home Goods from warehouse associate to lead to shift supervisor over 35 associates."},
+
+    {"kind": "header", "text": "Experience"},
+    {"kind": "role", "company": "Tumbleweed Home Goods", "city": "Reno", "state": "NV",
+     "title": "Distribution Center Shift Supervisor", "start": "Jan 2022", "end": "Present"},
+    {"kind": "bullet", "text": "Opened the Fernley, NV cross-dock in March 2022 and ramped its on-time shipping from 79% to 98% by August 2022."},
+    {"kind": "bullet", "text": "Built the cross-dock's shift schedule and trained its first 18 associates."},
+    {"kind": "bullet", "text": "Supervise 35 warehouse associates on second shift in a 400,000-square-foot distribution center."},
+    {"kind": "bullet", "text": "Kept inventory accuracy at 99.6% through 2023 and 2024 by running weekly cycle counts."},
+    {"kind": "bullet", "text": "Cut mis-picks from 1.2% to 0.4% by adding a second scan at pack-out in Manhattan WMS."},
+
+    {"kind": "role", "company": "Tumbleweed Home Goods", "city": "Reno", "state": "NV",
+     "title": "Warehouse Lead", "start": "May 2018", "end": "Dec 2021"},
+    {"kind": "bullet", "text": "Led a receiving team of 12 and set its daily putaway plan."},
+    {"kind": "bullet", "text": "Trained 40 new associates on Manhattan WMS scanners and putaway rules."},
+
+    {"kind": "role", "company": "Tumbleweed Home Goods", "city": "Reno", "state": "NV",
+     "title": "Warehouse Associate", "start": "Jun 2016", "end": "Apr 2018"},
+    {"kind": "bullet", "text": "Picked, packed and received freight, and moved up to lead after two years."},
+
+    {"kind": "header", "text": "Education"},
+    {"kind": "para", "text": "High School Diploma | Reno, NV | 2014"},
+
+    {"kind": "header", "text": "Certifications"},
+    {"kind": "para", "text": "OSHA 10-Hour General Industry | 2021"},
+    {"kind": "para", "text": "Forklift Certification, sit-down and reach truck operator | 2017"},
+
+    {"kind": "header", "text": "Skills"},
+    {"kind": "para", "text": "Manhattan WMS (warehouse management system), cycle counts, shift scheduling, putaway planning"}
+  ]
+}

@@ -1,0 +1,16 @@
+Subject: Supply Chain Planning Analyst application, Dmitri Okafor
+
+Dear Maria Lopez,
+
+Switchgrass's forecasts missed by 24% on average last year, and your posting says what a miss costs: idle docks one day and overtime the next. I've worked on forecast misses as a Planning Analyst at Brightwell Grocers Distribution since 2021, and at Brightwell the fix for a 31% miss was an input the old forecast never saw.
+
+Brightwell's weekly forecast covers 1,900 items in three distribution centers, and the old version had no input for the store promotions that moved demand. I rebuilt it in SQL and Excel with promotions added. The first quarter after the rebuild still missed by 24%. Over 52 weeks its error, measured as mean absolute percentage error, fell from 31% to 19%. The 14 buyers on Brightwell's buying team now set their orders every Monday from a Power BI dashboard I built for them.
+
+Switchgrass forecasts by lane and by terminal so docks are staffed and trailers placed before the freight shows up, which puts a miss on the dock floor. Before I moved into forecasting in 2021, I worked on that end of a forecast, as an inventory coordinator in a 410,000-square-foot Brightwell warehouse. I ran its cycle counts in Manhattan WMS, where count variance stood at 2.8%. Once I put the high-value items on a weekly count, the variance came down to 0.9%.
+
+This year you added Saturday dock shifts at six terminals and staff them from the weekly forecast, so Saturday staffing at those terminals now depends on a forecast that's right terminal by terminal. In this seat I'd start with the lanes into those six terminals and the inputs behind their misses. From there I'd work with your operations team on dock staffing and trailer plans for all 38 terminals. Your terminal managers would get a weekly forecast accuracy report from me, and at Brightwell I already write the buyers a one-page note each week on where the forecast missed.
+
+I find the input behind a forecast miss and fix it, and I can do that for Switchgrass's lanes. Could we talk about the lanes your forecast misses most at the six terminals that now run Saturday shifts, and the inputs behind them?
+
+Best,
+Dmitri Okafor
