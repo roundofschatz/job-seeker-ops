@@ -141,6 +141,22 @@ class Marketplace(unittest.TestCase):
         # plainspeak-writer has no plugin manifest, so its entry states the version.
         self.assertEqual(entries["plainspeak-writer"]["version"], record()["plainspeak-writer"]["version"])
 
+    def test_a_tool_without_a_manifest_is_declared_by_its_entry(self):
+        # claude.ai's marketplace sync skips a plugin with no .claude-plugin/plugin.json
+        # unless its entry sets "strict": false and names its skills. Claude Code accepts either.
+        market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+        entries = {p["name"]: p for p in market["plugins"]}
+        checked = 0
+        for name, spec in sb.SKILLS.items():
+            if spec["source"] or (REPO / "skills" / name / ".claude-plugin" / "plugin.json").exists():
+                continue
+            with self.subTest(name):
+                self.assertTrue((REPO / "skills" / name / "SKILL.md").exists())
+                self.assertIs(entries[name].get("strict"), False)
+                self.assertEqual(entries[name].get("skills"), ["./"])
+            checked += 1
+        self.assertEqual(checked, 1)
+
     def test_the_readme_names_each_copys_version(self):
         text = (REPO / "README.md").read_text(encoding="utf-8")
         section = text.split("## plainspeak-writer and resume-ops", 1)[1].split("\n## ", 1)[0]

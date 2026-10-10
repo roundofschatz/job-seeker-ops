@@ -2,6 +2,16 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.7 · claude.ai syncs plainspeak-writer from the marketplace
+
+The owner found on October 9 that the marketplace kept disappearing from the desktop app and had to be fixed on claude.ai. claude.ai's sync had skipped plainspeak-writer with this error: "Plugin 'plainspeak-writer' requires .claude-plugin/plugin.json or a top-level SKILL.md declaring plugin components (set strict: false in marketplace.json to use inline manifest)". plainspeak-writer's repository has a SKILL.md at its root and no plugin manifest. Claude Code loads that as one skill, but claude.ai's sync doesn't. The sync also hadn't run since the 0.4.5 commit, so the account install stayed on 0.4.5.
+
+Changed:
+
+- `.claude-plugin/marketplace.json`: the plainspeak-writer entry sets `"strict": false` and `"skills": ["./"]`, so the entry is the plugin's manifest and the root of plainspeak-writer's repository is its one skill. This is the fix the error names, and it leaves plainspeak-writer itself unchanged. In a clean Claude Code config, all three tools install from the edited marketplace, and plainspeak-writer loads as one skill named plainspeak-writer, as before.
+- `tests/unit/test_bundled.py`: a test fails if a bundled tool whose repository has no plugin manifest loses those two fields.
+- `.claude-plugin/plugin.json`: version 0.4.7.
+
 ## 0.4.6 · The marketplace says which tool to install
 
 The owner asked on October 9 why the marketplace lists resume-ops on its own when this plugin includes it. That's by design, so a person can take the whole set or one tool. But the listing didn't say that resume-ops and plainspeak-writer are already inside this plugin, and someone who installs both gets two resume skills or two writing skills, with Claude free to load either.

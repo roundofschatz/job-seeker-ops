@@ -31,6 +31,8 @@
       "homepage": "https://github.com/roundofschatz/plainspeak-writer",
       "repository": "https://github.com/roundofschatz/plainspeak-writer",
       "license": "MIT",
+      "strict": false,
+      "skills": ["./"],
       "source": {
         "source": "url",
         "url": "https://github.com/roundofschatz/plainspeak-writer.git",
