@@ -2,6 +2,27 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.9 · Releases publish themselves
+
+The owner moved this repository's work to Claude's cloud sessions on October 10. A cloud session can push to main, but GitHub refused its attempts to push the v0.4.8 tag and publish that release, so 0.4.8 never got one. A workflow on GitHub's side now publishes each release.
+
+Added:
+
+- `.github/workflows/release.yml`: when a commit lands on main with a version in `plugin.json` that has no release yet, it builds the package from that commit with the command in Contributing, checks it with `tests/unit/test_version.py`, and publishes the release with both package files. When the version already has a release, the run stops there. You can also start a run by hand from the Actions tab. It doesn't run the full unit test suite, since one test fails on Linux for the reason the 0.4.8 entry gives, so the session that makes a change still runs the tests.
+- `tools/release_notes.py`: writes the release's title and notes from this log. The notes hold every entry since the last release, so this release's notes cover 0.4.8 too, then say how to install. It stops with an error when the newest entry here isn't the version being released.
+- `tests/unit/test_release_notes.py`: five tests for the notes, the title and that error.
+
+Changed:
+
+- README: Files lists the workflow and the notes script, and Contributing says the workflow publishes each release.
+- `.claude-plugin/plugin.json`: version 0.4.9.
+
+Checked:
+
+- `tools/release_notes.py` on this log, as if 0.4.7 were the last release: the title comes out as "job-seeker-ops 0.4.9: releases publish themselves", and the notes hold the entries for 0.4.9 and 0.4.8.
+- The workflow file with actionlint 1.7.12: no errors.
+- The unit tests: 189 of 190 pass on Linux with Python 3.13.16, with the one failure the 0.4.8 entry describes.
+
 ## 0.4.8 · The README talks to the reader
 
 The owner found on October 10 that this README broke the voice rules the plugin ships with. plainspeak-writer's checker passed it, but reading it against `tells.md` and `voice.md` turned up what the checker can't see. The README never named the problem the plugin solves, and it called the reader "the person" 15 times. It used terms that only the plugin's own files define, such as "the four movements", "the second direction", "packet", "manifest", "keep-off list" and "first take", and it mixed file hashes and parser versions into the description of what the plugin does.

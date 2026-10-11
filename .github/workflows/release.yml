@@ -1,0 +1,56 @@
+# Publishes a release when a new version lands on main. It builds the package
+# from that commit, checks it, and publishes it with the changelog entries
+# since the last release as notes. A cloud session can push to main but
+# can't push tags or publish releases, so this runs on GitHub's side.
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the version
+        id: version
+        run: |
+          version=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json', encoding='utf-8'))['version'])")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if gh release view "v$version" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "v$version already has a release, so there's nothing to do."
+            echo "released=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build the package from this commit
+        if: steps.version.outputs.released != 'true'
+        run: |
+          mkdir -p dist
+          git archive --format=zip --prefix=job-seeker-ops/ -o dist/job-seeker-ops.plugin HEAD .claude-plugin/plugin.json agents skills README.md CHANGELOG.md LICENSE
+          cp dist/job-seeker-ops.plugin dist/job-seeker-ops.zip
+
+      - name: Check the version and the package
+        if: steps.version.outputs.released != 'true'
+        run: python3 tests/unit/test_version.py
+
+      - name: Publish the release
+        if: steps.version.outputs.released != 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          last=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null || true)
+          title=$(python3 tools/release_notes.py "$VERSION" "$last" --out notes.md)
+          gh release create "v$VERSION" dist/job-seeker-ops.plugin dist/job-seeker-ops.zip \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$title" --notes-file notes.md

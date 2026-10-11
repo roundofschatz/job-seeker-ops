@@ -144,6 +144,7 @@ Claude asks once for anything missing, builds the reviewer's folder, starts the 
 job-seeker-ops/
 ├── .claude-plugin/plugin.json      name, version and description
 ├── .claude-plugin/marketplace.json the marketplace for the three tools
+├── .github/workflows/release.yml   publishes a release when a new version lands on main
 ├── agents/submission-reviewer.md   the reviewer's instructions
 ├── skills/candidate-positioning/
 │   ├── SKILL.md                    the ten steps that build a positioning file
@@ -164,6 +165,7 @@ job-seeker-ops/
 ├── skills/resume-ops/              a copy of resume-ops, never edited here
 ├── bundled.json                    where each copy came from, with every file's hash
 ├── tools/sync_bundled.py           copies a release of either skill into skills/
+├── tools/release_notes.py          writes a release's title and notes from the changelog
 ├── tests/                          tests and test pieces, left out of the install zip
 ├── README.md
 ├── CHANGELOG.md
@@ -183,7 +185,8 @@ job-seeker-ops/
 - Build on what's here instead of replacing it.
 - Log every change in `CHANGELOG.md`: what was added, changed or removed, and why.
 - Run plainspeak-writer's checker on every file you change.
-- Give every change to a shipped file a new version. Build the package from the release commit, so it matches the commit byte for byte: `git archive --format=zip --prefix=job-seeker-ops/ -o dist/job-seeker-ops.plugin HEAD .claude-plugin/plugin.json agents skills README.md CHANGELOG.md LICENSE`.
+- Give every change to a shipped file a new version, with its entry at the top of `CHANGELOG.md`.
+- Let the workflow publish the release. When a new version in `plugin.json` lands on main, `.github/workflows/release.yml` builds the package from that commit, checks it with `tests/unit/test_version.py`, and publishes it with the changelog entries since the last release as notes. It builds the package with the same command you'd run by hand, so the package matches the commit byte for byte: `git archive --format=zip --prefix=job-seeker-ops/ -o dist/job-seeker-ops.plugin HEAD .claude-plugin/plugin.json agents skills README.md CHANGELOG.md LICENSE`.
 - Never edit `skills/plainspeak-writer/` or `skills/resume-ops/` here. Change the skill in its own repository and release it there, then copy the release in with `python tools/sync_bundled.py <name> --repo <its clone> --ref <tag>`.
 
 **How the bundled copies stay exact.** `bundled.json` names the commit each copy came from, with a hash for every file. A unit test fails when a copy differs from those hashes, and when the skill's own repository sits beside this one, the test checks the hashes against that commit too. Each tool's own tests stay in its own repository, which runs them. The cover letter skill tells Claude to load the plainspeak-writer copy that sits beside its own folder.
