@@ -2,6 +2,24 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.4.8 · The README talks to the reader
+
+The owner found on October 10 that this README broke the voice rules the plugin ships with. plainspeak-writer's checker passed it, but reading it against `tells.md` and `voice.md` turned up what the checker can't see. The README never named the problem the plugin solves, and it called the reader "the person" 15 times. It used terms that only the plugin's own files define, such as "the four movements", "the second direction", "packet", "manifest", "keep-off list" and "first take", and it mixed file hashes and parser versions into the description of what the plugin does.
+
+Changed:
+
+- README: it opens on the problem, with the 53% callback figure from the field test and the 1-in-8 figure from plainspeak-writer's testing, then lists the five skills by what each one does. It talks to "you" throughout. Plain descriptions taken from `letter.md` and `format.md` replace the in-house terms. Mirrored and stacked lines, short flat lines and repeats are rewritten, and no sentence opens on "It" or "This" to point back at the one before.
+- README: the line "Version 0.4 holds five skills" is gone, since `plugin.json` and this log hold the version. "The second direction" is now "Checking against your case".
+- README: how `bundled.json` keeps the bundled copies exact moves from the section on those copies into Contributing.
+- README: two rules now match the reviewer's instructions in `agents/submission-reviewer.md`. Missing more than half the must-have requirements makes the verdict Rethink only when an AI grader is one of the readers, and findings past the fifth are listed in one line each.
+- `.claude-plugin/plugin.json`: version 0.4.8.
+
+Checked:
+
+- plainspeak-writer 1.7.2's checker, the copy in `skills/`, on the README's prose with its code blocks left out, and on this entry: no hard hits and no warnings.
+- Two readers who didn't write the draft, one checking its facts against the old README and the skill files, and one reading it for tells the way a skeptical visitor would, over two rounds each. Every line they quoted was cut or rewritten.
+- The unit tests: 184 of 185 pass on Linux with Python 3.13.16, once the package is built from the release commit and the repositories of plainspeak-writer and resume-ops sit beside this one. The one that fails, `test_discovery_counts_matching_copies_once_and_stops_on_copies_that_differ`, fails the same way on 0.4.7 in this cloud session. `find_voice_dirs` walks folders in the order the file system lists them, and this machine lists `synced` before `plainspeak-writer`, so the copy the test expects to keep isn't the one found first.
+
 ## 0.4.7 · claude.ai syncs plainspeak-writer from the marketplace
 
 The owner found on October 9 that the marketplace kept disappearing from the desktop app and had to be fixed on claude.ai. claude.ai's sync had skipped plainspeak-writer with this error: "Plugin 'plainspeak-writer' requires .claude-plugin/plugin.json or a top-level SKILL.md declaring plugin components (set strict: false in marketplace.json to use inline manifest)". plainspeak-writer's repository has a SKILL.md at its root and no plugin manifest. Claude Code loads that as one skill, but claude.ai's sync doesn't. The sync also hadn't run since the 0.4.5 commit, so the account install stayed on 0.4.5.
