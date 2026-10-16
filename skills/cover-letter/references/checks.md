@@ -17,12 +17,14 @@ Every letter passes all of these before the person sees it. Most run by script, 
 | No internal method name, only its plain description; no quote from a client or a colleague | Reading, with section 6's plain descriptions | Either one on the page |
 | The last paragraph opens on line 4 in first person, and the last sentence asks for a conversation about one named thing, in the writer's own words | `check_letter.py` warns, and reading decides | A thank-you or "look forward" close, an ask with no named thing, a stock opener such as "I'd like to talk about", or an ask that opens like the writer's last letter |
 | Body of 500 words or fewer, one page, one column, no letter text in a table, text box, header or footer | `check_letter.py` | Any of them |
+| An upload opens on two lines: the name, then the email and the phone from the resume | `check_letter.py` | A date, an address, a city, a link or a line naming the firm on top, or an email or phone the resume doesn't give |
 | plainspeak-writer's checker finds no HARD hits | `check_letter.py --voice` | A HARD hit |
 | Both swap tests come back no | Reading | A yes on either |
 | Every sentence from the person's earlier writing states a fact the three files hold and is still true, and no sentence repeats within the letter | `check_letter.py --sample` and `--compare`, then reading | A shared sentence with a fact the files don't hold, a stale count of years, a blocked sentence, or a sentence said twice |
-| submission-review says Send, or the person has the open findings after two reviews | Step 7 | A third review, or a draft shown before the review ran |
+| The red-team list is in the record under all seven headings before the review packet is built, and each finding was fixed by rewriting its paragraph | Step 7, with `check_positioning.py` for the headings | A missing heading, a packet built before the list, or a finding fixed by a patch |
+| submission-review says Send, or the person has the open findings after two reviews | Step 8 | A third review, or a draft shown before the review ran |
 
-Fix every FAIL. Fix every warning from either script, or clear it with a reason in the record's checks.
+Fix every FAIL. Fix every warning from either script, or clear it with a reason in the record's checks. A finding in the body is fixed by rewriting its whole paragraph from the fact list, then reading the whole letter again, never by changing the words it quotes. A finding in the header or the sign-off, like a phone that doesn't match, is fixed by copying the resume.
 
 ## Hard fails
 
@@ -54,7 +56,7 @@ List every sentence of the body beside the thing it names: a firm, a number, a t
 
 **Could another applicant send this letter?** This is the test for a form letter [C09]. Read each paragraph and ask whether it holds something only this writer did. The Proof always does. A Frame or a Fit that any applicant could write goes back to step 3.
 
-**Could the writer send it to another firm with the name swapped?** Put another firm's name in and read the Frame, the Fit and the Invitation again. Each one has to break: it names this firm's measure, its facts, its topic. A proof sentence the writer has used before can still pass this test, since call 5 lets it move, but those three can't.
+**Could the writer send it to another firm with the name swapped?** Put another firm's name in and read the Frame, the Fit and the Invitation again. Each one has to break: it names this firm's measure, its facts, its topic. A proof sentence the writer has used before can still pass this test, since call 4 lets it move, but those three can't.
 
 ## Sentences from earlier writing
 
@@ -64,6 +66,38 @@ List every sentence of the body beside the thing it names: a firm, a number, a t
 2. It's still true today: a count of years, "current", "now", "still" or a title gets checked against the dates in the files. The script flags these.
 3. It's in a Proof paragraph. A shared sentence in the Frame, the Fit or the Invitation fails, since those are written for each firm.
 
+## The red team
+
+After the checks by reading, and before the review packet is built, re-read the whole letter once as the hiring manager at the firm: start to finish, at the pace they'd read it, with none of the draft's notes in hand. Write every finding into the letter's record under `#### Red team`, with these seven headings in this order:
+
+| Heading | What it looks for |
+|---|---|
+| Thread between paragraphs | Each paragraph picks up where the last one left off, so the reader can say why it comes next. A paragraph that could move without losing anything has no thread |
+| Each sentence follows from the one before | No sentence starts a new subject without a link back, and the reader never has to look back to see what a sentence answers |
+| Resume restated in prose | A resume line told again as a sentence, instead of what it meant or its story. The script catches near-copies, and this catches the reworded ones |
+| Abstractions, hanging references and what-clauses | An abstract word where a thing should be ("impact", "alignment", "solutions"); a "this", "that" or "it" pointing at nothing the reader can name; a what-clause, like "What I bring is" |
+| Short flat lines after long ones | A short sentence that only repeats, sums up or punches the long one before it, like "It worked." A short sentence that adds a fact stays |
+| Targets written as results | A goal, a plan, a forecast or a "would" written as if it happened, or a number the writer aimed for given as one they reached. A result is only what a file shows happened |
+| The close | The last paragraph opens on line 4 said as "I", the last sentence asks about one named thing in the writer's words, and nothing trails after it |
+
+Each finding names its paragraph, quotes the words, says what's wrong and says which paragraph was rewritten. A heading with no finding reads "None." A finding can sit on its heading's line or on indented lines under it.
+
+**The fix is a rewrite, never a patch.** Rewrite the finding's whole paragraph from the fact list of step 4, in plainspeak-writer's voice: no swapped word, no cut clause, no sentence mended where it stands. A patch fixes the words the finding quotes and leaves the paragraph's reasoning as it was, which is usually where the problem started. Then run steps 5 and 6 again, and re-read the whole letter as the hiring manager. A new finding goes under its heading and gets the same fix. `check_positioning.py FILE` checks that all seven headings are there, and the review packet waits until they are.
+
+From the example letter's record, written about its first draft:
+
+```text
+#### Red team
+
+- **Thread between paragraphs:** Paragraph 3 went from Saturday crews to "I was Brightwell's inventory coordinator" with nothing joining them. Rewrote paragraph 3 from F3 and P3, so the warehouse years come in as the floor where a miss lands.
+- **Each sentence follows from the one before:** None.
+- **Resume restated in prose:** None.
+- **Abstractions, hanging references and what-clauses:** None.
+- **Short flat lines after long ones:** Paragraph 2, "It worked.", after the sentence on 52 weeks. Rewrote paragraph 2 from P1 and P2.
+- **Targets written as results:** Paragraph 3, "your terminal managers get the same weekly note", gave a plan as if it were running. Rewrote paragraph 3 from P2 and the posting's reporting duty, as what he'd do in the seat.
+- **The close:** None.
+```
+
 ## Warnings worth knowing
 
 - **"Follows resume line N closely."** A proof sentence that repeats the line's numbers will trip this. Read it: when it tells the result as a story and ends on what it produced, clear it with that reason. When it copies the line, rewrite it.
@@ -72,4 +106,4 @@ List every sentence of the body beside the thing it names: a firm, a number, a t
 
 ## When the person edits
 
-Their edit stands. Run both scripts on their version, export it, and tell them what the scripts found, so they decide with the facts in front of them. A hard fail in their version, like a placeholder or a wrong company name, still holds the Word file back, and the skill says which one and why. A third review runs only if they ask for one.
+Their edit stands, and the rewrite rule binds only the skill's own fixes, never the person's edits. Run both scripts on their version, export it, and tell them what the scripts found, so they decide with the facts in front of them. A hard fail in their version, like a placeholder or a wrong company name, still holds the Word file back, and the skill says which one and why. A third review runs only if they ask for one.

@@ -2,6 +2,34 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.5.0 · A two-line header, and a red-team read before review
+
+The owner reviewed the cover letter skill on October 16 and changed three things. The letter's header copied the resume's heading: the name in the resume's larger bold type, the full contact line, then the date. A business-letter block with the date and the firm's address was tried next and took twelve lines of a one-page letter, so the owner set a header of two lines: the name, then the email and the phone. The owner also asked for one careful read as the hiring manager before the blind review, since letters that pass the code checks can still have flaws a hiring manager would catch, and for every finding to be fixed by rewriting its paragraph instead of patching the words it quotes.
+
+Changed:
+
+- `skills/cover-letter/references/letter.md`: an uploaded letter opens on the two-line header, at the body's size and never bold, with a middle dot between the email and the phone. Nothing else goes on top: no date, address, city, link or line naming the firm. The upload form and the full example show it. Text box and email letters still have no header.
+- `scripts/build_letter.py` 0.4.0: sets the header at the resume's body size with no bold, so the name no longer takes the resume's name size. It refuses a letter with no header. The font and margins still come from the resume.
+- `scripts/check_letter.py` 0.5.0: on an upload, it fails a header that isn't two lines, any date or other line above the greeting, and a second line that holds anything besides the email and the phone. It warns when that line isn't the email, a middle dot, then the phone. The email and the phone still have to match the resume's. Before drafting, it prints the header to use, taken from the resume.
+- `skills/cover-letter/SKILL.md`: the fact list holds the name, email and phone instead of the contact block and today's date. Step 5's fixes and step 6's sentence list follow the rewrite rule below. The old steps 7 to 9 are now 8 to 10, and a review finding gets the same rewrite as a red-team finding.
+
+Added:
+
+- Step 7, the red team, in `SKILL.md` and `references/checks.md`. After the checks by reading, the writer reads the whole letter once as the hiring manager and writes every finding into the letter's record under seven fixed headings: thread between paragraphs; each sentence follows from the one before; resume restated in prose; abstractions, hanging references and what-clauses; short flat lines after long ones; targets written as results; and the close. `checks.md` says what each heading looks for and shows an example. Each finding's paragraph is rewritten from the fact list, steps 5 and 6 run again, and the whole letter is read again. The review packet waits until the list is in the record.
+- Call 12 in `SKILL.md`: a script finding never gets a local edit. Its paragraph is rewritten from the fact list and the whole letter read again. Header and sign-off fixes are copies from the resume, and the person's own edits stand as they made them.
+- `check_positioning.py` 0.5.0: a letter record past draft needs `#### Red team` with all seven headings, each holding its findings or "None." A list gets checked whenever it's there, so a missing heading shows up before the review packet. A record started before 2026-10-16 gets a warning for a missing list instead of a fail, so a positioning file holding an older finished letter still passes the check that opens every new letter. `format.md` describes the new part under "9. Letters".
+- Seven unit tests: the two-line header and what it fails and warns on, the Word file's header at the body's size with no bold even when the resume's name is larger and bold, the build's refusal without a header, and the red-team list's headings, its findings on indented lines, and the warning for an older record. Test 18 in `tests/RUN-TESTS-cover-letter.md` checks the list in a live run.
+
+Fixed:
+
+- `SKILL.md` and `checks.md` pointed to call 5 for the rule on sentences from earlier writing. That rule is call 4.
+
+Checked:
+
+- `check_letter.py` on the example letter with the new header: a body of 350 words and the same warnings as 0.4.9. plainspeak-writer 1.7.2's checker gives it no new warning.
+- The page estimate at Calibri 11 with one-inch margins: the example letter fills 66% of a page, down from 70%, and a 500-word body fills 89%.
+- The unit tests: 196 of 197 pass on Linux with Python 3.13, with the one failure the 0.4.8 entry describes.
+
 ## 0.4.9 · Releases publish themselves
 
 The owner moved this repository's work to Claude's cloud sessions on October 10. A cloud session can push to main, but GitHub refused its attempts to push the v0.4.8 tag and publish that release, so 0.4.8 never got one. A workflow on GitHub's side now publishes each release.

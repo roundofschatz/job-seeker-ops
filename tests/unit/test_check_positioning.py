@@ -67,16 +67,16 @@ def make_voice(root, checker):
 LETTER_RECORD = """
 ## 9. Letters
 
-### Letter 1 · Supply Chain Planning Analyst · 2026-10-07
+### Letter 1 · Supply Chain Planning Analyst · 2026-10-16
 
 - **Role:** Supply Chain Planning Analyst
-- **Date:** 2026-10-07
+- **Date:** 2026-10-16
 - **Channel:** upload
 - **Reader:** cold
 - **Resume:** resume.txt
 - **Voice samples:** none
 - **Status:** ready
-- **Built:** cover-letter 0.3.0
+- **Built:** cover-letter 0.5.0
 
 #### Map
 
@@ -89,6 +89,16 @@ LETTER_RECORD = """
 | Referral | None. The reader is cold. | Section 1, Reader |
 | Off the page | The freight concern, answered by the warehouse work in P3 | Section 7, concern; P3 |
 
+#### Red team
+
+- **Thread between paragraphs:** None.
+- **Each sentence follows from the one before:** None.
+- **Resume restated in prose:** None.
+- **Abstractions, hanging references and what-clauses:** None.
+- **Short flat lines after long ones:** Paragraph 2, "It worked." Rewrote paragraph 2 from P1 and P2.
+- **Targets written as results:** None.
+- **The close:** None.
+
 #### Checks
 
 - **Voice:** plainspeak-writer 1.6.2, letter surface, no HARD hits
@@ -98,7 +108,7 @@ LETTER_RECORD = """
 
 ```text
 Dmitri Okafor
-Kansas City, MO | (816) 555-0172 | dmitri.okafor@example.com
+dmitri.okafor@example.com · (816) 555-0172
 
 Dear Switchgrass Freight hiring team,
 
@@ -193,18 +203,53 @@ class ExampleTests(Base):
         self.assertEqual((letter["number"], letter["fields"]["Status"]), (1, "ready"))
         self.assertTrue(letter["text"].startswith("Dmitri Okafor"))
         self.assertEqual(len(letter["map"]), 6)
+        self.assertEqual(len(letter["red_team"]), 7)
+        self.assertTrue(letter["red_team"]["Short flat lines after long ones"].startswith("Paragraph 2"))
 
     def test_a_draft_record_needs_no_text_yet(self):
-        draft = LETTER_RECORD.split("#### Checks")[0].replace("- **Status:** ready", "- **Status:** draft")
+        draft = LETTER_RECORD.split("#### Red team")[0].replace("- **Status:** ready", "- **Status:** draft")
         self.write(example() + draft)
         code, out, _ = self.check()
         self.assertEqual(code, 0, out)
 
-    def test_a_finished_record_needs_its_text_and_checks(self):
-        self.write(example() + LETTER_RECORD.split("#### Checks")[0])
+    def test_a_finished_record_needs_its_red_team_text_and_checks(self):
+        self.write(example() + LETTER_RECORD.split("#### Red team")[0])
         code, out, _ = self.check()
+        self.assertFails(out, "needs '#### Red team' with its seven headings")
         self.assertFails(out, "needs '#### Checks'")
         self.assertFails(out, "needs '#### Text'")
+
+    def test_the_red_team_list_needs_every_heading(self):
+        self.write(example() + LETTER_RECORD.replace("- **Targets written as results:** None.\n", "")
+                   .replace("- **The close:** None.", "- **The close:**"))
+        code, out, _ = self.check()
+        self.assertFails(out, "red team needs '- **Targets written as results:** ...'")
+        self.assertFails(out, "says nothing under The close")
+
+    def test_a_draft_with_a_red_team_list_needs_every_heading_too(self):
+        self.write(example() + LETTER_RECORD.split("#### Checks")[0]
+                   .replace("- **Status:** ready", "- **Status:** draft")
+                   .replace("- **Resume restated in prose:** None.\n", ""))
+        code, out, _ = self.check()
+        self.assertFails(out, "red team needs '- **Resume restated in prose:** ...'")
+
+    def test_findings_can_sit_under_their_heading(self):
+        self.write(example() + LETTER_RECORD.replace(
+            "- **Thread between paragraphs:** None.",
+            "- **Thread between paragraphs:**\n  - Paragraph 3 went from Saturday crews to his old title. "
+            "Rewrote paragraph 3 from F3 and P3."))
+        code, out, _ = self.check("--json")
+        self.assertEqual(code, 0, out)
+        thread = json.loads(out)["letters"][0]["red_team"]["Thread between paragraphs"]
+        self.assertTrue(thread.startswith("- Paragraph 3"), thread)
+
+    def test_a_record_from_before_the_red_team_step_only_warns(self):
+        old = (LETTER_RECORD.replace("2026-10-16", "2026-10-07")
+               .split("#### Red team")[0] + "#### Checks" + LETTER_RECORD.split("#### Checks")[1])
+        self.write(example() + old)
+        code, out, _ = self.check()
+        self.assertEqual(code, 0, out)
+        self.assertIn("was written before the red-team step", out)
 
     def test_a_record_needs_every_line_and_every_map_row(self):
         broken = (LETTER_RECORD.replace("- **Channel:** upload\n", "")

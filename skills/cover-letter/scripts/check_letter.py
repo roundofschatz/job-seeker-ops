@@ -19,8 +19,9 @@ that plainspeak-writer's checker blocks.
 
 On a letter, it finds the header, the salutation, the body and the sign-off,
 counts the body's words and the letter's characters, and fails a placeholder,
-a sentence said twice, a body over 500 words, a header that doesn't match the
-resume's contact block, and a channel's broken rule. With the positioning file
+a sentence said twice, a body over 500 words, an upload header that isn't the
+name and then the email and the phone from the resume, and a channel's broken
+rule. With the positioning file
 it also checks every number, date and name in the body against the three
 files, a phrase from the keep-off list, a resume line restated, the firm or
 the seat in the first two sentences, a referral in them, an ask that opens on
@@ -47,7 +48,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 HERE = Path(__file__).resolve().parent
 CP_PATH = HERE.parents[1] / "candidate-positioning" / "scripts" / "check_positioning.py"
@@ -69,6 +70,8 @@ SUBJECT = re.compile(r"^\s*subject\s*:\s*(.*)$", re.I)
 # word characters can't make the pattern retry from every position.
 EMAIL = re.compile(r"(?<![\w.+-])[\w.+-]+@[\w-]+\.[\w.]+")
 PHONE = re.compile(r"(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}")
+# An upload letter's second line: the email, a middle dot, the phone.
+HEADER_LINE = re.compile(EMAIL.pattern + r" \u00b7 " + PHONE.pattern)
 PLACEHOLDERS = [
     (re.compile(r"\[[^\]\n]{0,80}\]"), "a bracketed slot"),
     (re.compile(r"\b(?:TK|TBD|FIXME|PLACEHOLDER)\b"), "a working marker"),
@@ -373,7 +376,7 @@ class Letter:
         self.parse()
         if suffix == ".docx" and self.salutation:
             # Lay a Word file out the way its text form is written, so the voice
-            # check reads the contact block and the sign-off as blocks, not as
+            # check reads the header and the sign-off as blocks, not as
             # one-line paragraphs.
             parts = ["\n".join(self.header)] if self.header else []
             parts += [self.date] if self.date else []
@@ -642,9 +645,9 @@ def check_shape(letter, rep, channel):
                          f"word for word: \"{s[:90]}\"")
             seen.setdefault(key, k)
     if channel == "textbox":
-        if letter.header:
+        if letter.header or letter.date:
             rep.warn("channel", "A text box letter starts at the salutation. The form already holds "
-                     "the contact details.")
+                     "the name, email and phone.")
         if re.search(r"\*\*|__", letter.raw) or re.search(r"(?m)^\s*(?:[-*•]|\d+[.)])\s", letter.raw):
             rep.fail("channel", "A text box drops bold and bullets. Write plain paragraphs.")
         curly = sorted({c for c in letter.raw if c in "".join(chr(x) for x in (0x201C, 0x201D, 0x2018, 0x2019))})
@@ -655,11 +658,34 @@ def check_shape(letter, rep, channel):
         if not letter.subject:
             rep.fail("channel", "An email letter needs a first line like 'Subject: Operations "
                      "Supervisor application'.")
-        if letter.header:
-            rep.warn("channel", "An email letter leaves out the contact block; the signature carries it.")
-    if channel == "upload" and not letter.header:
-        rep.fail("channel", "An upload letter opens with the contact block from the resume.")
+        if letter.header or letter.date:
+            rep.warn("channel", "An email letter leaves out the header; the signature carries it.")
+    if channel == "upload":
+        check_header(letter, rep)
     return True
+
+
+def check_header(letter, rep):
+    """An upload letter's header: the name on one line, then the email and the
+    phone. No date, address or recipient block, since the resume carries the rest."""
+    if not letter.header:
+        rep.fail("header", "An upload letter opens with the header: the name on one line, then the "
+                 "email and the phone, like 'dmitri.okafor@example.com · (816) 555-0172'.")
+        return
+    extra = ([letter.date] if letter.date else []) + letter.header[2:]
+    if extra:
+        rep.fail("header", "The header is two lines, the name and then the email and the phone, with "
+                 "no date, address or recipient. Take out: " + "; ".join(f"\"{t[:60]}\"" for t in extra) + ".")
+    if len(letter.header) < 2:
+        rep.fail("header", "The header needs its second line: the email and the phone from the resume.")
+        return
+    line = letter.header[1].translate(CURLY).strip()
+    left = re.sub(r"[\u00b7|\u2022,;/\s-]+", " ", PHONE.sub(" ", EMAIL.sub(" ", line))).strip()
+    if left:
+        rep.fail("header", f"The header's second line holds only the email and the phone. Take out \"{left[:60]}\".")
+    elif not HEADER_LINE.fullmatch(line):
+        rep.warn("header", f"The header's second line reads the email, a middle dot, then the phone, "
+                 f"like 'dmitri.okafor@example.com · (816) 555-0172': \"{line}\".")
 
 
 def check_limit(letter, rep, limit):
@@ -683,13 +709,13 @@ def check_against_resume(letter, src, rep, channel):
     if channel in ("textbox", "email") or not letter.header:
         return
     header = " ".join(letter.header)
-    if name and words_only(name) not in words_only(header):
-        rep.fail("resume", f"The header doesn't name \"{name}\" as the resume does.")
+    if name and words_only(name) not in words_only(letter.header[0]):
+        rep.fail("resume", f"The header's first line doesn't name \"{name}\" as the resume does.")
     theirs = " ".join(contact)
     for label, pat in (("email", EMAIL), ("phone", PHONE)):
         want = {re.sub(r"\D", "", x) if label == "phone" else x.lower() for x in pat.findall(theirs)}
         have = {re.sub(r"\D", "", x) if label == "phone" else x.lower() for x in pat.findall(header)}
-        if want != have:
+        if have - want or (want and not have):
             rep.fail("resume", f"The header's {label} doesn't match the resume's contact block "
                      f"({', '.join(sorted(have)) or 'none'} against {', '.join(sorted(want)) or 'none'}).")
 
@@ -1127,7 +1153,9 @@ def check_proofs(src, rep):
                          "cites, not the resume.")
     contact = src.resume_contact()
     if contact:
-        rep.info("gate", "The resume's contact block, for the letter's header: " + " / ".join(contact))
+        theirs = " ".join(contact)
+        line = " \u00b7 ".join(EMAIL.findall(theirs)[:1] + PHONE.findall(theirs)[:1])
+        rep.info("gate", f"The letter's header, from the resume: {src.resume_name()} / {line}")
 
 
 # The Word file

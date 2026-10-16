@@ -17,7 +17,7 @@ The word ranges are working budgets, and the 500-word cap is the rule. The Proof
 
 ## Around the body
 
-- **Header.** The resume's contact block, since the letter is formatted like the resume [C02, C05]: the name on its own line, then the contact line, with the same details the resume has. Then the date, written out ("October 7, 2026"). An uploaded letter has both; a text box and an email have neither.
+- **Header.** An uploaded letter opens on two lines at the body's size, never bold: the name, then the email and the phone with a middle dot between them, each written the way the resume writes it. A blank line, then the salutation. Nothing else goes on top: no date, no address, no city, no LinkedIn link and no block naming the firm. The resume already gives those, and the room goes to the letter. Two guides say to format the letter like the resume [C02, C05], so it takes the resume's font, size and margins, though not the resume's full heading. A text box and an email have no header.
 - **Salutation.** A person when the posting or the person names one, written "Dear Maria Lopez," or "Dear Ms. Lopez,". Otherwise the firm's hiring team: "Dear Switchgrass Freight hiring team," [C01, C05, C08, C18]. Never "To Whom It May Concern" [C01] and never "Dear Sir or Madam".
 - **Sign-off.** One plain word and a comma ("Best," or "Sincerely,"), then the name as the resume gives it, without credentials. No thank-you line before it, since the ask is the last sentence.
 
@@ -71,9 +71,7 @@ The draft is always kept as text, in the form the channel takes, and that same t
 
 ```text
 Dmitri Okafor
-Kansas City, MO | (816) 555-0172 | dmitri.okafor@example.com
-
-October 7, 2026
+dmitri.okafor@example.com · (816) 555-0172
 
 Dear Switchgrass Freight hiring team,
 
@@ -83,13 +81,13 @@ Best,
 Dmitri Okafor
 ```
 
-**Text box.** The salutation, the body, the sign-off and the name, pasted as plain text [C23], with no contact block or date, since the form holds those. Paragraphs split by a blank line, straight quotes, no bold, no bullets, and inside the box's character limit. `check_letter.py` counts every character a person pastes.
+**Text box.** The salutation, the body, the sign-off and the name, pasted as plain text [C23], with no header, since the form holds the name, email and phone. Paragraphs split by a blank line, straight quotes, no bold, no bullets, and inside the box's character limit. `check_letter.py` counts every character a person pastes.
 
-**Email.** The letter goes in the email's body, which more readers in one survey preferred to an attachment [C20]. The first line is the subject, naming the role: `Subject: Supply Chain Planning Analyst application`. Then the salutation, the body, the sign-off and the name, with no contact block, and a note to attach the resume.
+**Email.** The letter goes in the email's body, which more readers in one survey preferred to an attachment [C20]. The first line is the subject, naming the role: `Subject: Supply Chain Planning Analyst application`. Then the salutation, the body, the sign-off and the name, with no header, and a note to attach the resume.
 
 ## The record
 
-When the letter is done, the record in section 9 gets its status, its checks and its text, as `format.md` describes. The checks part lists each check with its result, and any warning cleared with its reason, so whoever opens the file later can see how the letter was checked.
+Before the review, the record gets the red-team list: every finding from re-reading the letter as the hiring manager, under seven fixed headings, with the paragraph each one sent back for a rewrite. `checks.md` has the headings and an example. When the letter is done, the record gets its status, its checks and its text, as `format.md` describes. The checks part lists each check with its result, and any warning cleared with its reason, so whoever opens the file later can see how the letter was checked.
 
 ## A full example
 
@@ -97,9 +95,7 @@ Writer B from the plugin's tests, Dmitri Okafor, writing to the made-up freight 
 
 ```text
 Dmitri Okafor
-Kansas City, MO | (816) 555-0172 | dmitri.okafor@example.com
-
-October 7, 2026
+dmitri.okafor@example.com · (816) 555-0172
 
 Dear Switchgrass Freight hiring team,
 

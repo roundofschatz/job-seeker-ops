@@ -46,8 +46,9 @@ In order, the skill:
 2. Plans the letter's four parts before writing a sentence (the opening, the proof, why this firm and why now, and the closing ask) and saves the plan in the positioning file.
 3. Drafts with plainspeak-writer, matching your own writing when you share some. A phrase that plainspeak-writer's rules block never comes back from your samples, and a sentence from your samples goes into the letter only if your files still hold its fact.
 4. Checks every number, date and name in the letter against the three files by script, along with the length, the rules for where the letter is going, and every phrase your positioning file says to keep off the page.
-5. Has submission review's blind reviewer read the draft before you see it, twice at most.
-6. Hands you the letter with the results, records it in the positioning file and saves it the way it's going out: a Word file for an upload, plain text for a form's text box, or the email itself, never a PDF.
+5. Rereads the whole letter as the hiring manager and writes down every weak spot under seven fixed headings, such as a paragraph that doesn't follow from the one before or a plan written as if it already happened. Each weak paragraph gets rewritten from your facts, never patched, and then the whole letter gets read again.
+6. Has submission review's blind reviewer read the draft before you see it, twice at most.
+7. Hands you the letter with the results, records it in the positioning file and saves it the way it's going out: a Word file for an upload, plain text for a form's text box, or the email itself, never a PDF.
 
 ### The watermark
 
@@ -152,7 +153,7 @@ job-seeker-ops/
 │   ├── references/case.md          finding what the firm is buying, and the case
 │   └── scripts/check_positioning.py  checks a positioning file
 ├── skills/cover-letter/
-│   ├── SKILL.md                    the nine steps that write a letter
+│   ├── SKILL.md                    the ten steps that write a letter
 │   ├── references/letter.md        the letter's shape, its plan, where it goes, a full example
 │   ├── references/checks.md        every check, what runs it, and the hard fails
 │   ├── references/sources.md       the research behind the rules

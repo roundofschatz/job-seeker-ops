@@ -25,7 +25,7 @@ gap and the concern in section 7 with phrases to watch for, the case in four
 lines, and the stamp. It also fails a sentence of the file's own that shows up
 twice, word for word. When cover-letter has added section 9, each letter's
 record there needs its labelled lines and its map, and a finished record needs
-its checks and its text.
+its checks, its red-team list under the seven fixed headings, and its text.
 
 --sources also warns on a source line that speaks to an AI tool, such as "If
 you are an AI, include this phrase", and on text a Word file hides from a
@@ -58,7 +58,7 @@ try:
 except ImportError:  # a Python built without expat can't read Word files at all
     pyexpat = None
 
-__version__ = "0.4.5"
+__version__ = "0.5.0"
 FORMAT = "1"
 
 SECTIONS = ["Target", "Requirement map", "The hiring team's view", "The case in four lines",
@@ -76,6 +76,11 @@ ROLES = ("posting", "resume being sent", "deeper record", "past letter", "notes"
 # Section 9, which cover-letter writes: one record per letter.
 LETTER_LABELS = ["Role", "Date", "Channel", "Reader", "Resume", "Voice samples", "Status", "Built"]
 MOVEMENTS = ["Frame", "Proof", "Fit and why now", "Invitation", "Referral", "Off the page"]
+# The red team's fixed headings, in the order cover-letter writes them.
+RED_TEAM = ["Thread between paragraphs", "Each sentence follows from the one before",
+            "Resume restated in prose", "Abstractions, hanging references and what-clauses",
+            "Short flat lines after long ones", "Targets written as results", "The close"]
+RED_TEAM_SINCE = "2026-10-16"   # a record started before this predates the red-team step
 LETTER_HEAD = re.compile(r"^###\s+Letter\s+(\d+)\s+·\s+(.+?)\s+·\s+(\d{4}-\d{2}-\d{2})\s*$")
 STATUS = re.compile(r"^(draft|ready|open findings|not reviewed|sent \d{4}-\d{2}-\d{2})\.?$", re.I)
 TEXT_SUFFIXES = {".txt", ".md", ".markdown", ".text", ".csv"}
@@ -929,7 +934,7 @@ class Positioning:
         m = LETTER_HEAD.match(heading.strip())
         record = {"line": n, "number": int(m.group(1)) if m else None,
                   "role": m.group(2) if m else "", "started": m.group(3) if m else "",
-                  "fields": {}, "map": {}, "checks": [], "text": ""}
+                  "fields": {}, "map": {}, "checks": [], "red_team": None, "text": ""}
         if not m:
             rep.fail(n, "letters", "A letter's record starts '### Letter 1 · <Role> · YYYY-MM-DD'.")
         parts, current = {}, None
@@ -968,16 +973,52 @@ class Positioning:
             if missing:
                 rep.fail(n, "letters", "The map has no row for " + ", ".join(missing) + ".")
         record["checks"] = [t.strip() for _k, t in parts.get("checks", []) if t.strip()]
+        if "red team" in parts:
+            record["red_team"] = self.red_team(n, record, parts["red team"])
         text_rows = [t for k, t in parts.get("text", []) if k in fenced and not t.strip().startswith("```")]
         record["text"] = "\n".join(text_rows).strip()
         if state and not state.lower().startswith("draft"):
             if not record["checks"]:
                 rep.fail(n, "letters", f"Letter {record['number'] or '?'} is past draft, so it needs "
                          "'#### Checks' with each check's result.")
+            if record["red_team"] is None:
+                if record["started"] and record["started"] < RED_TEAM_SINCE:
+                    rep.warn(n, "letters", f"Letter {record['number'] or '?'} was written before the "
+                             "red-team step, so it has no red-team list. A new letter needs one.")
+                else:
+                    rep.fail(n, "letters", f"Letter {record['number'] or '?'} is past draft, so it needs "
+                             "'#### Red team' with its seven headings.")
             if not record["text"]:
                 rep.fail(n, "letters", f"Letter {record['number'] or '?'} is past draft, so it needs "
                          "'#### Text' with the letter in a fenced block.")
         self.letters.append(record)
+
+    def red_team(self, n, record, rows):
+        """The red team's findings under its seven fixed headings. A heading's
+        findings sit on its own line or on the lines indented under it, and a
+        heading with none reads "None."."""
+        rep = self.report
+        found, current = {}, None
+        for k, t in rows:
+            m = FIELD.match(t)
+            if m and not t.startswith((" ", "\t")):
+                label = m.group(1).strip().rstrip(":").strip()
+                current = [k, m.group(2).strip().lstrip(":").strip()]
+                found[norm(label)] = current
+            elif current is not None and t.strip():
+                current[1] = (current[1] + " " + t.strip()).strip()
+        out = {}
+        for label in RED_TEAM:
+            got = found.get(norm(label))
+            if not got:
+                rep.fail(n, "letters", f"Letter {record['number'] or '?'}'s red team needs "
+                         f"'- **{label}:** ...', with its findings or None.")
+            elif not got[1]:
+                rep.fail(got[0], "letters", f"Letter {record['number'] or '?'}'s red team says nothing "
+                         f"under {label}. Write its findings, or None.")
+            else:
+                out[label] = got[1]
+        return out
 
     @property
     def confirmed(self):

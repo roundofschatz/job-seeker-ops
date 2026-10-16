@@ -16,7 +16,7 @@ Files: `posting.txt`, `resume.txt`, `firm-pages.md`, her confirmed positioning f
 
 **Test 9, review limit.** The posting requires an OSHA 30-hour card she doesn't have, so the AI grader is likely to mark it missing and the verdict likely won't be Send. The skill revises once at most for anything else, runs a second review with a fresh packet, and after two reviews hands over the draft with the open findings, and the letter never names the missing card.
 
-**Test 10, channels.** `Renata_Castillo_CoverLetter_IronwoodTrailSupply.docx`, with Calibri at 10.5 point and half-inch margins taken from her Word resume, the header matching that resume's contact block, "Renata Castillo" in the author field, and no PDF.
+**Test 10, channels.** `Renata_Castillo_CoverLetter_IronwoodTrailSupply.docx`, with Calibri at 10.5 point and half-inch margins taken from her Word resume, a two-line header at that size with her name and then the email and phone from that resume, with no date or address, "Renata Castillo" in the author field, and no PDF.
 
 ## cl-e2
 

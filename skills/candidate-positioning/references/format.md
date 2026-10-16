@@ -143,13 +143,14 @@ Each record starts `### Letter 1 · <Role> · YYYY-MM-DD`, with the letters numb
 
 A record is a draft while the map stands and the letter isn't finished. It's ready when the review said Send, or when the person took the letter as it stood. It reads open findings when two reviews still found something to fix, not reviewed when no reviewer was available, and sent once the person says the letter went out.
 
-Three parts follow, each under its own `####` heading:
+Four parts follow, each under its own `####` heading:
 
 - `#### Map`, a table with the columns `Movement`, `What it says` and `From`, and a row each for Frame, Proof, Fit and why now, Invitation, Referral and Off the page. `From` names the parts of this file the row draws on, such as `P1; P3` or `F2; section 3`. The Referral row reads "None." for a cold reader. The Off the page row names the concern and the proof that answers it without naming it.
+- `#### Red team`, written before the review: the findings from re-reading the letter as the hiring manager, under seven labelled lines in this order: `Thread between paragraphs`, `Each sentence follows from the one before`, `Resume restated in prose`, `Abstractions, hanging references and what-clauses`, `Short flat lines after long ones`, `Targets written as results` and `The close`. Each line holds its findings, on the line or indented under it, or "None." cover-letter's `references/checks.md` says what each heading looks for.
 - `#### Checks`, one line for each check with its result: the voice check, the body's word count, `check_letter.py`, the sentence list, the two swap tests, any sentence from the person's earlier writing, each review's verdict, what the posting says about AI, and the watermark notice given at hand-over.
 - `#### Text`, the letter as the person got it, word for word, in a fenced block that opens with three backticks and `text`.
 
-A draft record needs its labelled lines and its map. Past draft, it also needs its checks and its text. `check_positioning.py` checks both, and a heading inside the fenced text never counts as a record.
+A draft record needs its labelled lines and its map, and a red-team list, once there is one, needs all seven lines. Past draft, a record also needs its red-team list, its checks and its text. A record started before 2026-10-16, when the red-team step came in, gets a warning for a missing list instead of a fail. `check_positioning.py` checks all of this, and a heading inside the fenced text never counts as a record.
 
 ## A full example
 

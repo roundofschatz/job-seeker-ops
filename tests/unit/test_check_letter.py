@@ -140,12 +140,12 @@ class ExampleTests(Base):
         code, out, _ = self.check(letter=False)
         self.assertEqual(code, 0, out)
         self.assertIn("resume.txt is the resume the case was built from, unchanged", out)
-        self.assertIn("DMITRI OKAFOR / Kansas City, MO", out)
+        self.assertIn("The letter's header, from the resume: DMITRI OKAFOR / dmitri.okafor@example.com · (816) 555-0172", out)
 
     def test_parts(self):
         letter = cl.Letter(self.letter)
-        self.assertEqual(letter.header[0], "Dmitri Okafor")
-        self.assertEqual(letter.date, "October 7, 2026")
+        self.assertEqual(letter.header, ["Dmitri Okafor", "dmitri.okafor@example.com · (816) 555-0172"])
+        self.assertIsNone(letter.date)
         self.assertEqual(letter.salutation, "Dear Switchgrass Freight hiring team,")
         self.assertEqual((letter.sign_off, letter.name), ("Best", "Dmitri Okafor"))
         self.assertEqual(len(letter.paragraphs), 4)
@@ -262,7 +262,7 @@ class ShapeTests(Base):
         self.assertFails(out, "word for word")
 
     def test_over_the_cap_fails_and_under_the_floor_fails(self):
-        para = example_letter().split("\n\n")[5]
+        para = example_letter().split("\n\n")[4]
         self.edit(para, "\n\n".join([para] * 3))
         code, out, _ = self.check()
         self.assertFails(out, "over the 500-word cap")
@@ -282,6 +282,30 @@ class ShapeTests(Base):
         self.edit("Best,\nDmitri Okafor", "Best,\nDmitri O. Kafor")
         code, out, _ = self.check()
         self.assertFails(out, "The letter is signed \"Dmitri O. Kafor\"")
+
+    def test_the_header_is_the_name_then_the_email_and_the_phone(self):
+        line = "dmitri.okafor@example.com · (816) 555-0172"
+        self.edit(line + "\n", line + "\n\nOctober 7, 2026\n")
+        code, out, _ = self.check()
+        self.assertFails(out, "Take out: \"October 7, 2026\"")
+        self.write(example_letter())
+        self.edit(line + "\n", line + "\n\nHiring Team · Switchgrass Freight Co. · Kansas City, Missouri\n")
+        code, out, _ = self.check()
+        self.assertFails(out, "The header is two lines")
+        for extra in ("Kansas City, MO", "linkedin.com/in/dmitriokafor"):
+            self.write(example_letter())
+            self.edit(line, line + " · " + extra)
+            code, out, _ = self.check()
+            self.assertFails(out, "holds only the email and the phone")
+        self.write(example_letter())
+        self.edit(line, "(816) 555-0172 | dmitri.okafor@example.com")
+        code, out, _ = self.check()
+        self.assertEqual(code, 0, out)
+        self.assertIn("reads the email, a middle dot, then the phone", out)
+        self.write(example_letter())
+        self.edit(line + "\n", "")
+        code, out, _ = self.check()
+        self.assertFails(out, "needs its second line")
 
     def test_no_salutation_stops_the_checks(self):
         self.edit("Dear Switchgrass Freight hiring team,\n", "")
@@ -310,10 +334,16 @@ class ChannelTests(Base):
         self.assertFails(out, "drops bold and bullets")
         self.assertFails(out, "Use straight quotes")
 
-    def test_an_upload_letter_has_its_contact_block(self):
+    def test_an_upload_letter_has_its_header(self):
         self.text_box()
         code, out, _ = self.check("--channel", "upload")
-        self.assertFails(out, "opens with the contact block")
+        self.assertFails(out, "opens with the header")
+
+    def test_a_text_box_or_email_letter_has_no_header(self):
+        code, out, _ = self.check("--channel", "textbox")
+        self.assertIn("A text box letter starts at the salutation", out)
+        code, out, _ = self.check("--channel", "email")
+        self.assertIn("An email letter leaves out the header", out)
 
     def test_an_email_letter_has_a_subject(self):
         self.text_box()
@@ -327,7 +357,7 @@ class ChannelTests(Base):
 class ReuseTests(Base):
     def test_a_shared_frame_fails_and_a_shared_proof_is_listed(self):
         other = self.dir / "letter-other.txt"
-        first = example_letter().split("\n\n")[3]
+        first = example_letter().split("\n\n")[2]
         proof = "I rebuilt it in SQL and Excel and added store promotions as an input, since the old forecast never saw them."
         other.write_text("Dear Quillmoor Logistics hiring team,\n\n" + first + "\n\n" + proof +
                          "\n\nI'd like to talk.\n\nBest,\nDmitri Okafor\n", encoding="utf-8")
@@ -452,6 +482,9 @@ class WordTests(Base):
             self.assertEqual(set(archive.namelist()), set(bl.PARTS))
             core = archive.read("docProps/core.xml").decode("utf-8")
             app = archive.read("docProps/app.xml").decode("utf-8")
+            doc = archive.read("word/document.xml").decode("utf-8")
+        self.assertEqual(self.header_runs(doc), [("Dmitri Okafor", "22", False),
+                                                 ("dmitri.okafor@example.com · (816) 555-0172", "22", False)])
         self.assertIn("<dc:creator>Dmitri Okafor</dc:creator>", core)
         self.assertNotIn("<Application>", app)
         self.assertIn("Author: Dmitri Okafor", out)
@@ -462,6 +495,14 @@ class WordTests(Base):
         self.assertIn("Body: 350 words in 4 paragraph(s)", out)
         self.assertFalse(list((self.dir / "out").glob("*.pdf")))
 
+    def header_runs(self, doc):
+        """(text, half-point size, bold) for the Word file's first two paragraphs."""
+        out = []
+        for p in re.findall(r"<w:p>.*?</w:p>", doc)[:2]:
+            text = re.search(r"<w:t[^>]*>(.*?)</w:t>", p).group(1)
+            out.append((text, re.search(r'<w:sz w:val="(\d+)"', p).group(1), "<w:b/>" in p))
+        return out
+
     def test_the_word_file_takes_a_word_resume_look(self):
         resume = self.dir / "resume.docx"
         paras = [("Dmitri Okafor", 16, True, 0, 3), ("Kansas City, MO | (816) 555-0172", 10.5, False, 0, 3),
@@ -471,6 +512,17 @@ class WordTests(Base):
         code, out, _ = self.build("--resume", resume)
         self.assertEqual(code, 0, out)
         self.assertIn("the font, size and margins of resume.docx (Georgia 10.5 point)", out)
+        docx = self.dir / "out" / "Dmitri_Okafor_CoverLetter_SwitchgrassFreight.docx"
+        with zipfile.ZipFile(docx) as archive:
+            doc = archive.read("word/document.xml").decode("utf-8")
+        # The resume's name is 16 point and bold; the letter's header stays at the body's size.
+        self.assertEqual([(size, bold) for _t, size, bold in self.header_runs(doc)], [("21", False), ("21", False)])
+
+    def test_the_build_refuses_a_letter_with_no_header(self):
+        self.edit("Dmitri Okafor\ndmitri.okafor@example.com · (816) 555-0172\n\n", "")
+        code, out, _ = self.build()
+        self.assertEqual(code, 1)
+        self.assertIn("No header above the salutation", out)
 
     def test_the_build_refuses_a_placeholder_and_a_long_letter(self):
         self.edit("I find the input", "[your opener] I find the input")
@@ -478,7 +530,7 @@ class WordTests(Base):
         self.assertEqual(code, 1)
         self.assertIn("BUILD REFUSED", out)
         self.write(example_letter())
-        para = example_letter().split("\n\n")[5]
+        para = example_letter().split("\n\n")[4]
         self.edit(para, "\n\n".join([para] * 6))
         code, out, _ = self.build()
         self.assertIn("Cut words, not spacing", out)
