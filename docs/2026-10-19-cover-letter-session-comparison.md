@@ -23,12 +23,12 @@ The voice sample was a 3,000-word paper the owner wrote and published. Both tran
 | | A1 | A2 | A-final | B1 | B-final | Sample |
 |---|---|---|---|---|---|---|
 | Body words | 443 | 494 | 525 | 457 | 490 | 3,054 |
-| Mean sentence length | 20.1 | 23.5 | 26.2 | 19.9 | 24.6 | 25.9 |
-| Spread (standard deviation) | 8.2 | 7.5 | 9.4 | 6.0 | 5.2 | 12.7 |
-| Sentences of 10 words or fewer | 14% | 5% | 5% | 9% | 0% | 8.5% |
+| Mean sentence length | 20.1 | 23.5 | 26.2 | 19.9 | 24.6 | 24.4 |
+| Spread (standard deviation) | 8.2 | 7.5 | 9.4 | 6.0 | 5.2 | 11.2 |
+| Sentences of 10 words or fewer | 14% | 5% | 5% | 9% | 0% | 8% |
 | Rhetorical questions in the body | 0 | 2 | 2 | 0 | 0 | 3 |
 
-A-final is closer to the sample than B-final on mean, spread and short sentences. Matching the sample's sentence lengths didn't make the better letter.
+B-final matches the sample's average, but so does A2, which the owner called choppy, and A-final is closer to the sample on spread and short sentences. Matching the sample's average didn't make the better letter.
 
 ### Paragraphs
 
@@ -80,7 +80,7 @@ Each letter gets the five scores, a total out of 25 and one line on why, then th
 
 ## The changes
 
-Pending the owner's yes. 0.5.0 already added a red-team step and the rule that a finding gets a rewrite instead of a patch.
+The owner approved these on October 19, and they shipped in job-seeker-ops 0.6.0 and plainspeak-writer 1.8. 0.5.0 had already added a red-team step and the rule that a finding gets a rewrite instead of a patch.
 
 ### cover-letter
 
@@ -91,7 +91,7 @@ Pending the owner's yes. 0.5.0 already added a red-team step and the rule that a
 - **The red team moves before the scripts** and gains a heading for the claim: each paragraph's first sentence says what it answers, and every sentence after serves it.
 - **No fix splits a sentence or cuts a connecting word to meet a length or short-sentence rule,** and there's no trimming pass.
 - **A new upload header:** the date, the recipient on one line, a Re: line with the posting's title and its requisition number when the posting gives one, then the greeting. The sender's contact details stay on the resume.
-- **The length limit** is a question for the owner: one page measured on the Word file, with 350 to 450 words as a guide that never triggers a cut, or the 500-word cap kept with only the trimming pass dropped.
+- **The length limit:** one full page, with 350 to 450 words as a guide that never forces a cut. The 500-word cap is gone. The owner's ruling.
 
 ### plainspeak-writer (in its own repository, then copied in)
 
@@ -99,4 +99,4 @@ Pending the owner's yes. 0.5.0 already added a red-team step and the rule that a
 - **Changed:** every sentence after the first is about the paragraph's subject and picks up the sentence before. A bridge sentence that only points back doesn't count as a tie.
 - **Dropped:** a proposed rule against rhetorical questions opening a body paragraph. The sample opens on one, and nothing tied questions to the gap.
 - **Added:** state a letter's claim in the words of the writer's own material, never a coined phrase.
-- **A question for the owner, since it changes the checker:** with a writer's sample, V09's 24-word ceiling would become the sample's own average and the 10% short floor would come off, with the default kept for writers with no sample. Also, V04 counts a letter's header and greeting lines as one-sentence paragraphs; on letters it would read only the body, as V09 does.
+- **Changed in the checker, on the owner's ruling:** with 500 words or more of a writer's sample, V09's 24-word ceiling becomes the sample's own average and the 10% short floor comes off, with the default kept for writers with no sample. V04 on a letter reads only the body, as V09 does, so a letter's header and greeting no longer count as one-sentence paragraphs.

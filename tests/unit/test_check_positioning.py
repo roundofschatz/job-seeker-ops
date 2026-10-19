@@ -67,30 +67,32 @@ def make_voice(root, checker):
 LETTER_RECORD = """
 ## 9. Letters
 
-### Letter 1 · Supply Chain Planning Analyst · 2026-10-16
+### Letter 1 · Supply Chain Planning Analyst · 2026-10-19
 
 - **Role:** Supply Chain Planning Analyst
-- **Date:** 2026-10-16
+- **Date:** 2026-10-19
 - **Channel:** upload
 - **Reader:** cold
 - **Resume:** resume.txt
 - **Voice samples:** none
 - **Status:** ready
-- **Built:** cover-letter 0.5.0
+- **Built:** cover-letter 0.6.0
 
 #### Map
 
 | Movement | What it says | From |
 |---|---|---|
+| Claim | A forecast misses on an input nobody has named yet, and Dmitri finds it and fixes it | Section 3; section 4, lines 3 and 4 |
 | Frame | Last year's 24% miss, and the input it hides | Section 1, measure; section 3 |
 | Proof | The forecast rebuilt around store promotions, and the dashboard the buyers use | P1; P2 |
 | Fit and why now | Saturday dock shifts staffed from the weekly forecast | F3; section 3 |
-| Invitation | Line 4 in his voice, then the lanes that miss most | Section 4, line 4 |
+| Invitation | The ask alone: the lanes that miss most | Section 1, measure |
 | Referral | None. The reader is cold. | Section 1, Reader |
 | Off the page | The freight concern, answered by the warehouse work in P3 | Section 7, concern; P3 |
 
 #### Red team
 
+- **The claim:** None.
 - **Thread between paragraphs:** None.
 - **Each sentence follows from the one before:** None.
 - **Resume restated in prose:** None.
@@ -107,8 +109,10 @@ LETTER_RECORD = """
 #### Text
 
 ```text
-Dmitri Okafor
-dmitri.okafor@example.com · (816) 555-0172
+October 19, 2026
+
+Switchgrass Freight Co., Planning Team
+Re: Supply Chain Planning Analyst
 
 Dear Switchgrass Freight hiring team,
 
@@ -201,9 +205,9 @@ class ExampleTests(Base):
         code, out, _ = self.check("--json")
         letter = json.loads(out)["letters"][0]
         self.assertEqual((letter["number"], letter["fields"]["Status"]), (1, "ready"))
-        self.assertTrue(letter["text"].startswith("Dmitri Okafor"))
-        self.assertEqual(len(letter["map"]), 6)
-        self.assertEqual(len(letter["red_team"]), 7)
+        self.assertTrue(letter["text"].startswith("October 19, 2026"))
+        self.assertEqual(len(letter["map"]), 7)
+        self.assertEqual(len(letter["red_team"]), 8)
         self.assertTrue(letter["red_team"]["Short flat lines after long ones"].startswith("Paragraph 2"))
 
     def test_a_draft_record_needs_no_text_yet(self):
@@ -215,7 +219,7 @@ class ExampleTests(Base):
     def test_a_finished_record_needs_its_red_team_text_and_checks(self):
         self.write(example() + LETTER_RECORD.split("#### Red team")[0])
         code, out, _ = self.check()
-        self.assertFails(out, "needs '#### Red team' with its seven headings")
+        self.assertFails(out, "needs '#### Red team' with its 8 headings")
         self.assertFails(out, "needs '#### Checks'")
         self.assertFails(out, "needs '#### Text'")
 
@@ -244,12 +248,31 @@ class ExampleTests(Base):
         self.assertTrue(thread.startswith("- Paragraph 3"), thread)
 
     def test_a_record_from_before_the_red_team_step_only_warns(self):
-        old = (LETTER_RECORD.replace("2026-10-16", "2026-10-07")
+        old = (LETTER_RECORD.replace("2026-10-19", "2026-10-07")
                .split("#### Red team")[0] + "#### Checks" + LETTER_RECORD.split("#### Checks")[1])
         self.write(example() + old)
         code, out, _ = self.check()
         self.assertEqual(code, 0, out)
         self.assertIn("was written before the red-team step", out)
+
+    def test_a_record_from_before_the_claim_only_warns(self):
+        old = (LETTER_RECORD.replace("2026-10-19", "2026-10-16")
+               .replace("| Claim | A forecast misses on an input nobody has named yet, and Dmitri finds it and fixes it "
+                        "| Section 3; section 4, lines 3 and 4 |\n", "")
+               .replace("- **The claim:** None.\n", ""))
+        self.write(example() + old)
+        code, out, _ = self.check()
+        self.assertEqual(code, 0, out)
+        self.assertIn("was written before the map's Claim row", out)
+        self.assertIn("was written before the red team's claim heading", out)
+
+    def test_a_new_record_needs_its_claim(self):
+        self.write(example() + LETTER_RECORD.replace("- **The claim:** None.\n", "")
+                   .replace("| Claim | A forecast misses on an input nobody has named yet, and Dmitri finds it and "
+                            "fixes it | Section 3; section 4, lines 3 and 4 |\n", ""))
+        code, out, _ = self.check()
+        self.assertFails(out, "The map has no row for Claim")
+        self.assertFails(out, "red team needs '- **The claim:** ...'")
 
     def test_a_record_needs_every_line_and_every_map_row(self):
         broken = (LETTER_RECORD.replace("- **Channel:** upload\n", "")

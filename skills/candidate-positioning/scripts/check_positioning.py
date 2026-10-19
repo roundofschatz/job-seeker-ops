@@ -25,7 +25,7 @@ gap and the concern in section 7 with phrases to watch for, the case in four
 lines, and the stamp. It also fails a sentence of the file's own that shows up
 twice, word for word. When cover-letter has added section 9, each letter's
 record there needs its labelled lines and its map, and a finished record needs
-its checks, its red-team list under the seven fixed headings, and its text.
+its checks, its red-team list under the eight fixed headings, and its text.
 
 --sources also warns on a source line that speaks to an AI tool, such as "If
 you are an AI, include this phrase", and on text a Word file hides from a
@@ -58,7 +58,7 @@ try:
 except ImportError:  # a Python built without expat can't read Word files at all
     pyexpat = None
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 FORMAT = "1"
 
 SECTIONS = ["Target", "Requirement map", "The hiring team's view", "The case in four lines",
@@ -75,12 +75,13 @@ ROLES = ("posting", "resume being sent", "deeper record", "past letter", "notes"
          "firm pages", "rulings", "other")
 # Section 9, which cover-letter writes: one record per letter.
 LETTER_LABELS = ["Role", "Date", "Channel", "Reader", "Resume", "Voice samples", "Status", "Built"]
-MOVEMENTS = ["Frame", "Proof", "Fit and why now", "Invitation", "Referral", "Off the page"]
+MOVEMENTS = ["Claim", "Frame", "Proof", "Fit and why now", "Invitation", "Referral", "Off the page"]
 # The red team's fixed headings, in the order cover-letter writes them.
-RED_TEAM = ["Thread between paragraphs", "Each sentence follows from the one before",
+RED_TEAM = ["The claim", "Thread between paragraphs", "Each sentence follows from the one before",
             "Resume restated in prose", "Abstractions, hanging references and what-clauses",
             "Short flat lines after long ones", "Targets written as results", "The close"]
 RED_TEAM_SINCE = "2026-10-16"   # a record started before this predates the red-team step
+CLAIM_SINCE = "2026-10-19"      # a record started before this predates the Claim row and heading
 LETTER_HEAD = re.compile(r"^###\s+Letter\s+(\d+)\s+·\s+(.+?)\s+·\s+(\d{4}-\d{2}-\d{2})\s*$")
 STATUS = re.compile(r"^(draft|ready|open findings|not reviewed|sent \d{4}-\d{2}-\d{2})\.?$", re.I)
 TEXT_SUFFIXES = {".txt", ".md", ".markdown", ".text", ".csv"}
@@ -118,6 +119,12 @@ SUBHEAD = re.compile(r"^###\s+(.+?)\s*$")
 REF_TAIL = re.compile(r"L(?P<a>\d+)(?:-L?(?P<b>\d+))?(?:\s*\((?P<date>[^)]*)\))?$")
 ANSWER_REF = re.compile(r"^A\d+$")
 CURLY = str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'"})
+
+
+def before_claim(record):
+    """A letter record started before the map's Claim row and the red team's
+    claim heading came in, on 2026-10-19."""
+    return bool(record["started"]) and record["started"] < CLAIM_SINCE
 
 
 class InputError(Exception):
@@ -970,7 +977,10 @@ class Positioning:
                 if not cells[1]:
                     rep.fail(k, "letters", f"The map's {cells[0]} row says nothing.")
             missing = [mv for mv in MOVEMENTS if norm(mv) not in record["map"]]
-            if missing:
+            if missing == ["Claim"] and before_claim(record):
+                rep.warn(n, "letters", f"Letter {record['number'] or '?'} was written before the map's "
+                         "Claim row, so it has none. A new letter needs one.")
+            elif missing:
                 rep.fail(n, "letters", "The map has no row for " + ", ".join(missing) + ".")
         record["checks"] = [t.strip() for _k, t in parts.get("checks", []) if t.strip()]
         if "red team" in parts:
@@ -987,16 +997,17 @@ class Positioning:
                              "red-team step, so it has no red-team list. A new letter needs one.")
                 else:
                     rep.fail(n, "letters", f"Letter {record['number'] or '?'} is past draft, so it needs "
-                             "'#### Red team' with its seven headings.")
+                             f"'#### Red team' with its {len(RED_TEAM)} headings.")
             if not record["text"]:
                 rep.fail(n, "letters", f"Letter {record['number'] or '?'} is past draft, so it needs "
                          "'#### Text' with the letter in a fenced block.")
         self.letters.append(record)
 
     def red_team(self, n, record, rows):
-        """The red team's findings under its seven fixed headings. A heading's
+        """The red team's findings under its eight fixed headings. A heading's
         findings sit on its own line or on the lines indented under it, and a
-        heading with none reads "None."."""
+        heading with none reads "None.". A record started before the claim
+        heading came in gets a warning for that one heading instead of a fail."""
         rep = self.report
         found, current = {}, None
         for k, t in rows:
@@ -1010,7 +1021,10 @@ class Positioning:
         out = {}
         for label in RED_TEAM:
             got = found.get(norm(label))
-            if not got:
+            if not got and label == "The claim" and before_claim(record):
+                rep.warn(n, "letters", f"Letter {record['number'] or '?'} was written before the red "
+                         "team's claim heading, so it has none. A new letter needs one.")
+            elif not got:
                 rep.fail(n, "letters", f"Letter {record['number'] or '?'}'s red team needs "
                          f"'- **{label}:** ...', with its findings or None.")
             elif not got[1]:

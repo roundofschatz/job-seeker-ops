@@ -79,6 +79,9 @@ print("RESULT: PASS")
 '''
 
 
+HEADER = "October 19, 2026\n\nSwitchgrass Freight Co., Planning Team\nRe: Supply Chain Planning Analyst\n"
+
+
 class Base(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -131,21 +134,34 @@ class ExampleTests(Base):
     def test_the_example_letter_passes(self):
         code, out, _ = self.check()
         self.assertEqual(code, 0, out)
-        self.assertIn("Body: 350 words in 4 paragraph(s)", out)
+        self.assertIn("Body: 357 words in 4 paragraph(s)", out)
+        self.assertIn("About 0.70 of a page by estimate", out)
         self.assertIn("Paragraph 3 follows resume line 14 closely", out)
         self.assertIn("52 (paragraph 2) comes from P1's deeper record", out)
-        self.assertNotIn("stock phrase", out)
+        for words in ("stock phrase", "line 4 of the case", "sizes up the job", "[header]", "guide for what goes in"):
+            self.assertNotIn(words, out)
 
     def test_before_drafting(self):
         code, out, _ = self.check(letter=False)
         self.assertEqual(code, 0, out)
         self.assertIn("resume.txt is the resume the case was built from, unchanged", out)
-        self.assertIn("The letter's header, from the resume: DMITRI OKAFOR / dmitri.okafor@example.com · (816) 555-0172", out)
+        self.assertIn("The letter's header: the date it goes out, then the recipient on one line naming "
+                      "Switchgrass Freight Co. and the team or the person, then \"Re: Supply Chain Planning "
+                      "Analyst\". The sign-off name, from the resume: DMITRI OKAFOR.", out)
+
+    def test_before_drafting_gives_the_requisition_number(self):
+        with open(self.dir / "posting.txt", "a", encoding="utf-8") as f:
+            f.write("\nReq ID: SG-2026-118\n")
+        code, out, _ = self.check(letter=False)
+        self.assertIn("\"Re: Supply Chain Planning Analyst, Req ID SG-2026-118\"", out)
 
     def test_parts(self):
         letter = cl.Letter(self.letter)
-        self.assertEqual(letter.header, ["Dmitri Okafor", "dmitri.okafor@example.com · (816) 555-0172"])
-        self.assertIsNone(letter.date)
+        self.assertEqual(letter.header, ["Switchgrass Freight Co., Planning Team", "Re: Supply Chain Planning Analyst"])
+        self.assertEqual(letter.date, "October 19, 2026")
+        self.assertEqual(letter.recipient, ["Switchgrass Freight Co., Planning Team"])
+        self.assertEqual(letter.re_line, "Re: Supply Chain Planning Analyst")
+        self.assertEqual([i for i, _t in letter.top], [0, 1, 1])
         self.assertEqual(letter.salutation, "Dear Switchgrass Freight hiring team,")
         self.assertEqual((letter.sign_off, letter.name), ("Best", "Dmitri Okafor"))
         self.assertEqual(len(letter.paragraphs), 4)
@@ -183,10 +199,13 @@ class FactTests(Base):
 
     def test_a_wrong_company_fails(self):
         self.edit("Dear Switchgrass Freight hiring team,", "Dear Quillmoor Freight hiring team,")
-        self.edit("I can do that for Switchgrass's lanes", "I can do that for Quillmoor's lanes")
+        self.edit("Last year Switchgrass's forecasts", "Last year Quillmoor's forecasts")
+        self.edit("Switchgrass Freight Co., Planning Team", "Quillmoor Freight Co., Planning Team")
         code, out, _ = self.check()
         self.assertFails(out, "The salutation names \"Quillmoor Freight\"")
-        self.assertFails(out, "\"Quillmoor\" (paragraph 4) isn't in the three files")
+        self.assertFails(out, "\"Quillmoor\" (paragraph 1) isn't in the three files")
+        self.assertFails(out, "names \"Quillmoor Freight Co.\", which isn't in the three files")
+        self.assertIn("The recipient line names the firm, Switchgrass Freight Co.", out)
 
     def test_a_name_the_person_gave_passes_with_given(self):
         self.edit("Dear Switchgrass Freight hiring team,", "Dear Maria Lopez,")
@@ -201,14 +220,14 @@ class FactTests(Base):
         self.assertNotIn("Excel and Power BI", out)
 
     def test_a_stale_count_of_years_fails(self):
-        self.edit("I've done that work at Brightwell Grocers Distribution since 2021.",
-                  "I've done that work at Brightwell Grocers Distribution for eight years.")
+        self.edit("the work I've done at Brightwell Grocers Distribution since 2021,",
+                  "the work I've done at Brightwell Grocers Distribution for eight years,")
         code, out, _ = self.check()
         self.assertFails(out, "a count of 8 years that the three files don't give")
 
     def test_a_count_of_years_the_file_works_out_passes(self):
-        self.edit("I've done that work at Brightwell Grocers Distribution since 2021.",
-                  "I've done that work at Brightwell Grocers Distribution for about five years.")
+        self.edit("the work I've done at Brightwell Grocers Distribution since 2021,",
+                  "the work I've done at Brightwell Grocers Distribution for about five years,")
         code, out, _ = self.check()
         self.assertNotIn("count of 5 years", out)
 
@@ -239,6 +258,21 @@ class FactTests(Base):
         code, out, _ = self.check()
         self.assertIn("The last sentence should ask for a conversation", out)
 
+    def test_the_opening_never_tells_the_reader_their_own_posting(self):
+        self.edit("and a missed forecast meant idle docks", "and your posting puts the cost plainly: idle docks")
+        code, out, _ = self.check()
+        self.assertIn("The opening tells the reader how their own posting sizes up the job, \"your posting puts\"", out)
+        self.write(example_letter())
+        self.edit("Your planning analyst will build", "Your posting asks for an analyst who will build")
+        code, out, _ = self.check()
+        self.assertNotIn("sizes up the job", out)
+
+    def test_line_four_in_the_letter_warns(self):
+        self.edit("Could we set up a call", "I find the input behind a forecast miss and fix it, and I can do that "
+                  "for Switchgrass's lanes. Could we set up a call")
+        code, out, _ = self.check()
+        self.assertIn("Paragraph 4 says line 4 of the case", out)
+
     def test_a_stock_ask_warns(self):
         self.edit("Could we set up a call about the lanes your forecasts miss most, and which of those lanes "
                   "decide how many people you put on the Saturday docks at your six terminals?",
@@ -254,58 +288,108 @@ class ShapeTests(Base):
         self.assertFails(out, "a bracketed slot is still in the letter")
 
     def test_a_sentence_said_twice_fails(self):
-        self.edit("I find the input behind a forecast miss and fix it, and I can do that for Switchgrass's lanes.",
-                  "I find the input behind a forecast miss and fix it, and I can do that for Switchgrass's lanes. "
-                  "I rebuilt it in SQL and Excel and added store promotions as an input, since the old "
-                  "forecast never saw them.")
+        self.edit("Could we set up a call", "I rebuilt it in SQL and Excel and added store promotions as an input, "
+                  "since the old forecast never saw them. Could we set up a call")
         code, out, _ = self.check()
         self.assertFails(out, "word for word")
 
-    def test_over_the_cap_fails_and_under_the_floor_fails(self):
-        para = example_letter().split("\n\n")[4]
+    def test_past_one_page_fails_and_under_the_floor_fails(self):
+        para = example_letter().split("\n\n")[5]
         self.edit(para, "\n\n".join([para] * 3))
         code, out, _ = self.check()
-        self.assertFails(out, "over the 500-word cap")
+        self.assertFails(out, "One page is the limit")
+        self.assertIn("never the words that join one sentence to the next", out)
         self.write(example_letter().replace(para + "\n\n", ""))
         code, out, _ = self.check()
         self.assertFails(out, "under plainspeak-writer's floor of 250")
+
+    def test_a_long_body_on_one_page_only_reports_the_guide(self):
+        extra = " ".join(["the weekly forecast and its inputs"] * 18) + "."
+        self.edit("Could we set up a call", extra + "\n\nCould we set up a call")
+        code, out, _ = self.check()
+        self.assertIn("The body runs 465 words. 350 to 450 is a guide for what goes in, never a reason to cut", out)
+        self.assertNotIn("One page is the limit", out)
+        self.assertNotIn("[length]", out.split("WARN (")[0].split("INFO (")[0])
+
+    def test_the_page_takes_a_word_resume_look(self):
+        resume = self.dir / "resume.docx"
+        paras = [("Dmitri Okafor", 16, True, 0, 3), ("Kansas City, MO | (816) 555-0172", 10.5, False, 0, 3),
+                 ("Planning analyst who rebuilt a weekly forecast and cut its error from 31% to 19%.", 14, False, 0, 3)]
+        layout = dict(bl.DEFAULT, font="Georgia", size=14, margins=(2160, 2160, 2160, 2160))
+        resume.write_bytes(bl.docx_bytes(paras, layout, "Dmitri Okafor"))
+        code, out, _ = run(cl, [self.letter, "--positioning", self.pos, "--resume", resume, "--channel", "upload"])
+        self.assertFails(out, "Georgia 14 from resume.docx")
 
     def test_to_whom_it_may_concern_fails(self):
         self.edit("Dear Switchgrass Freight hiring team,", "To Whom It May Concern:")
         code, out, _ = self.check()
         self.assertFails(out, "name a person, or else the firm's hiring team")
 
-    def test_the_header_matches_the_resume(self):
-        self.edit("(816) 555-0172", "(816) 555-0199")
-        code, out, _ = self.check()
-        self.assertFails(out, "The header's phone doesn't match")
+    def test_the_sign_off_matches_the_resume(self):
         self.edit("Best,\nDmitri Okafor", "Best,\nDmitri O. Kafor")
         code, out, _ = self.check()
         self.assertFails(out, "The letter is signed \"Dmitri O. Kafor\"")
 
-    def test_the_header_is_the_name_then_the_email_and_the_phone(self):
-        line = "dmitri.okafor@example.com · (816) 555-0172"
-        self.edit(line + "\n", line + "\n\nOctober 7, 2026\n")
+    def test_the_old_two_line_header_fails(self):
+        self.edit(HEADER, "Dmitri Okafor\ndmitri.okafor@example.com · (816) 555-0172\n")
         code, out, _ = self.check()
-        self.assertFails(out, "Take out: \"October 7, 2026\"")
-        self.write(example_letter())
-        self.edit(line + "\n", line + "\n\nHiring Team · Switchgrass Freight Co. · Kansas City, Missouri\n")
+        self.assertFails(out, "The header carries no contact details, since the resume gives them. Take out: "
+                         "\"dmitri.okafor@example.com\"; \"(816) 555-0172\"")
+        self.assertFails(out, "The writer's name goes at the sign-off, not in the header")
+        self.assertFails(out, "starts with the date")
+        self.assertFails(out, "needs the recipient on one line")
+        self.assertFails(out, "needs a Re: line")
+        self.assertNotIn("The recipient line names the firm", out)
+
+    def test_the_header_is_the_date_the_recipient_and_the_re_line(self):
+        recipient = "Switchgrass Freight Co., Planning Team\n"
+        cases = [
+            ("October 19, 2026\n\n", "", "FAIL", "starts with the date"),
+            (recipient, recipient + "1200 Terminal Road, Kansas City, MO 64120\n", "FAIL",
+             "carries no contact details"),
+            (recipient, "Switchgrass Freight Co., Planning Team · linkedin.com/in/dmitriokafor\n", "FAIL",
+             "\"linkedin.com/in/dmitriokafor\""),
+            (recipient, "Maria Lopez\n" + recipient, "FAIL", "The recipient goes on one line"),
+            (recipient, "", "FAIL", "needs the recipient on one line"),
+            (recipient, "Planning Team\n", "WARN", "The recipient line names the firm"),
+            ("Re: Supply Chain Planning Analyst\n", "", "FAIL", "needs a Re: line"),
+            ("Re: Supply Chain Planning Analyst", "Re: Planning Analyst", "WARN",
+             "names the posting's title as it's written"),
+            ("Re: Supply Chain Planning Analyst", "Re: Supply Chain Planning Analyst, Req ID 4471", "FAIL",
+             "The Re: line's \"4471\" isn't in the posting"),
+            (recipient + "Re: Supply Chain Planning Analyst", "Re: Supply Chain Planning Analyst\n" +
+             recipient.strip(), "WARN", "The Re: line comes after the recipient line"),
+        ]
+        for old, new, kind, words in cases:
+            with self.subTest(words):
+                self.write(example_letter())
+                self.edit(old, new)
+                code, out, _ = self.check("--given", "Maria Lopez")
+                part = out.split("WARN (")[0] if kind == "FAIL" else out.split("INFO (")[0]
+                self.assertIn(kind, part, out)
+                self.assertIn(words, part, out)
+
+    def test_the_re_line_carries_the_requisition_number(self):
+        with open(self.dir / "posting.txt", "a", encoding="utf-8") as f:
+            f.write("\nReq ID: SG-2026-118\n")
         code, out, _ = self.check()
-        self.assertFails(out, "The header is two lines")
-        for extra in ("Kansas City, MO", "linkedin.com/in/dmitriokafor"):
-            self.write(example_letter())
-            self.edit(line, line + " · " + extra)
-            code, out, _ = self.check()
-            self.assertFails(out, "holds only the email and the phone")
-        self.write(example_letter())
-        self.edit(line, "(816) 555-0172 | dmitri.okafor@example.com")
+        self.assertIn("The posting gives Req ID SG-2026-118, and the Re: line leaves it out", out)
+        self.edit("Re: Supply Chain Planning Analyst", "Re: Supply Chain Planning Analyst, Req ID SG-2026-118")
         code, out, _ = self.check()
         self.assertEqual(code, 0, out)
-        self.assertIn("reads the email, a middle dot, then the phone", out)
-        self.write(example_letter())
-        self.edit(line + "\n", "")
-        code, out, _ = self.check()
-        self.assertFails(out, "needs its second line")
+        self.assertNotIn("[header]", out)
+
+    def test_req_ids(self):
+        cases = {
+            "Req ID: 20417": [("20417", "Req ID 20417")],
+            "Requisition #R-2026-114 is open.": [("R-2026-114", "Requisition R-2026-114")],
+            "Job ID JR0412": [("JR0412", "Job ID JR0412")],
+            "Requirements: three years of SQL.": [],
+            "Required: 5 years in planning.": [],
+        }
+        for text, want in cases.items():
+            with self.subTest(text):
+                self.assertEqual(cl.req_ids(text), want)
 
     def test_no_salutation_stops_the_checks(self):
         self.edit("Dear Switchgrass Freight hiring team,\n", "")
@@ -328,8 +412,8 @@ class ChannelTests(Base):
 
     def test_a_text_box_drops_bold_and_curly_quotes(self):
         self.text_box()
-        self.edit("I find the input", "I **find** the input")
-        self.edit("Switchgrass's lanes", "Switchgrass" + chr(0x2019) + "s lanes")
+        self.edit("I rebuilt it", "I **rebuilt** it")
+        self.edit("Switchgrass's forecasts", "Switchgrass" + chr(0x2019) + "s forecasts")
         code, out, _ = self.check("--channel", "textbox")
         self.assertFails(out, "drops bold and bullets")
         self.assertFails(out, "Use straight quotes")
@@ -357,7 +441,7 @@ class ChannelTests(Base):
 class ReuseTests(Base):
     def test_a_shared_frame_fails_and_a_shared_proof_is_listed(self):
         other = self.dir / "letter-other.txt"
-        first = example_letter().split("\n\n")[2]
+        first = example_letter().split("\n\n")[3]
         proof = "I rebuilt it in SQL and Excel and added store promotions as an input, since the old forecast never saw them."
         other.write_text("Dear Quillmoor Logistics hiring team,\n\n" + first + "\n\n" + proof +
                          "\n\nI'd like to talk.\n\nBest,\nDmitri Okafor\n", encoding="utf-8")
@@ -452,7 +536,7 @@ class AIPolicyTests(Base):
 
 class VoiceTests(Base):
     def test_the_voice_check_maps_hard_hits(self):
-        self.edit("I find the input", "I BADWORD find the input")
+        self.edit("I rebuilt it in SQL", "I BADWORD rebuilt it in SQL")
         code, out, _ = self.check("--voice", "--voice-dir", self.voice())
         self.assertFails(out, "[X01 test word]")
 
@@ -461,6 +545,30 @@ class VoiceTests(Base):
         code, out, _ = self.check("--voice", "--voice-dir", real)
         self.assertEqual(code, 0, out)
         self.assertIn("0 HARD hit(s)", out)
+
+    def test_the_samples_go_to_the_voice_check(self):
+        sample = self.dir / "essay.txt"
+        lines = [f"Planner {n} on the weekly forecast found that the late trailers at the north terminal came from "
+                 f"a shipper whose volume moved with the season, and the fix took a month of reading the "
+                 f"lane reports by hand." for n in range(1, 21)]
+        sample.write_text("\n\n".join(lines) + "\n", encoding="utf-8")
+        real = REPO / "skills" / "plainspeak-writer"
+        code, out, _ = self.check("--voice", "--voice-dir", real, "--sample", sample)
+        self.assertEqual(code, 0, out)
+        self.assertIn("sample: essay.txt", out)
+        self.assertIn("V09 follows it on letters", out)
+        self.assertNotIn("V09", out.split("INFO (")[0])
+
+    def test_a_checker_that_takes_no_samples_runs_without(self):
+        folder = self.voice()
+        (folder / "scripts" / "check_voice.py").write_text(
+            "import sys\nif '--sample' in sys.argv:\n    sys.stderr.write('error: unrecognized arguments: --sample')\n"
+            "    sys.exit(2)\n" + FAKE_CHECKER, encoding="utf-8")
+        sample = self.dir / "essay.txt"
+        sample.write_text("We plan the docks each week.\n", encoding="utf-8")
+        code, out, _ = self.check("--voice", "--voice-dir", folder, "--sample", sample)
+        self.assertEqual(code, 0, out)
+        self.assertIn("doesn't take samples", out)
 
     def test_without_voice_dir_the_check_uses_the_plugins_own_copy(self):
         code, out, _ = self.check("--voice")
@@ -483,8 +591,11 @@ class WordTests(Base):
             core = archive.read("docProps/core.xml").decode("utf-8")
             app = archive.read("docProps/app.xml").decode("utf-8")
             doc = archive.read("word/document.xml").decode("utf-8")
-        self.assertEqual(self.header_runs(doc), [("Dmitri Okafor", "22", False),
-                                                 ("dmitri.okafor@example.com · (816) 555-0172", "22", False)])
+        self.assertEqual(self.header_runs(doc), [("October 19, 2026", "22", False),
+                                                 ("Switchgrass Freight Co., Planning Team", "22", False),
+                                                 ("Re: Supply Chain Planning Analyst", "22", False)])
+        # A line's space after the date and after the Re: line, none between the recipient and the Re: line.
+        self.assertEqual(re.findall(r'w:after="(\d+)"', doc)[:3], ["220", "0", "220"])
         self.assertIn("<dc:creator>Dmitri Okafor</dc:creator>", core)
         self.assertNotIn("<Application>", app)
         self.assertIn("Author: Dmitri Okafor", out)
@@ -492,13 +603,13 @@ class WordTests(Base):
         self.assertNotIn(chr(0x2019), text)
         code, out, _ = run(cl, [docx, "--positioning", self.pos])
         self.assertEqual(code, 0, out)
-        self.assertIn("Body: 350 words in 4 paragraph(s)", out)
+        self.assertIn("Body: 357 words in 4 paragraph(s)", out)
         self.assertFalse(list((self.dir / "out").glob("*.pdf")))
 
     def header_runs(self, doc):
-        """(text, half-point size, bold) for the Word file's first two paragraphs."""
+        """(text, half-point size, bold) for the Word file's first three paragraphs."""
         out = []
-        for p in re.findall(r"<w:p>.*?</w:p>", doc)[:2]:
+        for p in re.findall(r"<w:p>.*?</w:p>", doc)[:3]:
             text = re.search(r"<w:t[^>]*>(.*?)</w:t>", p).group(1)
             out.append((text, re.search(r'<w:sz w:val="(\d+)"', p).group(1), "<w:b/>" in p))
         return out
@@ -516,21 +627,27 @@ class WordTests(Base):
         with zipfile.ZipFile(docx) as archive:
             doc = archive.read("word/document.xml").decode("utf-8")
         # The resume's name is 16 point and bold; the letter's header stays at the body's size.
-        self.assertEqual([(size, bold) for _t, size, bold in self.header_runs(doc)], [("21", False), ("21", False)])
+        self.assertEqual([(size, bold) for _t, size, bold in self.header_runs(doc)], [("21", False)] * 3)
 
     def test_the_build_refuses_a_letter_with_no_header(self):
-        self.edit("Dmitri Okafor\ndmitri.okafor@example.com · (816) 555-0172\n\n", "")
+        self.edit(HEADER + "\n", "")
         code, out, _ = self.build()
         self.assertEqual(code, 1)
-        self.assertIn("No header above the salutation", out)
+        self.assertIn("An upload letter opens with the header", out)
+        self.write(example_letter())
+        self.edit(HEADER, "Dmitri Okafor\ndmitri.okafor@example.com · (816) 555-0172\n")
+        code, out, _ = self.build()
+        self.assertEqual(code, 1)
+        self.assertIn("The header carries no contact details", out)
+        self.assertFalse((self.dir / "out").exists() and list((self.dir / "out").iterdir()))
 
     def test_the_build_refuses_a_placeholder_and_a_long_letter(self):
-        self.edit("I find the input", "[your opener] I find the input")
+        self.edit("I rebuilt it in SQL", "[your opener] I rebuilt it in SQL")
         code, out, _ = self.build()
         self.assertEqual(code, 1)
         self.assertIn("BUILD REFUSED", out)
         self.write(example_letter())
-        para = example_letter().split("\n\n")[4]
+        para = example_letter().split("\n\n")[5]
         self.edit(para, "\n\n".join([para] * 6))
         code, out, _ = self.build()
         self.assertIn("Cut words, not spacing", out)

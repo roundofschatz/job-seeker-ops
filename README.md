@@ -36,17 +36,17 @@ The skill uses your gaps, the doubts the hiring team would have about you and an
 
 ## Cover letter
 
-The cover letter skill writes one letter for one posting from three files: your positioning file, the posting and the resume you're sending with the letter. With your resume as the evidence, the letter answers why this firm, why this role and why now, and backs its answers with two or three named results. Your deeper record, such as a master resume or past letters, reaches the letter only through the positioning file. Without one, the skill offers to run candidate positioning first instead of working out a case of its own.
+The cover letter skill writes one letter for one posting from three files: your positioning file, the posting and the resume you're sending with the letter. With your resume as the evidence, the letter argues one claim about why you fit this firm's role now, and backs it with two or three named results. Your deeper record, such as a master resume or past letters, reaches the letter only through the positioning file. Without one, the skill offers to run candidate positioning first instead of working out a case of its own.
 
 The research behind the letter's rules is in `skills/cover-letter/references/sources.md`. Each source there has an ID in square brackets, like [C16] for the callback figure at the top, with its date, a grade for how strong it is, and a link.
 
 In order, the skill:
 
 1. Checks that the posting doesn't rule out AI-written materials, and that your positioning file is confirmed and current, holds two facts about the firm, and matches the resume going with the letter on every figure the letter will use.
-2. Plans the letter's four parts before writing a sentence (the opening, the proof, why this firm and why now, and the closing ask) and saves the plan in the positioning file.
+2. Plans the letter before writing a sentence: the one claim it argues, in words from your own material, then its four parts (the opening, the proof, why this firm and why now, and the closing ask), each one saying what part of the claim or which of the posting's asks it answers. The plan goes in the positioning file.
 3. Drafts with plainspeak-writer, matching your own writing when you share some. A phrase that plainspeak-writer's rules block never comes back from your samples, and a sentence from your samples goes into the letter only if your files still hold its fact.
-4. Checks every number, date and name in the letter against the three files by script, along with the length, the rules for where the letter is going, and every phrase your positioning file says to keep off the page.
-5. Rereads the whole letter as the hiring manager and writes down every weak spot under seven fixed headings, such as a paragraph that doesn't follow from the one before or a plan written as if it already happened. Each weak paragraph gets rewritten from your facts, never patched, and then the whole letter gets read again.
+4. Reads the whole draft as the hiring manager, before any script runs, and writes down every weak spot under eight fixed headings, such as a paragraph that answers nothing in the claim, a paragraph that doesn't follow from the one before or a plan written as if it already happened. Each weak paragraph gets rewritten from your facts, never patched, and then the whole letter gets read again.
+5. Checks every number, date and name in the letter against the three files by script, along with the header, the page, the rules for where the letter is going, and every phrase your positioning file says to keep off the page. One page is the limit; the 350 to 450 words the body aims for never call for a cut, and no fix splits a sentence or cuts the words that join one to the next.
 6. Has submission review's blind reviewer read the draft before you see it, twice at most.
 7. Hands you the letter with the results, records it in the positioning file and saves it the way it's going out: a Word file for an upload, plain text for a form's text box, or the email itself, never a PDF.
 
@@ -88,7 +88,7 @@ The verdict is Rethink when the first reaction sees no fit, when there are more 
 
 ## plainspeak-writer and resume-ops
 
-Candidate positioning, cover letter and submission review are this plugin's own skills. The cover letter skill can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both, and one install gives you all five. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.7.2 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.4. The plugin's scripts use the plugin's own copy of plainspeak-writer even when you have another installed, because the plugin is tested with that copy.
+Candidate positioning, cover letter and submission review are this plugin's own skills. The cover letter skill can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both, and one install gives you all five. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.8 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.4. The plugin's scripts use the plugin's own copy of plainspeak-writer even when you have another installed, because the plugin is tested with that copy.
 
 Either tool also installs on its own from this repository's marketplace, for a leaner setup. Pick one way to install each tool, because with a separate copy beside the plugin, Claude sees two skills with the same job and may load either. Remove the separate copy when you install the plugin.
 

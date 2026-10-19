@@ -19,17 +19,23 @@ that plainspeak-writer's checker blocks.
 
 On a letter, it finds the header, the salutation, the body and the sign-off,
 counts the body's words and the letter's characters, and fails a placeholder,
-a sentence said twice, a body over 500 words, an upload header that isn't the
-name and then the email and the phone from the resume, and a channel's broken
-rule. With the positioning file
-it also checks every number, date and name in the body against the three
-files, a phrase from the keep-off list, a resume line restated, the firm or
-the seat in the first two sentences, a referral in them, an ask that opens on
-a stock phrase, a blocked sentence from a voice sample, and sentences shared
-with another letter, along with an ask that opens the same way.
+a sentence said twice, a letter that runs past one page by estimate, an upload
+header that isn't the date, the recipient on one line and a Re: line, a header
+that carries the writer's contact details, and a channel's broken rule. The
+body's 350 to 450 words are a guide it reports and never fails. With the
+positioning file it also checks every number, date and name in the body and
+the header against the three files, the posting's title and requisition number
+in the Re: line, a phrase from the keep-off list, a resume line restated, the
+firm or the seat in the first two sentences, a referral in them, an opening
+that tells the reader how their own posting sizes up the job, line 4 of the
+case written into the letter, an ask that opens on a stock phrase, a blocked
+sentence from a voice sample, and sentences shared with another letter, along
+with an ask that opens the same way. With --voice and --sample, plainspeak-
+writer's checker reads the samples too, so its sentence-length rule follows
+the writer's own.
 
 On a Word file, it checks the author field, tables, text boxes, columns,
-headers and footers, and estimates whether the letter fits on one page.
+headers and footers, and whether the letter fits on one page.
 
 Exit code 0 means no FAIL, 1 means at least one, and 2 means the input needs
 fixing. Python 3.8 or newer, standard library only. It reads the positioning
@@ -48,7 +54,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 HERE = Path(__file__).resolve().parent
 CP_PATH = HERE.parents[1] / "candidate-positioning" / "scripts" / "check_positioning.py"
@@ -56,9 +62,9 @@ W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 TEXT_SUFFIXES = {".txt", ".md", ".markdown", ".text"}
 CURLY = str.maketrans({chr(0x201C): '"', chr(0x201D): '"', chr(0x2018): "'", chr(0x2019): "'"})
 
-MAX_WORDS = 500           # the body's hard cap, by code
-TARGET = (350, 450)       # the body's target range
+TARGET = (350, 450)       # the body's guide; it never calls for a cut, and one page is the limit
 FLOOR = 250               # plainspeak-writer's floor for a cover letter
+PAGE = (12240, 15840)     # US Letter, in twentieths of a point
 MIN_WORDS = 6             # a sentence this long or longer counts as said twice
 CHANNELS = ("upload", "textbox", "email")
 
@@ -70,8 +76,19 @@ SUBJECT = re.compile(r"^\s*subject\s*:\s*(.*)$", re.I)
 # word characters can't make the pattern retry from every position.
 EMAIL = re.compile(r"(?<![\w.+-])[\w.+-]+@[\w-]+\.[\w.]+")
 PHONE = re.compile(r"(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}")
-# An upload letter's second line: the email, a middle dot, the phone.
-HEADER_LINE = re.compile(EMAIL.pattern + r" \u00b7 " + PHONE.pattern)
+RE_LINE = re.compile(r"^\s*re\s*:\s*(.*)$", re.I)
+URL = re.compile(r"(?i)(?:\bhttps?://|\bwww\.)\S+|\b[\w-]+\.(?:com|org|net|io|me|dev|edu|gov|us)(?:/\S*)?\b")
+STREET = re.compile(r"\b\d{1,6}\s+(?:[A-Z][\w'-]*\s+){1,4}(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|"
+                    r"Drive|Dr|Lane|Ln|Way|Court|Ct|Place|Pl|Parkway|Pkwy|Suite|Ste)\b|\b\d{5}(?:-\d{4})?\b")
+STATE = re.compile(r",\s*(?:AL|AK|AZ|AR|CA|CO|CT|DE|DC|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|"
+                   r"MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\b")
+# A posting's requisition number, like "Req ID 20417" or "Job ID: JR-0412".
+REQ_ID = re.compile(r"\b(?:(?:req(?:uisition)?|job|posting|position|vacancy)\s*(?:id|no\.?|number|#)|"
+                    r"req(?:uisition)?)\s*[:#.]?\s*#?\s*([A-Z]{0,4}-?\d[\w-]{2,})", re.I)
+# An opening that tells the reader how their own posting sizes up the job.
+POSTING_MEASURE = re.compile(r"\b(?:your|the) (?:job )?(?:posting|listing|ad|advert|job description)(?:'s)?\b"
+                             r"[^.?!]{0,40}?\b(?:measures?|measured|sizes? up|defines?|frames?|judges?|puts|"
+                             r"own measure)\b|\bposting'?s own measure\b", re.I)
 PLACEHOLDERS = [
     (re.compile(r"\[[^\]\n]{0,80}\]"), "a bracketed slot"),
     (re.compile(r"\b(?:TK|TBD|FIXME|PLACEHOLDER)\b"), "a working marker"),
@@ -141,6 +158,7 @@ STARTERS = {w.lower() for w in (
     "One Two Three Four Five Six Seven Eight Nine Ten That's There's What's Let Once Because "
     "Although Though Even Still Yet Instead Rather Than Through During Within Between Among "
     "Thank Thanks Please Today Also Again Together Whether Until Unless About Like Just "
+    "Could Would Should Can Will Might Do Does Did Is Are Was Were Has Have Had "
     "Monday Tuesday Wednesday Thursday Friday Saturday Sunday").split()}
 HEADERS = {"summary", "professional summary", "profile", "experience", "work experience",
            "professional experience", "education", "skills", "certification", "certifications",
@@ -149,6 +167,9 @@ HEADERS = {"summary", "professional summary", "profile", "experience", "work exp
 # Average width of a character of English prose, as a share of the font size,
 # measured from the fonts' own files on 2026-10-07, and each font's single line
 # height as Word sets it. Fonts not listed use the widest.
+DEFAULT_LAYOUT = {"font": "Calibri", "size": 11.0, "margins": (1440, 1440, 1440, 1440)}
+# A font name goes into XML attributes; a name with other characters falls back to Calibri.
+FONT_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9 .-]{0,60}")
 FONT_WIDTH = {"calibri": 0.409, "arial": 0.448, "helvetica": 0.448, "georgia": 0.446,
               "times new roman": 0.408, "garamond": 0.40}
 LINE_HEIGHT = {"calibri": 1.22, "arial": 1.15, "helvetica": 1.15, "georgia": 1.14,
@@ -366,8 +387,11 @@ class Letter:
                 if line.strip():
                     self.lines.append((i, line.strip()))
         self.subject = None
-        self.header = []
+        self.top = []            # (paragraph index, line) above the salutation, in order
+        self.header = []         # those lines, without the date
         self.date = None
+        self.re_line = None
+        self.recipient = []
         self.salutation = None
         self.sign_off = None
         self.name = None
@@ -378,8 +402,10 @@ class Letter:
             # Lay a Word file out the way its text form is written, so the voice
             # check reads the header and the sign-off as blocks, not as
             # one-line paragraphs.
-            parts = ["\n".join(self.header)] if self.header else []
-            parts += [self.date] if self.date else []
+            groups = {}
+            for i, text in self.top:
+                groups.setdefault(i, []).append(text)
+            parts = ["\n".join(groups[i]) for i in sorted(groups)]
             parts += [self.salutation] + self.paragraphs
             if self.sign_off:
                 parts.append("\n".join([self.sign_off + ",", self.name] + self.after_name))
@@ -395,11 +421,16 @@ class Letter:
         if sal is None:
             return
         self.salutation = lines[sal][1]
-        for _i, text in lines[start:sal]:
-            if DATE_LINE.match(text):
+        self.top = list(lines[start:sal])
+        for _i, text in self.top:
+            if DATE_LINE.match(text) and self.date is None:
                 self.date = text
+                continue
+            self.header.append(text)
+            if RE_LINE.match(text) and self.re_line is None:
+                self.re_line = text
             else:
-                self.header.append(text)
+                self.recipient.append(text)
         close = None
         for k in range(len(lines)-1, sal, -1):
             if SIGN_OFF.match(lines[k][1]) and k+1 < len(lines) and len(lines)-k <= 5:
@@ -624,14 +655,12 @@ def check_shape(letter, rep, channel):
     if count < 4 or count > 6:
         rep.warn("shape", f"The body has {count} paragraph(s). Four movements fit in four to six.")
     words = letter.words
-    if words > MAX_WORDS:
-        rep.fail("length", f"The body runs {words} words, over the {MAX_WORDS}-word cap. Cut repeats "
-                 "and lists, never the names, the figures or the first-person verbs.")
-    elif words < FLOOR:
+    if words < FLOOR:
         rep.fail("length", f"The body runs {words} words, under plainspeak-writer's floor of {FLOOR} for "
                  "a cover letter.")
     elif not TARGET[0] <= words <= TARGET[1]:
-        rep.warn("length", f"The body runs {words} words. The target is {TARGET[0]} to {TARGET[1]}.")
+        rep.info("length", f"The body runs {words} words. {TARGET[0]} to {TARGET[1]} is a guide for what goes "
+                 "in, never a reason to cut: one page is the limit.")
     for pat, label in PLACEHOLDERS:
         for m in pat.finditer(letter.raw):
             rep.fail("placeholder", f"{label} is still in the letter: \"{m.group(0)[:60]}\". Fill it, "
@@ -660,32 +689,94 @@ def check_shape(letter, rep, channel):
                      "Supervisor application'.")
         if letter.header or letter.date:
             rep.warn("channel", "An email letter leaves out the header; the signature carries it.")
-    if channel == "upload":
-        check_header(letter, rep)
     return True
 
 
-def check_header(letter, rep):
-    """An upload letter's header: the name on one line, then the email and the
-    phone. No date, address or recipient block, since the resume carries the rest."""
-    if not letter.header:
-        rep.fail("header", "An upload letter opens with the header: the name on one line, then the "
-                 "email and the phone, like 'dmitri.okafor@example.com · (816) 555-0172'.")
+def req_ids(posting):
+    """The posting's requisition numbers, each as (the number, the posting's own
+    words for it, like 'Req ID 20417')."""
+    out = []
+    for m in REQ_ID.finditer(posting.translate(CURLY)):
+        shown = re.sub(r"\s*[:#]\s*", " ", m.group(0)).strip()
+        if m.group(1) not in [x[0] for x in out]:
+            out.append((m.group(1), re.sub(r"\s+", " ", shown)))
+    return out
+
+
+def check_header(letter, rep, src=None):
+    """An upload letter's header: the date, the recipient on one line, and a Re:
+    line with the posting's title and its requisition number when the posting
+    gives one. The writer's contact details stay on the resume, and the name
+    goes at the sign-off."""
+    if not letter.top:
+        rep.fail("header", "An upload letter opens with the header: the date, the recipient on one line, "
+                 "and a Re: line with the posting's title, like 'Re: Supply Chain Planning Analyst'.")
         return
-    extra = ([letter.date] if letter.date else []) + letter.header[2:]
-    if extra:
-        rep.fail("header", "The header is two lines, the name and then the email and the phone, with "
-                 "no date, address or recipient. Take out: " + "; ".join(f"\"{t[:60]}\"" for t in extra) + ".")
-    if len(letter.header) < 2:
-        rep.fail("header", "The header needs its second line: the email and the phone from the resume.")
+    pos = src.pos if src else None
+    company = pos.target.get("Company", {}).get("text", "") if pos else ""
+    role = pos.target.get("Role", {}).get("text", "") if pos else ""
+    names = {n for n in (letter.name, src.resume_name() if src and src.resume else "") if n}
+    contact, sender, carriers = [], [], set()
+    for _i, text in letter.top:
+        line = text.translate(CURLY)
+        found = EMAIL.findall(line)
+        line = EMAIL.sub(" ", line)
+        if RE_LINE.match(text):
+            # A Re: line holds the requisition number, which can look like a phone or a zip code.
+            found += URL.findall(line)
+        else:
+            found += PHONE.findall(line)
+            line = PHONE.sub(" ", line)
+            found += URL.findall(line) + [m.group(0) for m in STREET.finditer(line)]
+            found += [m.group(0).lstrip(", ") for m in STATE.finditer(line)]
+        contact += found
+        if found:
+            carriers.add(text)
+        if any(same_name(text, n) for n in names):
+            sender.append(text)
+    if contact:
+        rep.fail("header", "The header carries no contact details, since the resume gives them. Take out: "
+                 + "; ".join(f"\"{t.strip()[:60]}\"" for t in contact) + ".")
+    if sender:
+        rep.fail("header", f"The writer's name goes at the sign-off, not in the header. Take out \"{sender[0]}\".")
+    if not letter.date:
+        rep.fail("header", "The header starts with the date the letter goes out, like 'October 19, 2026'.")
+    elif letter.top[0][1] != letter.date:
+        rep.warn("header", "The date is the header's first line.")
+    # A line that's only the writer's name or contact details isn't the recipient.
+    recipient = [t for t in letter.recipient if t not in sender and not (t in carriers and not
+                 re.sub(r"[\u00b7|\u2022,;/\s-]+", "", URL.sub("", PHONE.sub("", EMAIL.sub("", t.translate(CURLY))))))]
+    if not recipient:
+        rep.fail("header", "The header needs the recipient on one line: the firm, and the team or the person, "
+                 "like 'Switchgrass Freight Co., Planning Team'.")
+    elif len(recipient) > 1:
+        rep.fail("header", "The recipient goes on one line, the firm and the team or the person, with no "
+                 "address. Take out: " + "; ".join(f"\"{t[:60]}\"" for t in recipient[1:]) + ".")
+    elif company:
+        lead = [w for w in company.split() if w.lower().strip(".,") not in LEGAL]
+        if lead and not re.search(r"(?<![\w])" + re.escape(lead[0]) + r"(?![\w])", recipient[0].translate(CURLY)):
+            rep.warn("header", f"The recipient line names the firm, {company}: \"{recipient[0]}\".")
+    if not letter.re_line:
+        rep.fail("header", "The header needs a Re: line with the posting's title"
+                 + (f", like 'Re: {role}'" if role else "") + ", and its requisition number when it gives one.")
         return
-    line = letter.header[1].translate(CURLY).strip()
-    left = re.sub(r"[\u00b7|\u2022,;/\s-]+", " ", PHONE.sub(" ", EMAIL.sub(" ", line))).strip()
-    if left:
-        rep.fail("header", f"The header's second line holds only the email and the phone. Take out \"{left[:60]}\".")
-    elif not HEADER_LINE.fullmatch(line):
-        rep.warn("header", f"The header's second line reads the email, a middle dot, then the phone, "
-                 f"like 'dmitri.okafor@example.com · (816) 555-0172': \"{line}\".")
+    if recipient and letter.top.index(next(x for x in letter.top if x[1] == letter.re_line)) < \
+            letter.top.index(next(x for x in letter.top if x[1] == recipient[0])):
+        rep.warn("header", "The Re: line comes after the recipient line.")
+    subject = RE_LINE.match(letter.re_line).group(1)
+    if role and words_only(role.split(",")[0]) not in words_only(subject):
+        rep.warn("header", f"The Re: line names the posting's title as it's written, {role}: \"{letter.re_line}\".")
+    posting = src.posting if src else ""
+    if posting:
+        ids = req_ids(posting)
+        if ids and not any(n.lower() in subject.lower() for n, _shown in ids):
+            rep.warn("header", f"The posting gives {ids[0][1]}, and the Re: line leaves it out. Add it after "
+                     "the title.")
+        given = posting.translate(CURLY).lower()
+        for token in re.findall(r"[\w-]*\d[\w-]*", subject.translate(CURLY)):
+            if token.lower() not in given:
+                rep.fail("header", f"The Re: line's \"{token}\" isn't in the posting. The title and the "
+                         "requisition number come from the posting as it writes them.")
 
 
 def check_limit(letter, rep, limit):
@@ -698,26 +789,14 @@ def check_limit(letter, rep, limit):
             rep.info("channel", f"{chars:,} characters, inside the limit of {limit:,}.")
 
 
-def check_against_resume(letter, src, rep, channel):
-    contact = src.resume_contact()
+def check_against_resume(letter, src, rep):
+    """The name at the sign-off, as the resume gives it."""
     name = src.resume_name()
-    if not contact:
-        rep.warn("resume", "Couldn't find the resume's contact block to compare the header with.")
+    if not name:
+        rep.warn("resume", "Couldn't find the name on the resume to compare the sign-off with.")
         return
-    if letter.name and name and not same_name(letter.name, name):
+    if letter.name and not same_name(letter.name, name):
         rep.fail("resume", f"The letter is signed \"{letter.name}\" and the resume says \"{name}\".")
-    if channel in ("textbox", "email") or not letter.header:
-        return
-    header = " ".join(letter.header)
-    if name and words_only(name) not in words_only(letter.header[0]):
-        rep.fail("resume", f"The header's first line doesn't name \"{name}\" as the resume does.")
-    theirs = " ".join(contact)
-    for label, pat in (("email", EMAIL), ("phone", PHONE)):
-        want = {re.sub(r"\D", "", x) if label == "phone" else x.lower() for x in pat.findall(theirs)}
-        have = {re.sub(r"\D", "", x) if label == "phone" else x.lower() for x in pat.findall(header)}
-        if have - want or (want and not have):
-            rep.fail("resume", f"The header's {label} doesn't match the resume's contact block "
-                     f"({', '.join(sorted(have)) or 'none'} against {', '.join(sorted(want)) or 'none'}).")
 
 
 def phrases(run):
@@ -763,6 +842,15 @@ def check_facts(letter, src, rep, given=()):
             rep.fail("names", f"The salutation names \"{run}\", which isn't in the three files. A wrong "
                      "company or person in the greeting blocks the letter; a name the person gave in "
                      "the session goes in with --given.")
+    for line in letter.recipient + ([letter.re_line] if letter.re_line else []):
+        # The requisition number is checked against the posting in check_header.
+        plain = REQ_ID.sub(" ", RE_LINE.sub(r"\1", line))
+        plain = re.sub(r"\b(?:hiring|search|recruiting)?\s*(?:team|manager|committee|panel)\b", " ", plain, flags=re.I)
+        for run, _loose in name_runs(plain):
+            gone = missing_names(re.sub(r"^(?:Mr|Mrs|Ms|Mx|Dr)\.?\s+", "", run), lower, given)
+            if gone and run.lower() not in {"mr", "mrs", "ms", "mx", "dr"}:
+                rep.fail("names", f"The header's \"{line[:60]}\" names \"{run}\", which isn't in the three "
+                         "files. A name the person gave in the session goes in with --given.")
     for k, s in letter.sentences():
         digits, spelled = numbers(s)
         items = [(n, "number", True) for n in sorted(digits)] + [(n, "number", False) for n in sorted(spelled-digits)]
@@ -845,6 +933,17 @@ def check_opening(letter, src, rep, referral):
                  f"them early: {company or role}.")
     if referral and words_only(referral) not in low:
         rep.fail("opening", f"The referral, {referral}, belongs in the first two sentences.")
+    measure = POSTING_MEASURE.search(letter.paragraphs[0].translate(CURLY)) if letter.paragraphs else None
+    if measure:
+        rep.warn("opening", f"The opening tells the reader how their own posting sizes up the job, "
+                 f"\"{measure.group(0)}\". They wrote it. Open on the fact itself.")
+    line4 = pos.case.get("What the reader should believe", {}).get("text", "") if pos else ""
+    theirs = words_only(line4).split()
+    if len(theirs) >= 8:
+        for k, s in sentences:
+            if lcs(words_only(s).split(), theirs) / len(theirs) >= 0.6:
+                rep.warn("close", f"Paragraph {k} says line 4 of the case: \"{s[:90]}\". Line 4 is what the "
+                         "letter argues, never a sentence in it, and the close is the ask alone.")
     if sentences:
         last = sentences[-1][1]
         if not ASK_WORDS.search(last):
@@ -898,22 +997,34 @@ def find_voice(cp, voice_dir):
     return cp.locate_voice_dir()
 
 
-def run_voice(folder, text, surface="letter", keep=()):
+def run_voice(folder, text, surface="letter", keep=(), samples=(), notes=None):
     """plainspeak-writer's checker on a text. Returns (hard, warn, version) where
-    each hit is (line, message)."""
+    each hit is (line, message). With samples, the checker reads them too, so
+    its sentence-length rule follows the writer's own; a checker too old to take
+    them runs without, and notes says so. notes also gets the checker's line
+    about the samples."""
     checker = folder / "scripts" / "check_voice.py"
+    env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUTF8="1")
     with tempfile.TemporaryDirectory() as tmp:
         piece = Path(tmp) / "piece.txt"
         piece.write_bytes(text.encode("utf-8"))
-        args = [sys.executable, str(checker), "--surface", surface, str(piece)]
+        base = [sys.executable, str(checker), "--surface", surface]
         if keep:
-            args[2:2] = ["--keep", ",".join(keep)]
-        env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUTF8="1")
-        proc = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                              env=env, timeout=120)
+            base += ["--keep", ",".join(keep)]
+        extra = [a for s in samples for a in ("--sample", str(Path(s).resolve()))]
+        proc = subprocess.run(base + extra + [str(piece)], capture_output=True, text=True, encoding="utf-8",
+                              errors="replace", env=env, timeout=120)
+        if extra and proc.returncode == 2 and "--sample" in (proc.stderr or ""):
+            if notes is not None:
+                notes.append("This copy of plainspeak-writer's checker doesn't take samples, so its "
+                             "sentence-length rule kept its default.")
+            proc = subprocess.run(base + [str(piece)], capture_output=True, text=True, encoding="utf-8",
+                                  errors="replace", env=env, timeout=120)
     if proc.returncode not in (0, 1):
         raise InputError("plainspeak-writer's checker stopped with an error: "
                          + (proc.stderr or proc.stdout).strip()[-200:])
+    if notes is not None:
+        notes += [line.strip() for line in proc.stdout.splitlines() if line.startswith("sample: ")]
     hard, warn, section = [], [], None
     for raw in proc.stdout.splitlines():
         if raw.startswith("HARD FAIL"):
@@ -1034,12 +1145,15 @@ def check_compare(letter, src, rep, other_path):
                      f"\"{' '.join(mine[-1][1].split()[:4])}\". Write each letter's ask for its firm.")
 
 
-def check_voice_on(letter, rep, voice, keep):
+def check_voice_on(letter, rep, voice, keep, samples=()):
     if not voice:
         rep.warn("voice", "plainspeak-writer wasn't found, so the voice check didn't run. Point "
                  "--voice-dir at the folder that holds its SKILL.md.")
         return
-    hard, warn, version = run_voice(voice, letter.voice_text, "letter", keep)
+    notes = []
+    hard, warn, version = run_voice(voice, letter.voice_text, "letter", keep, samples, notes)
+    for note in notes:
+        rep.info("voice", note)
     for line, msg in hard:
         rep.fail("voice", f"L{line}: {msg}")
     for line, msg in warn:
@@ -1151,11 +1265,13 @@ def check_proofs(src, rep):
             else:
                 rep.info("gate", f"{p['id']}'s {part} gives {', '.join(missing)} from the deeper record it "
                          "cites, not the resume.")
-    contact = src.resume_contact()
-    if contact:
-        theirs = " ".join(contact)
-        line = " \u00b7 ".join(EMAIL.findall(theirs)[:1] + PHONE.findall(theirs)[:1])
-        rep.info("gate", f"The letter's header, from the resume: {src.resume_name()} / {line}")
+    company = src.pos.target.get("Company", {}).get("text", "")
+    role = src.pos.target.get("Role", {}).get("text", "")
+    ids = req_ids(src.posting) if src.posting else []
+    re_line = f"Re: {role}" + (f", {ids[0][1]}" if ids else "")
+    rep.info("gate", f"The letter's header: the date it goes out, then the recipient on one line naming "
+             f"{company} and the team or the person, then \"{re_line}\". The sign-off name, from the "
+             f"resume: {src.resume_name()}.")
 
 
 # The Word file
@@ -1278,6 +1394,80 @@ def estimate_pages(paras, font, margins, page):
     return used/avail, lines
 
 
+def resume_layout(path):
+    """Font, body size and margins, from a Word resume. A text resume has none
+    of these, so the defaults stand."""
+    layout = dict(DEFAULT_LAYOUT, source="defaults")
+    if not path or Path(path).suffix.lower() != ".docx":
+        return layout
+    cp = cp_module()
+    try:
+        cp.check_expat()
+        with zipfile.ZipFile(path) as archive:
+            doc = ET.fromstring(cp.read_part(archive, "word/document.xml", Path(path).name))
+            styles = ET.fromstring(cp.read_part(archive, "word/styles.xml", Path(path).name))
+    except (zipfile.BadZipFile, KeyError, ET.ParseError, cp.InputError):
+        return layout
+    fonts = styles.find(f"{W}docDefaults/{W}rPrDefault/{W}rPr/{W}rFonts")
+    if fonts is not None and FONT_NAME.fullmatch(fonts.get(W + "ascii") or ""):
+        layout["font"] = fonts.get(W + "ascii")
+    sz = styles.find(f"{W}docDefaults/{W}rPrDefault/{W}rPr/{W}sz")
+    if sz is not None:
+        layout["size"] = int(sz.get(W + "val")) / 2
+    sizes = [(text, size) for text, size, _before, _after in layout_paragraphs(doc, None)
+             if text.strip() and size is not None]
+    if sizes:
+        body = [s for t, s in sizes[1:] if len(t.split()) > 8]
+        if body:
+            layout["size"] = max(set(body), key=body.count)
+    mar = doc.find(f".//{W}sectPr/{W}pgMar")
+    if mar is not None:
+        layout["margins"] = tuple(int(mar.get(W + k, 1440)) for k in ("top", "right", "bottom", "left"))
+    layout["source"] = Path(path).name
+    return layout
+
+
+def letter_layout(letter, layout):
+    """(text, size, bold, space before, space after) for each paragraph of the
+    letter as the Word file sets it, in points. The header's lines keep the
+    grouping the text gives them, with a line's space after each group, all at
+    the body's size and never bold."""
+    size = layout["size"]
+    out = []
+    top = letter.top
+    for k, (group, line) in enumerate(top):
+        last = k == len(top)-1 or top[k+1][0] != group
+        out.append((line, size, False, 0, size if last else 0))
+    out.append((letter.salutation, size, False, 0, size))
+    for para in letter.paragraphs:
+        out.append((para, size, False, 0, size))
+    if letter.sign_off:
+        out.append((letter.sign_off + ",", size, False, 0, 0))
+    if letter.name:
+        out.append((letter.name, size, False, 0, 0))
+    for line in letter.after_name:
+        out.append((line, size, False, 0, 0))
+    return out
+
+
+def check_page(letter, rep, layout):
+    """One page is the limit, estimated with the resume's font, size and margins."""
+    paras = letter_layout(letter, layout)
+    pages, lines = estimate_pages([(t, s, b, a) for t, s, _bold, b, a in paras], layout["font"],
+                                  layout["margins"], PAGE)
+    where = f"{layout['font']} {layout['size']:g}" + (f" from {layout['source']}" if layout["source"] != "defaults"
+                                                       else " with one-inch margins")
+    if pages > 1:
+        rep.fail("length", f"The letter fills about {pages:.2f} pages by estimate ({lines} lines, {where}). "
+                 "One page is the limit. Cut words, not spacing: take out a whole proof or a point the letter "
+                 "can lose, never the words that join one sentence to the next.")
+    elif pages > 0.95:
+        rep.warn("length", f"About {pages:.2f} pages by estimate ({lines} lines, {where}), close to the edge. "
+                 "The Word file's check counts its pages.")
+    else:
+        rep.info("length", f"About {pages:.2f} of a page by estimate ({lines} lines, {where}).")
+
+
 def check_docx(path, rep, expected_name, render=True):
     cp = cp_module()
     try:
@@ -1337,13 +1527,13 @@ def check_docx(path, rep, expected_name, render=True):
         # LibreOffice's layout is close to Word's, so it decides over the estimate.
         if rendered > 1:
             rep.fail("word", f"LibreOffice lays it out on {rendered} pages. A letter fits on one page; cut words, "
-                     "not spacing.")
+                     "not spacing, and never the words that join one sentence to the next.")
         else:
             rep.info("word", f"LibreOffice lays it out on one page. The estimate is {pages:.2f} of a page "
                      f"({lines} lines, {font.title()}). Word's layout is close to LibreOffice's, not identical.")
     elif pages > 1:
         rep.fail("word", f"About {pages:.2f} pages by estimate ({lines} lines). A letter fits on one page; "
-                 "cut words, not spacing.")
+                 "cut words, not spacing, and never the words that join one sentence to the next.")
     elif pages > 0.95:
         rep.warn("word", f"About {pages:.2f} pages by estimate, close to the edge. Open it in Word to see the break.")
     else:
@@ -1403,7 +1593,9 @@ def parser():
     ap.add_argument("--channel", choices=CHANNELS, help="upload, textbox or email (default: the file's)")
     ap.add_argument("--limit", type=int, help="a text box's character limit")
     ap.add_argument("--referral", help="the referrer's name, for a warm reader (default: the file's)")
-    ap.add_argument("--sample", action="append", default=[], help="a voice sample the person picked; repeat for more")
+    ap.add_argument("--sample", action="append", default=[],
+                    help="a voice sample the person picked; repeat for more. With --voice, plainspeak-writer's "
+                         "checker reads it too")
     ap.add_argument("--compare", action="append", default=[], help="another letter by the same writer")
     ap.add_argument("--voice", action="store_true", help="run plainspeak-writer's checker on the letter")
     ap.add_argument("--voice-dir", help="the plainspeak-writer folder, when it isn't found on its own")
@@ -1452,9 +1644,13 @@ def main(argv=None):
         rep.info("letter", f"Body: {letter.words} words in {len(letter.paragraphs)} paragraph(s). "
                  f"Letter: {letter.characters:,} characters. Channel: {channel or 'not given'}.")
         if check_shape(letter, rep, channel):
+            if channel == "upload":
+                check_header(letter, rep, src)
             check_limit(letter, rep, limit)
+            if path.suffix.lower() != ".docx":
+                check_page(letter, rep, resume_layout(src.resume_path if src else None))
             if src and src.resume:
-                check_against_resume(letter, src, rep, channel)
+                check_against_resume(letter, src, rep)
             if src and src.pos:
                 check_facts(letter, src, rep, tuple(args.given))
                 check_restated(letter, src, rep)
@@ -1474,7 +1670,8 @@ def main(argv=None):
             expected = args.name or (src.resume_name() if src and src.resume else None) or letter.name
             check_docx(path, rep, expected, render=not args.no_render)
         if args.voice:
-            check_voice_on(letter, rep, voice, tuple(t.strip() for v in args.keep for t in v.split(",") if t.strip()))
+            check_voice_on(letter, rep, voice, tuple(t.strip() for v in args.keep for t in v.split(",") if t.strip()),
+                           args.sample)
     except InputError as exc:
         print(f"The letter can't be checked, because {exc}", file=sys.stderr)
         return 2

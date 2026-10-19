@@ -6,12 +6,13 @@ writer's name in the author field.
     python build_letter.py letter.txt --positioning positioning-silver-larch-...md \\
         --resume Nadia-Haddad-Resume.docx --out .
 
-The letter's text is the upload form: the header (the name, then the email
-and the phone), the salutation, the body, the sign-off and the name, with a
-blank line between paragraphs. The Word file takes the resume's font, size and
-margins when the resume is a Word file; from a text resume it uses Calibri 11
-with one-inch margins and says so. The header is set at the body's size and
-never bold. The file is named FirstName_LastName_CoverLetter_Company.docx,
+The letter's text is the upload form: the header (the date, the recipient on
+one line and the Re: line), the salutation, the body, the sign-off and the
+name, with a blank line between paragraphs. The Word file takes the resume's
+font, size and margins when the resume is a Word file; from a text resume it
+uses Calibri 11 with one-inch margins and says so. The header is set at the
+body's size and never bold, with its lines grouped the way the text groups
+them. The file is named FirstName_LastName_CoverLetter_Company.docx,
 and a plain-text copy with straight quotes goes beside it for pasting. The
 company comes from the positioning file's heading, so a posting's words never
 have to go into a command; --company gives it by hand.
@@ -20,8 +21,8 @@ It never makes a PDF. When a posting asks for one, the person exports it from
 the Word file.
 
 The build refuses, and writes nothing, when the letter has no salutation or
-sign-off, holds a placeholder, has no header, or runs past one page by
-estimate, and when the Word file or its text copy already exists, unless
+sign-off, holds a placeholder, has a header that isn't the date, the recipient
+and the Re: line, or runs past one page by estimate, and when the Word file or its text copy already exists, unless
 --replace says to write over them. After writing, it checks the file with
 check_letter.py, which counts its pages with LibreOffice when it's installed.
 
@@ -37,10 +38,9 @@ import re
 import sys
 import zipfile
 from pathlib import Path
-from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 HERE = Path(__file__).resolve().parent
 _spec = importlib.util.spec_from_file_location("check_letter", HERE / "check_letter.py")
@@ -51,69 +51,16 @@ W = cl.W
 NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
 NS_R = 'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
 XML_HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-DEFAULT = {"font": "Calibri", "size": 11.0, "margins": (1440, 1440, 1440, 1440)}
+DEFAULT = cl.DEFAULT_LAYOUT
 SERIF = {"georgia", "garamond", "times new roman"}
-# A font name goes into XML attributes; a name with other characters falls back to Calibri.
-FONT_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9 .-]{0,60}")
 STRAIGHT = str.maketrans({chr(0x201C): '"', chr(0x201D): '"', chr(0x2018): "'", chr(0x2019): "'"})
 
 
-# The resume's look
+# The resume's look and the paragraphs, shared with check_letter.py so the
+# check and the build lay the letter out the same way.
 
-def resume_layout(path):
-    """Font, body size and margins, from a Word resume. A text resume has none
-    of these, so the defaults stand."""
-    layout = dict(DEFAULT, source="defaults")
-    if not path or Path(path).suffix.lower() != ".docx":
-        return layout
-    cp = cl.cp_module()
-    try:
-        cp.check_expat()
-        with zipfile.ZipFile(path) as archive:
-            doc = ET.fromstring(cp.read_part(archive, "word/document.xml", Path(path).name))
-            styles = ET.fromstring(cp.read_part(archive, "word/styles.xml", Path(path).name))
-    except (zipfile.BadZipFile, KeyError, ET.ParseError, cp.InputError):
-        return layout
-    fonts = styles.find(f"{W}docDefaults/{W}rPrDefault/{W}rPr/{W}rFonts")
-    if fonts is not None and FONT_NAME.fullmatch(fonts.get(W + "ascii") or ""):
-        layout["font"] = fonts.get(W + "ascii")
-    sz = styles.find(f"{W}docDefaults/{W}rPrDefault/{W}rPr/{W}sz")
-    if sz is not None:
-        layout["size"] = int(sz.get(W + "val")) / 2
-    sizes = [(text, size) for text, size, _before, _after in cl.layout_paragraphs(doc, None)
-             if text.strip() and size is not None]
-    if sizes:
-        body = [s for t, s in sizes[1:] if len(t.split()) > 8]
-        if body:
-            layout["size"] = max(set(body), key=body.count)
-    mar = doc.find(f".//{W}sectPr/{W}pgMar")
-    if mar is not None:
-        layout["margins"] = tuple(int(mar.get(W + k, 1440)) for k in ("top", "right", "bottom", "left"))
-    layout["source"] = Path(path).name
-    return layout
-
-
-# The paragraphs
-
-def paragraphs(letter, layout):
-    """(text, size, bold, space before, space after) for each paragraph, in points."""
-    size = layout["size"]
-    out = []
-    # The header is the letter's own first lines, not the resume's heading: the
-    # name and then the email and the phone, at the body's size and never bold.
-    header = letter.header
-    for k, line in enumerate(header):
-        out.append((line, size, False, 0, size if k == len(header)-1 else 0))
-    if letter.date:
-        out.append((letter.date, size, False, 0, size))
-    out.append((letter.salutation, size, False, 0, size))
-    for para in letter.paragraphs:
-        out.append((para, size, False, 0, size))
-    out.append((letter.sign_off + ",", size, False, 0, 0))
-    out.append((letter.name, size, False, 0, 0))
-    for line in letter.after_name:
-        out.append((line, size, False, 0, 0))
-    return out
+resume_layout = cl.resume_layout
+paragraphs = cl.letter_layout
 
 
 def attr(value):
@@ -322,9 +269,10 @@ def main(argv=None):
         reasons.append("No salutation, like 'Dear Ironwood Trail hiring team,'.")
     if not letter.sign_off or not letter.name:
         reasons.append("No sign-off and name at the end.")
-    if not letter.header:
-        reasons.append("No header above the salutation. An uploaded letter opens with the name, then "
-                       "the email and the phone from the resume.")
+    if letter.salutation:
+        header = cl.Report()
+        cl.check_header(letter, header)
+        reasons += [msg for _tag, msg in header.fails]
     for pat, label in cl.PLACEHOLDERS:
         for m in pat.finditer(letter.raw):
             reasons.append(f"{label} is still in the letter: \"{m.group(0)[:60]}\".")
@@ -334,10 +282,11 @@ def main(argv=None):
     layout = resume_layout(args.resume)
     paras = paragraphs(letter, layout)
     pages, lines = cl.estimate_pages([(t, s, b, a) for t, s, _bold, b, a in paras],
-                                     layout["font"], layout["margins"], (12240, 15840))
+                                     layout["font"], layout["margins"], cl.PAGE)
     if pages > 1:
         return refuse([f"The letter fills about {pages:.2f} pages by estimate ({lines} lines). Cut words, "
-                       "not spacing, until it fits on one page."])
+                       "not spacing, until it fits on one page, and never the words that join one sentence "
+                       "to the next."])
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     stem = file_stem(name, company)
