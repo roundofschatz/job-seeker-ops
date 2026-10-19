@@ -22,7 +22,7 @@
     },
     {
       "name": "plainspeak-writer",
-      "version": "1.7.2",
+      "version": "1.8",
       "description": "Plain-voice writing on its own: writes and rewrites prose so it reads like a sharp human writer, matched to your own writing when you share some. Already included in job-seeker-ops, so skip this if you install that.",
       "author": {
         "name": "Ryan Schatzman",
@@ -36,7 +36,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/roundofschatz/plainspeak-writer.git",
-        "ref": "v1.7.2"
+        "ref": "v1.8.0"
       }
     }
   ]

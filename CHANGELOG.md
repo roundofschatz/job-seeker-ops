@@ -2,6 +2,19 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.1 · plainspeak-writer's copy on its release tag
+
+The owner made the `v1.8.0` tag on plainspeak-writer's repository on October 19, at commit 0ce6ad6, the commit 0.6.0 copied. A cloud session can't make tags, so 0.6.0 had to copy the commit and leave the marketplace's own plainspeak-writer entry at 1.7.2.
+
+Changed:
+
+- `bundled.json`: the copy of plainspeak-writer now names its release, `v1.8.0`, instead of the bare commit. Its files are the same, byte for byte.
+- `.claude-plugin/marketplace.json`: the plainspeak-writer entry, for installing it on its own, moves to 1.8 and the `v1.8.0` tag.
+
+Checked:
+
+- The unit tests: 207 of 209 pass on Linux with Python 3.13. One is skipped, since LibreOffice isn't installed, and one fails, the one the 0.4.8 entry describes. The marketplace check that failed in 0.6.0 passes.
+
 ## 0.6.0 · One claim, a business-letter header, and one page as the limit
 
 On October 16 the owner had two sessions write a cover letter for the same posting from the same files, and judged one letter far better than the other. A comparison of their five drafts, made October 19 and kept in `docs/2026-10-19-cover-letter-session-comparison.md`, found four things. The better letter argued one claim and kept each paragraph on it. Two of this skill's own rules wrote the same weak opening and the same summary close into both first drafts. Every draft the owner called choppy had been cut or split to meet a number. And the better letter's session read the draft as the reader before any script ran. The owner approved the changes below on October 19. He set one full page as the letter's limit, with 350 to 450 words as a guide that never forces a cut, and ruled on the header: the date, the recipient on one line, and a Re: line with the posting's title and its requisition number, the way the letter he sent reads. That header replaces 0.5.0's two lines.
@@ -30,7 +43,7 @@ Checked:
 
 - The new example letter: a body of 357 words on about 0.70 of a page, with the same two cleared warnings as before. plainspeak-writer 1.8's checker finds no HARD hit. With no sample it warns on V09, which the record clears by reading, since the example has no sample to set the rule.
 - The old example letter, with the new header: it gets both new warnings, on "your posting puts" and on line 4 in the close.
-- The unit tests: 207 of 209 pass on Linux with Python 3.13. One failure is the one the 0.4.8 entry describes. The other is the marketplace check, which wants the standalone plainspeak-writer entry on the copy's tag, and passes once `v1.8.0` exists and the entry points at it.
+- The unit tests: 206 of 209 pass on Linux with Python 3.13, and one is skipped, since LibreOffice isn't installed. One failure is the one the 0.4.8 entry describes. The other is the marketplace check, which wants the standalone plainspeak-writer entry on the copy's tag, and passes once `v1.8.0` exists and the entry points at it.
 
 ## 0.5.0 · A two-line header, and a red-team read before review
 

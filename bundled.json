@@ -4,7 +4,7 @@
     "plainspeak-writer": {
       "version": "1.8",
       "repository": "https://github.com/roundofschatz/plainspeak-writer",
-      "ref": "0ce6ad6a7ebb7fb9b0ee35f505ed76b90924db98",
+      "ref": "v1.8.0",
       "commit": "0ce6ad6a7ebb7fb9b0ee35f505ed76b90924db98",
       "source": ".",
       "left_out": [
