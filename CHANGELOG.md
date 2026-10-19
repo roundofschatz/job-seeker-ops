@@ -2,6 +2,20 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.2 · plainspeak-writer 1.8.1: two words to spare on a writer's own sentence length
+
+The owner ruled on October 19 that a letter may run two words over the average sentence length of the writer's own sample. With the owner's paper as the sample, 1.8's V09 had warned on the letter he judged best, at 24.5 words a sentence against the paper's 24.4.
+
+Changed:
+
+- The copy of plainspeak-writer, to 1.8.1 from its `v1.8.1` tag. With a sample of 500 words or more, V09 warns only when a letter's body averages more than two words longer than the sample's sentences, and the report's sample line gives that limit. With no sample, its reports match 1.8's apart from the version line.
+- `.claude-plugin/marketplace.json`: the plainspeak-writer entry, for installing it on its own, moves to 1.8.1 and its tag. `README.md` names 1.8.1.
+- `tools/sync_bundled.py`: leaves plainspeak-writer's `.github/` folder out of the copy. That repository now publishes its own releases from GitHub's side, as this one does, so a version no longer waits for a tag made by hand.
+
+Checked:
+
+- The unit tests: 207 of 209 pass on Linux with Python 3.13. One is skipped, since LibreOffice isn't installed, and one fails, the one the 0.4.8 entry describes.
+
 ## 0.6.1 · plainspeak-writer's copy on its release tag
 
 The owner made the `v1.8.0` tag on plainspeak-writer's repository on October 19, at commit 0ce6ad6, the commit 0.6.0 copied. A cloud session can't make tags, so 0.6.0 had to copy the commit and leave the marketplace's own plainspeak-writer entry at 1.7.2.

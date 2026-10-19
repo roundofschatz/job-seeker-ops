@@ -2,31 +2,32 @@
   "about": "Skills this plugin carries as exact copies of one commit of their own repositories. tools/sync_bundled.py writes them and this record, and tests/unit/test_bundled.py checks both. Change a skill in its own repository, never here.",
   "skills": {
     "plainspeak-writer": {
-      "version": "1.8",
+      "version": "1.8.1",
       "repository": "https://github.com/roundofschatz/plainspeak-writer",
-      "ref": "v1.8.0",
-      "commit": "0ce6ad6a7ebb7fb9b0ee35f505ed76b90924db98",
+      "ref": "v1.8.1",
+      "commit": "a78716858fb98223e6152e51619d7553792969b9",
       "source": ".",
       "left_out": [
+        ".github/",
         ".gitignore",
         "tests/"
       ],
       "files": {
-        "CHANGELOG.md": "e817224e39b6931cb6ec15c600f298851f97f1609fe7761e1bb09da581b61b0f",
+        "CHANGELOG.md": "623b5a68cdb126f7197bfd137ef5c8ed486d5199e49133627d70cad946af07f6",
         "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
-        "README.md": "be58a9c940ac32ec2d21814ea909b36aa3406e06400ac444fe76966cd8aed6b3",
-        "SKILL.md": "2c73898cd6b0b5ddef73473f77a50460644dc58026db5ffa788c6a4bfe88e4e3",
+        "README.md": "671017b18c90bcb6e01cf28aed186f23f85dcf9158f46d1da1f0052e9d75a344",
+        "SKILL.md": "42c05e0bbbb7402d3ce4c7e3eb3a2f2f8fd55857f53e582bc6ac683311e4bf46",
         "references/formats/brand-narrative.md": "ce9c6c0a5fa0daccaa24ef586b8fe247cecb70f5ddf28dedff4c9ae6f583f3d8",
-        "references/formats/letter.md": "e910adbb986ce544d8415a779d5b0e537ccf5f737b8ea91014f1cea375dae37f",
+        "references/formats/letter.md": "15638dd1f95920a13d67b5f457f3e8b25eeffed0107e5b55d8a0a307c714ae19",
         "references/formats/linkedin.md": "d16c907cde90c9a0670bbb496f0a163eda50b7f5647022557ec1fcef35d0e28e",
         "references/formats/proposal.md": "146fc0864fcd9b04aec7657e93222e594cf2be2e50789041874492989d23c053",
         "references/formats/think-piece.md": "0121e6bcedf4632b7cc399ca9caf8e428d8cfef41b55b83200bcb437b888aa5a",
         "references/formats/workshop.md": "1c5539a22e0b354cea0b67c8631e1a03b447528d6dc394297f209711f783ae7f",
-        "references/full-check.md": "dc0d49ff09a8d5b5665aef82bcc100303a8bae855c9e7eae5fcb1035ef5952c7",
+        "references/full-check.md": "9d20bdf8ea57a2a74470b227fd3c442efb3f18d8ff2789985c0d418362aef85a",
         "references/samples.md": "681344d98622fcd2d3269ab5cef3c6f67368b1cbc4714b6347288c8ce01c1f5e",
-        "references/tells.md": "b42e6b854504c56f4647b026ed01c6a1f91763b7ea44259a30563708623a2669",
+        "references/tells.md": "d254a39da62dc77ee631a9fff57e9a76a20079fb943e2a706c01e8ee19ae47bf",
         "references/voice.md": "7595d6d8f13a2726981ac6fb4715ff61d9e6a8738cd7f540ddc9251e6083d2b7",
-        "scripts/check_voice.py": "09ecac99c616eb88fafd96b76f447099724509a8bd30e633824ebce11f5e4131"
+        "scripts/check_voice.py": "eab59e2b07b559b350617e4b5caad88e869c7ffbf57c56d581f335f0eebe7693"
       }
     },
     "resume-ops": {

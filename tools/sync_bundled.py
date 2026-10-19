@@ -34,7 +34,7 @@ SKILLS = {
     "plainspeak-writer": {
         "repository": "https://github.com/roundofschatz/plainspeak-writer",
         "source": "",  # the repository is the skill
-        "left_out": [".gitignore", "tests/"],
+        "left_out": [".github/", ".gitignore", "tests/"],
     },
     "resume-ops": {
         "repository": "https://github.com/roundofschatz/resume-ops",
