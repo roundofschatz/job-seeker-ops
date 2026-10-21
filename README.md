@@ -88,7 +88,7 @@ The verdict is Rethink when the first reaction sees no fit, when there are more 
 
 ## plainspeak-writer and resume-ops
 
-Candidate positioning, cover letter and submission review are this plugin's own skills. The cover letter skill can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both, and one install gives you all five. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.8.1 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.4. The plugin's scripts use the plugin's own copy of plainspeak-writer even when you have another installed, because the plugin is tested with that copy.
+Candidate positioning, cover letter and submission review are this plugin's own skills. The cover letter skill can't write without plainspeak-writer, and candidate positioning saves its file for resume-ops to read, so the plugin includes both, and one install gives you all five. Each is an exact copy of one release from its own repository: [plainspeak-writer](https://github.com/roundofschatz/plainspeak-writer) 1.9.0 and [resume-ops](https://github.com/roundofschatz/resume-ops) 2.4.4. The plugin's scripts use the plugin's own copy of plainspeak-writer even when you have another installed, because the plugin is tested with that copy.
 
 Either tool also installs on its own from this repository's marketplace, for a leaner setup. Pick one way to install each tool, because with a separate copy beside the plugin, Claude sees two skills with the same job and may load either. Remove the separate copy when you install the plugin.
 

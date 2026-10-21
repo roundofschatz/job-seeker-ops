@@ -2,6 +2,20 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.7 · plainspeak-writer 1.9.0: LinkedIn post rules follow the evidence
+
+plainspeak-writer and linkedin-post-generator gave conflicting instructions on the same post. The owner ruled on October 21 that evidence of what works on LinkedIn outranks a style rule, and plainspeak-writer 1.9.0 brings its LinkedIn post rules in line with linkedin-post-generator's research.
+
+Changed:
+
+- The copy of plainspeak-writer, to 1.9.0 from its `v1.9.0` tag. Its LinkedIn guide now sets a post at 1,300 to 1,900 characters, with paragraphs of one or two full sentences, one to three hashtags on the last line and the point in the first 140 characters, and it allows a specific question about a named case or choice as the close. On the linkedin surface, its check no longer runs V04, warns on hashtags at four in a row instead of three, and lets a specific question through U18. On the letter, blurb, resume and general surfaces its reports match 1.8.1's apart from the version line, so cover letters, resumes and outreach check the same way they did.
+- Submission review checks a LinkedIn About section or headline on the linkedin surface, so V04 no longer warns on an About section written one sentence per line. plainspeak-writer's LinkedIn guide still bars that layout in an About section, and the reviewer finds it by reading.
+- `.claude-plugin/marketplace.json`: the plainspeak-writer entry, for installing it on its own, moves to 1.9.0 and its tag. `README.md` names 1.9.0.
+
+Checked:
+
+- The unit tests: 208 of 210 pass on Linux with Python 3.13. One is skipped, since LibreOffice isn't installed, and one fails, the one the 0.4.8 entry describes.
+
 ## 0.6.6 · linkedin-post-generator 1.2.0
 
 The marketplace's linkedin-post-generator entry moves to 1.2.0 and its `v1.2.0` tag. In that release, evidence of what works on LinkedIn outranks style rules, including plainspeak-writer's, for paragraphs and hashtags.
