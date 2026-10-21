@@ -16,6 +16,10 @@ Checked:
 
 - The unit tests: 208 of 210 pass on Linux with Python 3.13. One is skipped, since LibreOffice isn't installed, and one fails, the one the 0.4.8 entry describes.
 
+## 0.6.7 · linkedin-post-generator 1.2.1
+
+The marketplace's linkedin-post-generator entry moves to 1.2.1 and its `v1.2.1` tag. That release matches the writer's tone of voice and builds it out with the posting tactics, instead of replacing it.
+
 ## 0.6.6 · linkedin-post-generator 1.2.0
 
 The marketplace's linkedin-post-generator entry moves to 1.2.0 and its `v1.2.0` tag. In that release, evidence of what works on LinkedIn outranks style rules, including plainspeak-writer's, for paragraphs and hashtags.
