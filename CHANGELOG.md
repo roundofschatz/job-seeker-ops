@@ -2,6 +2,10 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.6 · linkedin-post-generator 1.2.0
+
+The marketplace's linkedin-post-generator entry moves to 1.2.0 and its `v1.2.0` tag. In that release, evidence of what works on LinkedIn outranks style rules, including plainspeak-writer's, for paragraphs and hashtags.
+
 ## 0.6.5 · linkedin-post-generator 1.1.1
 
 The marketplace's linkedin-post-generator entry moves to 1.1.1 and its `v1.1.1` tag. That release drops a paragraph-count target that pushed posts toward one sentence per line.
