@@ -2,6 +2,10 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.8 · linkedin-post-generator 1.2.2
+
+The marketplace's linkedin-post-generator entry moves to 1.2.2 and its `v1.2.2` tag, which makes its share-post guide follow the same tone rule as the rest of the skill.
+
 ## 0.6.7 · plainspeak-writer 1.9.0: LinkedIn post rules follow the evidence
 
 plainspeak-writer and linkedin-post-generator gave conflicting instructions on the same post. The owner ruled on October 21 that evidence of what works on LinkedIn outranks a style rule, and plainspeak-writer 1.9.0 brings its LinkedIn post rules in line with linkedin-post-generator's research.

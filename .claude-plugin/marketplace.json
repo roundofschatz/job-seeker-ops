@@ -43,7 +43,7 @@
     },
     {
       "name": "linkedin-post-generator",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "description": "LinkedIn posts from a link, an idea, a document or notes, built for how LinkedIn's feed works in 2026: it reads the source, gets your own take, picks the post type and checks the post before you see it. Uses plainspeak-writer for the writing when it's installed.",
       "author": {
         "name": "Ryan Schatzman",
@@ -59,7 +59,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/roundofschatz/linkedin-post-generator.git",
-        "ref": "v1.2.1"
+        "ref": "v1.2.2"
       }
     }
   ]
