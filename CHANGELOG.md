@@ -2,6 +2,10 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.4 · linkedin-post-generator 1.1.0
+
+The marketplace's linkedin-post-generator entry moves to 1.1.0 and its `v1.1.0` tag. That release adds posts that share the writer's own work and brings every rule in line with the research the skill was built from. This plugin doesn't copy it, so nothing else changes.
+
 ## 0.6.3 · linkedin-post-generator listed in the marketplace
 
 The owner built linkedin-post-generator on October 21, a skill that turns a link, an idea, a document or notes into a LinkedIn post, and asked for it to sit beside plainspeak-writer and this plugin. It lives in its own public repository and isn't part of the job-search set, so the marketplace lists it for installing on its own and this plugin doesn't copy it.
