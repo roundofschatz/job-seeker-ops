@@ -129,7 +129,7 @@ class Marketplace(unittest.TestCase):
         market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
         self.assertEqual(market["name"], "roundofschatz")
         entries = {p["name"]: p for p in market["plugins"]}
-        self.assertEqual(sorted(entries), ["job-seeker-ops", "plainspeak-writer", "resume-ops"])
+        self.assertEqual(sorted(entries), ["job-seeker-ops", "linkedin-post-generator", "plainspeak-writer", "resume-ops"])
         self.assertIn(entries["job-seeker-ops"]["source"], ("./", "."))
         for name, entry in record().items():
             with self.subTest(name):
@@ -140,6 +140,18 @@ class Marketplace(unittest.TestCase):
                 self.assertEqual(source["ref"], entry["ref"])
         # plainspeak-writer has no plugin manifest, so its entry states the version.
         self.assertEqual(entries["plainspeak-writer"]["version"], record()["plainspeak-writer"]["version"])
+
+    def test_a_listed_tool_installs_from_its_own_release(self):
+        # linkedin-post-generator is listed for installing on its own and isn't copied into this
+        # plugin, so its entry points at its own repository's release tag.
+        market = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+        entry = {p["name"]: p for p in market["plugins"]}["linkedin-post-generator"]
+        self.assertNotIn("linkedin-post-generator", record())
+        self.assertEqual(entry["source"]["source"], "url")
+        self.assertEqual(entry["source"]["url"], "https://github.com/roundofschatz/linkedin-post-generator.git")
+        self.assertEqual(entry["source"]["ref"], "v" + entry["version"])
+        self.assertIs(entry.get("strict"), False)
+        self.assertEqual(entry.get("skills"), ["./"])
 
     def test_a_tool_without_a_manifest_is_declared_by_its_entry(self):
         # claude.ai's marketplace sync skips a plugin with no .claude-plugin/plugin.json

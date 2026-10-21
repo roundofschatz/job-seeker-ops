@@ -109,7 +109,7 @@ Upload it under Plugins rather than Skills, because a skill upload drops the rev
 /plugin install job-seeker-ops@roundofschatz
 ```
 
-To install one tool alone, use `/plugin install resume-ops@roundofschatz` or `/plugin install plainspeak-writer@roundofschatz`. The marketplace moved here from resume-ops's repository in 0.4.4, so if you added `roundofschatz/resume-ops` as a marketplace before then, remove it before you add this one.
+To install one tool alone, use `/plugin install resume-ops@roundofschatz` or `/plugin install plainspeak-writer@roundofschatz`. [linkedin-post-generator](https://github.com/roundofschatz/linkedin-post-generator), which writes LinkedIn posts, shares the marketplace and isn't part of this plugin: `/plugin install linkedin-post-generator@roundofschatz`. The marketplace moved here from resume-ops's repository in 0.4.4, so if you added `roundofschatz/resume-ops` as a marketplace before then, remove it before you add this one.
 
 To try the plugin for one session, run `claude --plugin-dir ./job-seeker-ops`.
 

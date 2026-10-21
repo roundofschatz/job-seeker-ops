@@ -2,6 +2,20 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.3 · linkedin-post-generator listed in the marketplace
+
+The owner built linkedin-post-generator on October 21, a skill that turns a link, an idea, a document or notes into a LinkedIn post, and asked for it to sit beside plainspeak-writer and this plugin. It lives in its own public repository and isn't part of the job-search set, so the marketplace lists it for installing on its own and this plugin doesn't copy it.
+
+Added:
+
+- `.claude-plugin/marketplace.json`: a linkedin-post-generator entry at 1.0.0, from its own repository's `v1.0.0` tag. The marketplace's description names it.
+- `tests/unit/test_bundled.py`: a test that the linkedin-post-generator entry installs from its own release tag and isn't in `bundled.json`. The test of the marketplace's names now expects four.
+- `README.md`: the install line for linkedin-post-generator on its own.
+
+Checked:
+
+- The unit tests: 208 of 210 pass on Linux with Python 3.13. One is skipped, since LibreOffice isn't installed, and one fails, the one the 0.4.8 entry describes.
+
 ## 0.6.2 · plainspeak-writer 1.8.1: two words to spare on a writer's own sentence length
 
 The owner ruled on October 19 that a letter may run two words over the average sentence length of the writer's own sample. With the owner's paper as the sample, 1.8's V09 had warned on the letter he judged best, at 24.5 words a sentence against the paper's 24.4.
