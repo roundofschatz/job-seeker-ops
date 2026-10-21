@@ -2,6 +2,10 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.5 · linkedin-post-generator 1.1.1
+
+The marketplace's linkedin-post-generator entry moves to 1.1.1 and its `v1.1.1` tag. That release drops a paragraph-count target that pushed posts toward one sentence per line.
+
 ## 0.6.4 · linkedin-post-generator 1.1.0
 
 The marketplace's linkedin-post-generator entry moves to 1.1.0 and its `v1.1.0` tag. That release adds posts that share the writer's own work and brings every rule in line with the research the skill was built from. This plugin doesn't copy it, so nothing else changes.
