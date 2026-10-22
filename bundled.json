@@ -31,30 +31,30 @@
       }
     },
     "resume-ops": {
-      "version": "2.4.4",
+      "version": "2.5.0",
       "repository": "https://github.com/roundofschatz/resume-ops",
-      "ref": "v2.4.4",
-      "commit": "b25d53582f6b0e3790c8e4084a003f31838dcd2c",
+      "ref": "v2.5.0",
+      "commit": "e832b35feba5f534df959a3bc4e3e62168ad2341",
       "source": "skills/resume-ops",
       "left_out": [
         "tests/"
       ],
       "files": {
-        "CHANGELOG.md": "12c52ef88286fd361246073fa05db6e3337a4503cef09a0484ba576b29fc9df2",
+        "CHANGELOG.md": "5c74ea45abd5d3c059a16539ac758bcb07071268d301dae67fa9f90f1d1baad6",
         "LICENSE": "497979ecc48796848595b2fb4b711eecaf630da0b090bce8f071397e1f79cd3f",
-        "README.md": "a8d3fef3cd4c2692fe260c5a46fa01d85ea5bbeb9bc6c99e0b967819b873a775",
-        "SKILL.md": "22d06b1287d948be294f3e7f0986fe5d7e5ff8cf361f9b49c8df565aee90d8e6",
-        "references/document.md": "db395a7d2d66a5c4a001ccef21a182e85e56673a64cf402117c529685d29cdd9",
-        "references/intake.md": "5f4a10bdffdfeaa6c8a4c2f6e9a56a970e9bf3fd1cf2b59de266fdc86f8981d0",
-        "references/readers.md": "81e09b33b464b7a16f0d71c9d8e893f34eb02b3092ed93c26a9e61b7d7a1c0c7",
+        "README.md": "659c993356b515f73c07424a144f6f48feee8208d04169277b74ff638168e6e5",
+        "SKILL.md": "4f02154873b9b9b2b7ba66c7c91536507b3b660c24485870bbd8e56f8135f7c7",
+        "references/document.md": "7a920c6d885aac2440627ef9150635d5559273ec9cb1e706f293326c46b74398",
+        "references/intake.md": "977b7e7a36e2049817e040370c917bb8ccfb42a7cbf5de558d246b5dd04919a8",
+        "references/readers.md": "81c9f6b9ba94dda54a51e36d074b2e3774e4f0ef068a9d0a612cde64dae6d5ba",
         "references/sources.md": "a9357be7e34d91c905e607c632a9559d6e13232540ad869d7c1f7d8850a65568",
-        "references/tailoring.md": "4c0aaaffc288238f610cbeb0c0c658a53a43ec61bce21459ee748c8ea902e1c5",
-        "references/writing.md": "e60652bbbce79ece162359bee5120c56412beb46f0e1229054bd7a9802676ca9",
+        "references/tailoring.md": "fa68d5d8d0bf9b896f16ed0382f617a2e566812a217a17c52c06be49141e218f",
+        "references/writing.md": "d5e720d3f28c9af5820e94445a221ead04087aad5a3f3c02547c4f3382ddec7f",
         "scripts/_docx.py": "71dcb56ed3c898b003f960174d8c067332998aa8e73df12401ce2e90f57a9914",
         "scripts/build_resume.py": "d11ff677dbfce451266caba3c91832af8224dcd0e4f2fcb409b51f60aa45a13a",
         "scripts/corpus_triage.py": "cf475d10065e149210de2269c8727c9058b99fa0a1d172b4c0be3e8262b3f760",
         "scripts/detect_ats.py": "3fb0f46473130cfc1b345c8d4dd7e7fc242b39b809b5fb81a3a49ce0f36a8d29",
-        "scripts/draft_review.py": "e5bf4ab9da132fe4df97a7409047a24eb5bb674e5231886793dd161c65bc5c55",
+        "scripts/draft_review.py": "8bf1e6b8f0a50aca15450f1f8c6a8b4449e40138cfe7478c24908341846ff1b5",
         "scripts/parse_check.py": "2e31fc1bbe56ed8ffaf315dd610a4ba7a88c1e0783e18ec8fb035ae36f2bc418",
         "scripts/positioning_check.py": "81bea42aae35c21b0b678a49407247a62ed5299e95f533bcb3d7bf2b952039d1",
         "scripts/profile_check.py": "8644c94896410434a6dbfb8c431846155ad3e961baa48b86a4099ecaa60003b5",
@@ -62,8 +62,8 @@
         "scripts/requirement_check.py": "00dea3815dbbee78b2fc64d8e25a3d1ad75f29bc75bed4c403bda733ec5af6a4",
         "scripts/term_coverage.py": "aa58e8400c1ca6d5cfb181ab1598c19329a6be1a10bbc9f5f5d53b93bf900cd1",
         "scripts/widow_check.py": "fc4ed9f29676c97df78ce54fc22e60938f25d03824090cfefa37b51ea49e74f3",
-        "templates/candidate-facts.md": "21cf14c53c8dfd7419eaf0b27235517d752a6809c5dcdaef8974a429c3dc8de4",
-        "templates/rulings.md": "692513f87f0eab1aa645c51ad0504a1f147f97d56a79e5b42b54cbbc8115b371"
+        "templates/candidate-facts.md": "c1229504581383dacfa1022bc37d1623ed7956ea31796acd629763c9602a69ad",
+        "templates/rulings.md": "8e3fa4243d67da3c249f6e416a8c617fa25e0877629f9b2068c348864415de77"
       }
     }
   }

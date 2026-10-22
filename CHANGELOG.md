@@ -2,6 +2,22 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.6.9 · resume-ops 2.5.0: the summary is a pitch, and lists take the serial comma
+
+The owner rejected two resume summaries on October 22 as choppy and not a pitch. resume-ops 2.5.0 rewrites its summary rules and adds the serial comma as a writing rule.
+
+Changed:
+
+- The copy of resume-ops, to 2.5.0 from its `v2.5.0` tag. The summary sells who the candidate is and why they fit this employer, up to about 110 words or seven lines. It covers what the candidate does and for whom, the run of work that matches the employer by name, and what they've built and led, in whatever order the evidence calls for, with a summary that worked as the voice model. The one-result rule and the belief line are gone. No "I", and a bullet behind every name and number, stay. A list of three or more takes a comma before its last "and" or "or", and `draft_review.py` checks for it.
+- `.claude-plugin/marketplace.json`: the resume-ops entry, for installing it on its own, moves to the `v2.5.0` tag. `README.md` names 2.5.0.
+
+Not changed yet: plainspeak-writer and cover letter don't have the serial comma rule. They get it in their own releases.
+
+Checked:
+
+- resume-ops's own tests: 312 pass on Linux with Python 3.13.
+- This plugin's unit tests: 207 of 210 pass. Two are skipped, and one fails, the one the 0.4.8 entry describes.
+
 ## 0.6.8 · linkedin-post-generator 1.2.2
 
 The marketplace's linkedin-post-generator entry moves to 1.2.2 and its `v1.2.2` tag, which makes its share-post guide follow the same tone rule as the rest of the skill.
