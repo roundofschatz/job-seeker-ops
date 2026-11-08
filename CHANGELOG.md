@@ -9,7 +9,7 @@ On November 8 the owner accepted every recommendation from the question red team
 Changed:
 
 - `references/questions.md`, reworded at the owner's yes: the skills question ("What skills do you use in your job…"), clients ("…or the people your work is for?"), proof ("If you don't have proof yet…"), being used well ("Is there any way your job could make better use of what you're good at?") and industry ("Is there any type of industry you'd like to work in?"). The pay question now starts "What do you make now?"
-- Eleven questions are marked `Optional: yes`, most of them repeats: what you'd change, being used well, what coworkers say, change stories, what proof looks like, your dream day, energy, describing yourself, describing your career, and what you won't do. The workbook tags them Optional. 39 questions stay required.
+- Ten questions are marked `Optional: yes`, most of them repeats: what you'd change, being used well, what coworkers say, change stories, what proof looks like, your dream day, energy, describing yourself, describing your career, and what you won't do. The workbook tags them Optional. 40 questions stay required.
 - Part 2's opening asks for first names only and says names stay in the answers. The answers file tells any AI reading it to take every name out.
 - `SKILL.md` and `references/record.md`: no name of anyone in a story goes into the record or the aim file, with or without a yes. Every story's `People in it:` line reads `no names`, and the check fails any other.
 
