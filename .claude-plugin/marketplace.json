@@ -9,7 +9,7 @@
     {
       "name": "job-seeker-ops",
       "source": "./",
-      "description": "The full job-search set: works out your case for a posting, writes the cover letter from it, and has a blind reviewer check a finished piece. resume-ops and plainspeak-writer are included, so install this one alone."
+      "description": "The full job-search set: helps you work out what you've done when you don't know where to start, works out your case for a posting, writes the cover letter from it, and has a blind reviewer check a finished piece. resume-ops and plainspeak-writer are included, so install this one alone."
     },
     {
       "name": "resume-ops",

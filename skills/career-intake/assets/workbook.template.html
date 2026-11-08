@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Career intake workbook</title>
+<style>
+  :root {
+    --bg: #faf8f4; --card: #ffffff; --ink: #1f2328; --soft: #5b6168;
+    --line: #e3dfd6; --accent: #2f6f5e; --accent-ink: #ffffff; --mark: #e8f1ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17191c; --card: #202328; --ink: #eceae6; --soft: #a8adb3;
+      --line: #33373d; --accent: #6fb8a3; --accent-ink: #10201b; --mark: #233631;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font: 18px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 20px 18px 120px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  header .title { font-weight: 650; font-size: 16px; }
+  header .saved { font-size: 13px; color: var(--soft); }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 22px; }
+  .bar > div { height: 100%; background: var(--accent); width: 0; transition: width .25s; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 22px; }
+  .where { font-size: 14px; color: var(--soft); margin-bottom: 8px; }
+  h1 { font-size: 26px; line-height: 1.25; margin: 0 0 12px; }
+  h2 { font-size: 22px; line-height: 1.3; margin: 0 0 10px; font-weight: 650; }
+  p { margin: 0 0 12px; }
+  .hint { font-size: 15px; color: var(--soft); margin: -2px 0 14px; }
+  textarea, input[type=text], input[type=number] {
+    width: 100%; font: inherit; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+  }
+  textarea { min-height: 170px; resize: vertical; }
+  textarea:focus, input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  label { display: block; font-size: 15px; font-weight: 600; margin: 14px 0 6px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 520px) { .grid3 { grid-template-columns: 1fr; } }
+  .estimate { background: var(--mark); border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: 16px; }
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--line); }
+  .nav .inner { max-width: 680px; margin: 0 auto; padding: 12px 18px; display: flex; gap: 10px; justify-content: space-between; }
+  button { font: inherit; font-size: 16px; border-radius: 10px; padding: 11px 18px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  button.go { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  button:disabled { opacity: .4; cursor: default; }
+  .tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .tools button { font-size: 15px; padding: 9px 14px; }
+  .list { margin-top: 18px; }
+  .list h3 { font-size: 16px; margin: 18px 0 6px; }
+  .list a { display: block; color: var(--ink); text-decoration: none; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .list a .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 10px; border: 1.5px solid var(--soft); }
+  .list a.done .dot { background: var(--accent); border-color: var(--accent); }
+  .note { font-size: 14px; color: var(--soft); margin-top: 16px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="title">Career intake workbook</div>
+    <div class="saved" id="saved"></div>
+  </header>
+  <div class="bar"><div id="bar"></div></div>
+  <div class="card" id="screen"></div>
+  <div class="tools">
+    <button type="button" id="btn-list">See all questions</button>
+    <button type="button" id="btn-save">Save answers file</button>
+    <button type="button" id="btn-copy">Copy all answers</button>
+    <button type="button" id="btn-open">Open saved answers</button>
+    <input type="file" id="file" accept=".md,.txt,text/markdown,text/plain" class="hidden">
+  </div>
+  <div class="list hidden" id="list"></div>
+  <p class="note">Your answers stay on this device. This page sends nothing anywhere. To keep a copy, or to move to another device, use Save answers file.</p>
+</div>
+<div class="nav"><div class="inner">
+  <button type="button" id="btn-back">Back</button>
+  <button type="button" class="go" id="btn-next">Next</button>
+</div></div>
+
+<script>
+"use strict";
+var WORKBOOK_VERSION = "__VERSION__";
+var PARTS = __QUESTIONS_JSON__;
+var STORE_KEY = "career-intake-answers-" + WORKBOOK_VERSION;
+
+var state = { name: "", answers: {}, pos: 0 };
+var screens = [];
+var canStore = true;
+
+function buildScreens() {
+  screens = [{ kind: "welcome" }];
+  PARTS.forEach(function (part, pi) {
+    screens.push({ kind: "part", part: pi });
+    part.questions.forEach(function (q, qi) { screens.push({ kind: "q", part: pi, q: qi }); });
+  });
+  screens.push({ kind: "finish" });
+}
+
+function allQuestions() {
+  var out = [];
+  PARTS.forEach(function (p) { p.questions.forEach(function (q) { out.push(q); }); });
+  return out;
+}
+
+function emptyAnswer(q) {
+  if (q.type === "count") return { at: "", weeks: "", years: "", total: "", edited: false, notes: "" };
+  if (q.type === "three") return ["", "", ""];
+  return "";
+}
+
+function answerOf(q) {
+  var a = state.answers[q.id];
+  if (a === undefined) { a = emptyAnswer(q); state.answers[q.id] = a; }
+  return a;
+}
+
+function isAnswered(q) {
+  var a = state.answers[q.id];
+  if (a === undefined) return false;
+  if (q.type === "count") return String(a.total || a.notes || "").trim() !== "";
+  if (q.type === "three") return a.some(function (s) { return String(s).trim() !== ""; });
+  return String(a).trim() !== "";
+}
+
+function estimate(a) {
+  var at = parseFloat(a.at), weeks = parseFloat(a.weeks), years = parseFloat(a.years);
+  if (!(at > 0) || !(weeks > 0) || !(years > 0)) return null;
+  var n = at * (52 / weeks) * years;
+  if (n < at) n = at;
+  if (n >= 1000) return Math.round(n / 100) * 100;
+  if (n >= 100) return Math.round(n / 10) * 10;
+  return Math.round(n);
+}
+
+/* ---------- saving ---------- */
+function save() {
+  if (!canStore) return;
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    setSaved("Saved on this device");
+  } catch (e) {
+    canStore = false;
+    setSaved("This browser can't save as you go. Use Save answers file before you close it.");
+  }
+}
+function load() {
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      if (s && typeof s === "object") {
+        state.name = s.name || "";
+        state.answers = s.answers || {};
+        state.pos = Math.min(Math.max(parseInt(s.pos, 10) || 0, 0), screens.length - 1);
+      }
+    }
+  } catch (e) {
+    canStore = false;
+    setSaved("This browser can't save as you go. Use Save answers file before you close it.");
+  }
+}
+function setSaved(text) { document.getElementById("saved").textContent = text; }
+
+/* ---------- the answers file ---------- */
+function today() {
+  var d = new Date();
+  function two(n) { return (n < 10 ? "0" : "") + n; }
+  return d.getFullYear() + "-" + two(d.getMonth() + 1) + "-" + two(d.getDate());
+}
+function escapeBody(text) {
+  return String(text).replace(/\r\n/g, "\n").split("\n").map(function (line) {
+    return /^(#|<!--|\\)/.test(line) ? "\\" + line : line;
+  }).join("\n").trim();
+}
+function unescapeBody(text) {
+  return text.split("\n").map(function (line) {
+    return /^\\(#|<!--|\\)/.test(line) ? line.slice(1) : line;
+  }).join("\n").trim();
+}
+var BLANK = "(no answer yet)";
+
+function toMarkdown() {
+  var L = [];
+  L.push("# Career intake answers", "");
+  L.push("Name: " + (state.name || "").replace(/\n/g, " "));
+  L.push("Saved: " + today());
+  L.push("Workbook: career-intake " + WORKBOOK_VERSION, "");
+  L.push("These are my answers to the career intake workbook from job-seeker-ops. To turn them into a career record, give this file to Claude with the job-seeker-ops plugin installed and ask it to build my career record.");
+  PARTS.forEach(function (part) {
+    L.push("", "## Part " + part.n + ": " + part.title);
+    part.questions.forEach(function (q) {
+      var a = answerOf(q);
+      L.push("", "### " + q.text, "<!-- id: " + q.id + " -->");
+      if (q.type === "count") {
+        var est = estimate(a);
+        var total = a.edited ? a.total : (est === null ? "" : String(est));
+        L.push("At a time: " + (a.at || ""));
+        L.push("Weeks each one lasts: " + (a.weeks || ""));
+        L.push("Years doing this: " + (a.years || ""));
+        L.push("Total: " + (total || ""));
+        L.push("Total worked out by the workbook: " + (a.edited ? "no, I changed it" : (est === null ? "no" : "yes")));
+        L.push("Notes:", a.notes ? escapeBody(a.notes) : "");
+      } else if (q.type === "three") {
+        a.forEach(function (s, i) {
+          L.push("#### Story " + (i + 1), String(s).trim() ? escapeBody(s) : BLANK);
+        });
+      } else {
+        L.push(String(a).trim() ? escapeBody(a) : BLANK);
+      }
+    });
+  });
+  return L.join("\n") + "\n";
+}
+
+function fromMarkdown(md) {
+  md = md.replace(/\r\n/g, "\n");
+  if (!/^Workbook: career-intake /m.test(md)) throw new Error("not a workbook file");
+  var byId = {};
+  allQuestions().forEach(function (q) { byId[q.id] = q; });
+  var nameMatch = md.match(/^Name: (.*)$/m);
+  var re = /^<!-- id: ([a-z0-9-]+) -->$/mg, marks = [], m;
+  while ((m = re.exec(md))) marks.push({ id: m[1], start: m.index + m[0].length });
+  var answers = {};
+  marks.forEach(function (mk, i) {
+    var q = byId[mk.id];
+    if (!q) return;
+    var end = i + 1 < marks.length ? marks[i + 1].start : md.length;
+    var chunk = md.slice(mk.start, end);
+    var cut = chunk.search(/\n#{2,3} /);
+    if (cut >= 0) chunk = chunk.slice(0, cut);
+    if (q.type === "count") {
+      var get = function (label) {
+        var r = chunk.match(new RegExp("^" + label + ": ?(.*)$", "m"));
+        return r ? r[1].trim() : "";
+      };
+      var notes = chunk.split(/\nNotes:\n?/)[1] || "";
+      var a = { at: get("At a time"), weeks: get("Weeks each one lasts"), years: get("Years doing this"),
+                total: get("Total"), notes: unescapeBody(notes), edited: false };
+      var est = estimate(a);
+      a.edited = a.total !== "" && (est === null || String(est) !== a.total);
+      answers[q.id] = a;
+    } else if (q.type === "three") {
+      var parts = chunk.split(/\n#### Story \d+\n/).slice(1);
+      var three = ["", "", ""];
+      parts.slice(0, 3).forEach(function (p, j) { var t = unescapeBody(p); three[j] = t === BLANK ? "" : t; });
+      answers[q.id] = three;
+    } else {
+      var t = unescapeBody(chunk);
+      answers[q.id] = t === BLANK ? "" : t;
+    }
+  });
+  return { name: nameMatch ? nameMatch[1].trim() : "", answers: answers };
+}
+
+function fileName() {
+  var n = (state.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return "career-intake-answers" + (n ? "-" + n : "") + ".md";
+}
+
+function download() {
+  var blob = new Blob([toMarkdown()], { type: "text/markdown;charset=utf-8" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = fileName();
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  setSaved("Answers file saved");
+}
+
+function copyAll() {
+  var text = toMarkdown();
+  function fallback() {
+    var t = document.createElement("textarea");
+    t.value = text; document.body.appendChild(t); t.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    t.remove();
+    setSaved(ok ? "Copied. Paste it into the AI you use." : "Couldn't copy here. Use Save answers file instead.");
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () {
+      setSaved("Copied. Paste it into the AI you use.");
+    }, fallback);
+  } else { fallback(); }
+}
+
+function openFile(file) {
+  var reader = new FileReader();
+  reader.onload = function () {
+    try {
+      var got = fromMarkdown(String(reader.result));
+      if (got.name) state.name = got.name;
+      Object.keys(got.answers).forEach(function (id) { state.answers[id] = got.answers[id]; });
+      save(); render();
+      setSaved("Opened your saved answers");
+    } catch (e) {
+      setSaved("That file isn't a saved answers file from this workbook.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- drawing the screens ---------- */
+function el(tag, attrs, text) {
+  var e = document.createElement(tag);
+  if (attrs) Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function render() {
+  var box = document.getElementById("screen");
+  box.innerHTML = "";
+  var s = screens[state.pos];
+  var total = screens.length - 1;
+  document.getElementById("bar").style.width = Math.round((state.pos / total) * 100) + "%";
+  document.getElementById("btn-back").disabled = state.pos === 0;
+  var next = document.getElementById("btn-next");
+  next.textContent = state.pos === total ? "Save answers file" : (s.kind === "welcome" ? "Start" : "Next");
+
+  if (s.kind === "welcome") {
+    box.appendChild(el("h1", null, "Tell your story, one question at a time"));
+    box.appendChild(el("p", null, "This workbook asks about your work now, your best and hardest stories, where you want to go, and how you see yourself. It takes four sittings of 20 to 30 minutes, and you can stop any time. Your answers save on this device as you go."));
+    box.appendChild(el("p", null, "Write the way you talk. Rough answers count, and so does “I don't know yet.”"));
+    box.appendChild(el("p", null, "When you're done, save the answers file and bring it to Claude, or to the AI you use, with the job-seeker-ops plugin installed. It reads your answers, works out what you've done and how it reads to other employers, and asks about anything that's missing."));
+    box.appendChild(el("label", { "for": "name" }, "Your first name"));
+    var name = el("input", { type: "text", id: "name", autocomplete: "given-name" });
+    name.value = state.name;
+    name.addEventListener("input", function () { state.name = name.value; save(); });
+    box.appendChild(name);
+  } else if (s.kind === "part") {
+    var part = PARTS[s.part];
+    box.appendChild(el("div", { "class": "where" }, "Part " + part.n + " of " + PARTS.length));
+    box.appendChild(el("h1", null, part.title));
+    part.intro.forEach(function (line) { box.appendChild(el("p", null, line)); });
+  } else if (s.kind === "q") {
+    drawQuestion(box, PARTS[s.part], PARTS[s.part].questions[s.q], s.q);
+  } else {
+    var done = allQuestions().filter(isAnswered).length, all = allQuestions().length;
+    box.appendChild(el("h1", null, "You've answered " + done + " of " + all + " questions"));
+    box.appendChild(el("p", null, "Save your answers file, then bring it to Claude, or to the AI you use, with the job-seeker-ops plugin installed. Ask it to build your career record from the file."));
+    box.appendChild(el("p", null, "It will read your stories, work out your totals, say back what you do in the words other fields use, and ask about anything you skipped. Nothing you marked as private goes on a resume or a letter."));
+    box.appendChild(el("p", null, "You can come back and change any answer here, then save the file again."));
+  }
+  drawList();
+  var first = box.querySelector("textarea, input");
+  if (first && s.kind === "q") first.focus({ preventScroll: true });
+  window.scrollTo(0, 0);
+}
+
+function drawQuestion(box, part, q, qi) {
+  box.appendChild(el("div", { "class": "where" }, "Part " + part.n + ": " + part.title + " · " + (qi + 1) + " of " + part.questions.length));
+  box.appendChild(el("h2", null, q.text));
+  if (q.hint) box.appendChild(el("p", { "class": "hint" }, q.hint));
+  var a = answerOf(q);
+
+  if (q.type === "count") {
+    var grid = el("div", { "class": "grid3" });
+    var fields = [["at", "How many at a time"], ["weeks", "How many weeks each one lasts"], ["years", "How many years you've done this"]];
+    var inputs = {};
+    fields.forEach(function (f) {
+      var wrap = el("div");
+      wrap.appendChild(el("label", { "for": "f-" + f[0] }, f[1]));
+      var inp = el("input", { type: "number", id: "f-" + f[0], min: "0", step: "any", inputmode: "decimal" });
+      inp.value = a[f[0]];
+      inp.addEventListener("input", function () { a[f[0]] = inp.value; update(); save(); });
+      inputs[f[0]] = inp; wrap.appendChild(inp); grid.appendChild(wrap);
+    });
+    box.appendChild(grid);
+    var est = el("div", { "class": "estimate" });
+    box.appendChild(est);
+    box.appendChild(el("label", { "for": "f-total" }, "Your total (change it if you know a better number)"));
+    var tot = el("input", { type: "text", id: "f-total", inputmode: "numeric" });
+    box.appendChild(tot);
+    box.appendChild(el("label", { "for": "f-notes" }, "Anything to add about this number"));
+    var notes = el("textarea", { id: "f-notes" });
+    notes.style.minHeight = "90px";
+    notes.value = a.notes;
+    notes.addEventListener("input", function () { a.notes = notes.value; save(); });
+    box.appendChild(notes);
+    tot.addEventListener("input", function () { a.total = tot.value; a.edited = tot.value.trim() !== ""; save(); });
+    var update = function () {
+      var n = estimate(a);
+      est.textContent = n === null
+        ? "Fill in all three boxes and the workbook works out a total."
+        : a.at + " at a time × (52 ÷ " + a.weeks + " weeks) × " + a.years + " years = about " + n.toLocaleString() + ".";
+      if (!a.edited) { a.total = n === null ? "" : String(n); tot.value = a.total; }
+    };
+    tot.value = a.total;
+    update();
+  } else if (q.type === "three") {
+    a.forEach(function (s, i) {
+      box.appendChild(el("label", { "for": "s" + i }, "Story " + (i + 1)));
+      var t = el("textarea", { id: "s" + i });
+      t.style.minHeight = "120px";
+      t.value = s;
+      t.addEventListener("input", function () { a[i] = t.value; save(); });
+      box.appendChild(t);
+    });
+  } else {
+    var t = el("textarea", { id: "answer", "aria-label": q.text });
+    t.value = a;
+    t.addEventListener("input", function () { state.answers[q.id] = t.value; save(); });
+    box.appendChild(t);
+  }
+}
+
+function drawList() {
+  var list = document.getElementById("list");
+  if (list.classList.contains("hidden")) return;
+  list.innerHTML = "";
+  screens.forEach(function (s, i) {
+    if (s.kind === "part") {
+      list.appendChild(el("h3", null, "Part " + PARTS[s.part].n + ": " + PARTS[s.part].title));
+    } else if (s.kind === "q") {
+      var q = PARTS[s.part].questions[s.q];
+      var link = el("a", { href: "#", "class": isAnswered(q) ? "done" : "" });
+      link.appendChild(el("span", { "class": "dot" }));
+      link.appendChild(document.createTextNode(q.text));
+      link.addEventListener("click", function (e) { e.preventDefault(); go(i); });
+      list.appendChild(link);
+    }
+  });
+}
+
+function go(i) {
+  state.pos = Math.min(Math.max(i, 0), screens.length - 1);
+  save(); render();
+}
+
+function init() {
+  buildScreens();
+  load();
+  document.getElementById("btn-back").addEventListener("click", function () { go(state.pos - 1); });
+  document.getElementById("btn-next").addEventListener("click", function () {
+    if (state.pos === screens.length - 1) download(); else go(state.pos + 1);
+  });
+  document.getElementById("btn-save").addEventListener("click", download);
+  document.getElementById("btn-copy").addEventListener("click", copyAll);
+  document.getElementById("btn-open").addEventListener("click", function () { document.getElementById("file").click(); });
+  document.getElementById("file").addEventListener("change", function (e) {
+    if (e.target.files && e.target.files[0]) openFile(e.target.files[0]);
+    e.target.value = "";
+  });
+  document.getElementById("btn-list").addEventListener("click", function () {
+    var list = document.getElementById("list");
+    list.classList.toggle("hidden");
+    this.textContent = list.classList.contains("hidden") ? "See all questions" : "Hide the list";
+    drawList();
+  });
+  document.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); document.getElementById("btn-next").click(); }
+  });
+  render();
+}
+
+window.CareerIntake = { toMarkdown: toMarkdown, fromMarkdown: fromMarkdown, estimate: estimate, state: state };
+init();
+</script>
+</body>
+</html>

@@ -2,6 +2,28 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.7.0 · career intake: a starting point for people with no target yet
+
+Every skill in the plugin started from a job posting. The owner asked on November 8 for a skill that comes first, for someone who needs a career change and doesn't know where to start: it gets their stories out, works out the numbers behind them, and helps them say their work in other fields' words. He wrote the questions himself and asked that his wording be the rubric for how they're asked. He also asked for a workbook a person can download, fill in and bring back to any AI, and ruled that stories keep their full detail and leave out names unless the person in the story gave a direct yes.
+
+Added:
+
+- `skills/career-intake/`: the sixth skill. It talks a person through four parts (their current job, their stories, where they want to go, and how they see themselves), or hands them the workbook. Then it keeps the people in the stories private, pulls skills out of the stories, says the work back in two or three other fields' words taken from live postings, and writes two files: `career-record.md`, which candidate-positioning and resume-ops already read as a career record, and `where-to-aim.md`, a private page that scores targets with resume-ops's six points and makes three calls.
+- `references/questions.md`: the questions' one home, in the owner's wording, split into single questions, with typos fixed and the order changed so the current job and the stories come before "tell me about you". New questions follow how he asks: money and limits, energy, what coworkers come to the person for, things they built, and who they know. "Utilized" stays because it's his word.
+- `assets/workbook.html`: one page that runs offline in any browser. It asks one question at a time, saves on the device as the person goes, has a counting helper for the total number of people helped, and saves and reopens one Markdown answers file. It reaches nothing outside itself. `scripts/build_workbook.py` builds it from the questions, so the chat and the workbook can't drift.
+- `scripts/check_record.py`: reads an answers file (what's answered, what's blank, possible names, lines aimed at an AI tool), and checks the record and the aim file, including a `People in it:` line on every story and a source on every total.
+- `tests/unit/test_career_intake.py` and the made-up candidate in `tests/intake/`: 17 tests.
+
+Changed:
+
+- `README.md`, `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` name career intake.
+
+Checked:
+
+- The workbook in headless Chrome at phone width: no script errors, the counting helper's math, answers kept across a reload, and a saved file reopened word for word, including lines that start with `#`.
+- The unit tests: 224 of 227 pass on Linux with Python 3.13. Two are skipped, and one fails, the one the 0.4.8 entry describes.
+- plainspeak-writer's check on every new file and the README: no hard fails. The warnings left are lists of sections in the format page and one-line questions, which is the questions' shape.
+
 ## 0.6.8 · linkedin-post-generator 1.2.2
 
 The marketplace's linkedin-post-generator entry moves to 1.2.2 and its `v1.2.2` tag, which makes its share-post guide follow the same tone rule as the rest of the skill.
