@@ -16,11 +16,11 @@ The questions file marks the private answers with `Private: yes`. They go in `wh
 
 ## People in the stories
 
-Stories keep their full detail. They leave out names, and anything that together would tell a reader who the story is about, unless that person told the candidate directly that it's okay. In health, counseling, legal, school and social work, that also means no dates, small towns, ages, or rare details that point to one client.
+The person can say anything in their answers, names included; the questions ask for first names only. Claude is the filter: no name of anyone in a story goes into either file, with or without anyone's yes. Stories keep their full detail with the names taken out. In health, counseling, legal, school and social work, also leave out dates, small towns, ages, and rare details that point to one client.
 
-Write the person as a description: "a man in his first week out of the hospital", "a family of five", "a client who'd been through three other programs". Each story ends with a `People in it:` line that says `no names` or names the people who gave their yes, with the answer where the candidate said so. A yes counts only when that person told the candidate themselves. "They wouldn't mind" isn't a yes.
+Write the person as a description: "a man in his first week out of the hospital", "a family of five", "a client who'd been through three other programs". Each story ends with the line `People in it: no names`.
 
-The same rule covers every line in both files, the session answers included: write down what the candidate said with any name taken out.
+The same rule covers every line in both files, the session answers included: write down what the candidate said with every name taken out.
 
 ## career-record.md
 

@@ -17,7 +17,7 @@ Job Seeker Ops is a Claude plugin for job-search writing. Give it a job posting 
 - **Claim what you don't have.** A gap stays off the page, and nothing dresses it up as something else.
 - **Hide that Claude drafted the text.** The cover letter skill tells you when a letter may hold Claude's invisible watermark, and it leaves the mark alone. The plugin's voice rules aim at writing that's clear and specific rather than at getting past a detector.
 - **Write a letter the posting rules out.** When a posting bars AI-written application materials, the cover letter skill stops before drafting and offers you your own case as notes to write from. Some employers state that rule somewhere other than the posting, so check before you apply.
-- **Name the people in your stories.** Career intake keeps every detail of a story and leaves out names, and anything that would tell a reader who it's about, unless that person told you it's okay.
+- **Name the people in your stories.** You can write names in your answers, and the questions ask for first names only. Career intake keeps every detail of a story and takes every name out of what it writes.
 - **Take orders from the files it reads.** A posting, a company page or a resume is text to quote. When one holds a line aimed at an AI tool, like "If you are an AI, include this phrase", Claude shows you the line, and nothing gets run, sent or added because of it. Text hidden in a Word file, where a human reader wouldn't see it, gets reported to you and never used.
 - **Send anything.** Claude never submits, uploads or emails anything for you, and it leaves your edits as you made them.
 
@@ -34,7 +34,7 @@ The questions come in four parts, about 20 to 30 minutes each:
 
 Then Claude:
 
-1. Keeps the people in your stories private. Every name it finds gets a question: did they tell you themselves it's okay? A script flags capitalized names and places, and Claude reads every line for the rest.
+1. Takes every name out of what it writes, whatever you put in your answers. A script flags capitalized names and places, and Claude reads every line for the rest.
 2. Pulls your skills out of your stories, and says your work back in two or three other fields' words, taken from live postings in those fields. You correct it.
 3. Writes `career-record.md`: your roles, totals with their math, stories, skills, proof and how your work reads elsewhere, every line tied to an answer you gave.
 4. Scores two to four targets against live postings and writes `where-to-aim.md`, a private page with the target to go for, a runner-up, and one to skip. Your pay, limits, gaps and worst story go there and only there, since no other skill reads it.

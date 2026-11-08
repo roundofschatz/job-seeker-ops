@@ -152,7 +152,7 @@ def check_answers(path):
                     print(f"WARN  {q['id']}: a line speaks to an AI tool. Quote it to the person and use none of it: {line.strip()[:120]}")
             names = possible_names(body) if body else []
             if names:
-                print(f"WARN  {q['id']}: possible names or places, check before anything is written: {', '.join(names)}")
+                print(f"WARN  {q['id']}: possible names or places; none of them goes into the record: {', '.join(names)}")
         answered = len(p["questions"]) - len(blanks)
         print(f"Part {p['n']}: {answered} of {len(p['questions'])} answered" + (f". Blank: {', '.join(blanks)}" if blanks else ""))
     print(f"{done} of {total} answered")
@@ -254,7 +254,6 @@ def check_record(path):
         s = bullet(line)
         if s and not is_none(s) and not re.search(r"\[(confirmed|estimate)\]", s):
             fails.append(f"2. Totals: tag each total [confirmed] or [estimate]: {s[:90]}")
-    named_ok = set()
     if "3. Stories" in secs:
         body = "\n".join(secs["3. Stories"])
         stories = re.split(r"^### ", body, flags=re.M)[1:]
@@ -269,17 +268,14 @@ def check_record(path):
                     fails.append(f"3. Stories: {title[:40]} has no '{want}' line")
             people = re.search(r"^\s*[-*] People in it: (.*)$", st, re.M)
             if people and people.group(1).strip().rstrip(".").lower() != "no names":
-                if not SOURCE_RE.search(people.group(1)):
-                    fails.append(f"3. Stories: {title[:40]} names people without the answer where they said yes")
-                else:
-                    named_ok.update(re.findall(r"[A-Z][a-z]+", SOURCE_RE.sub("", people.group(1))))
+                fails.append(f"3. Stories: {title[:40]} must read 'People in it: no names'; names never leave the answers")
     head_name = text.split("\n", 1)[0].split(":", 1)[-1].strip()
     for name in [n for n in RECORD_SECTIONS if n != "10. Open questions"] + ["Answers in this session"]:
         body = "\n".join(secs.get(name, []))
         body = re.sub(r"https?://\S+", "", SOURCE_RE.sub("", body))
-        names = [n for n in possible_names(body) if n not in named_ok and n != head_name]
+        names = [n for n in possible_names(body) if n != head_name]
         if names:
-            warns.append(f"{name}: possible names or places; keep only the ones with a yes: {', '.join(names)}")
+            warns.append(f"{name}: possible names or places; take out every person's name: {', '.join(names)}")
         for line in body.split("\n"):
             if AI_LINE_RE.search(line):
                 warns.append(f"{name}: a line speaks to an AI tool: {line.strip()[:90]}")

@@ -2,6 +2,26 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.7.2 · career intake: the owner's rulings on the questions and on names
+
+On November 8 the owner accepted every recommendation from the question red team, and ruled on names: people can write whatever they want in their answers, names included. The questions ask for first names only, and Claude is the final filter that takes every name out of what it writes. That replaces the 0.7.0 rule that let a name through with a direct yes.
+
+Changed:
+
+- `references/questions.md`, reworded at the owner's yes: the skills question ("What skills do you use in your job…"), clients ("…or the people your work is for?"), proof ("If you don't have proof yet…"), being used well ("Is there any way your job could make better use of what you're good at?") and industry ("Is there any type of industry you'd like to work in?"). The pay question now starts "What do you make now?"
+- Eleven questions are marked `Optional: yes`, most of them repeats: what you'd change, being used well, what coworkers say, change stories, what proof looks like, your dream day, energy, describing yourself, describing your career, and what you won't do. The workbook tags them Optional. 39 questions stay required.
+- Part 2's opening asks for first names only and says names stay in the answers. The answers file tells any AI reading it to take every name out.
+- `SKILL.md` and `references/record.md`: no name of anyone in a story goes into the record or the aim file, with or without a yes. Every story's `People in it:` line reads `no names`, and the check fails any other.
+
+Added:
+
+- Two questions in Part 1: `work-credentials` (degrees, licenses and certifications) and `work-size` (how many people, how much money or how much work in a week).
+
+Checked:
+
+- In headless Chrome: a file saved by the first version opens in this one, the Optional tag shows, and the new questions reach the answers file.
+- The unit tests: 23 for career intake.
+
 ## 0.7.1 · career intake: red team fixes
 
 Two reviewers that hadn't seen the build read career intake on November 8. One tested the workbook and the scripts. The other went through all 48 questions as three made-up career changers. Their findings that were defects are fixed here. Changes to the owner's question wording wait for his ruling.

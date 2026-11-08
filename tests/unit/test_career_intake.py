@@ -100,7 +100,7 @@ class Answers(unittest.TestCase):
             path.write_text(text, encoding="utf-8")
             code, out = run(check_record.check_answers, str(path))
         self.assertEqual(code, 0)
-        self.assertIn("possible names or places, check before anything is written: Dana", out)
+        self.assertIn("possible names or places; none of them goes into the record: Dana", out)
         self.assertIn("coffee-stories: a line speaks to an AI tool", out)
 
     def test_refuses_another_file(self):
@@ -128,12 +128,19 @@ class Record(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("'People in it:'", out)
 
-    def test_a_named_person_needs_the_yes(self):
-        text = (FIXTURES / "career-record.md").read_text(encoding="utf-8").replace(
-            "- People in it: no names", "- People in it: Dana, the pharmacist")
-        code, out = self.check(check_record.check_record, text)
-        self.assertEqual(code, 1)
-        self.assertIn("names people without the answer", out)
+    def test_names_never_leave_the_answers(self):
+        for line in ("- People in it: Dana, the pharmacist", "- People in it: Dana, who said yes [A1]"):
+            text = (FIXTURES / "career-record.md").read_text(encoding="utf-8").replace("- People in it: no names", line)
+            code, out = self.check(check_record.check_record, text)
+            self.assertEqual(code, 1, line)
+            self.assertIn("People in it: no names", out)
+
+    def test_optional_and_new_questions(self):
+        qs = {q["id"]: q for p in parts() for q in p["questions"]}
+        self.assertTrue(qs["change-stories"]["optional"])
+        self.assertFalse(qs["best-story"]["optional"])
+        for new in ("work-credentials", "work-size"):
+            self.assertIn(new, qs)
 
     def test_a_total_needs_a_source_and_a_tag(self):
         text = (FIXTURES / "career-record.md").read_text(encoding="utf-8").replace(

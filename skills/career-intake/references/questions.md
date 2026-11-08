@@ -17,7 +17,7 @@ They came from a person who helps people find their next job, written the way he
 
 `## Part N: Title` starts a part. The lines under it, before its first question, are what the person reads when the part starts.
 
-`### id` starts a question. The id never changes once it ships, because records and saved answers files cite it. Retire a question by moving it to the end of its part with `Optional: yes` rather than deleting its id, so an older answers file still opens whole. The lines under the id are the question. A line starting `Hint:` is a short note shown under the question in the workbook. `Type: count` makes the question the counting helper, which works out a total from how many at a time, how long each lasts and how many years. `Type: three` gives three boxes, one for each story. `Private: yes` marks an answer that never goes on a page someone else reads; the workbook and the answers file both say so.
+`### id` starts a question. The id never changes once it ships, because records and saved answers files cite it. Retire a question by marking it `Optional: yes` rather than deleting its id, so an older answers file still opens whole. The lines under the id are the question. A line starting `Hint:` is a short note shown under the question in the workbook. `Type: count` makes the question the counting helper, which works out a total from how many at a time, how long each lasts and how many years. `Type: three` gives three boxes, one for each story. `Private: yes` marks an answer that never goes on a page someone else reads; the workbook and the answers file both say so. `Optional: yes` marks a question the person can skip; it often repeats an earlier answer for people who've already said it.
 
 ## Part 1: Talk about your current job
 
@@ -38,8 +38,16 @@ Hint: Add your employer, the city, and the year you started.
 What roles or titles have you held in the past?
 Hint: List them with the employer and the years if you know them.
 
+### work-credentials
+What degrees, licenses, or certifications do you have?
+Hint: Add the year, and when a license renews if it does.
+
 ### work-responsibilities
 What are your primary responsibilities?
+
+### work-size
+How many people, how much money, or how much work do you handle in a week?
+Hint: Team size, budget, cases, calls, orders, students. Your best estimate is fine.
 
 ### work-great-at
 What are you really great at about your job?
@@ -49,20 +57,23 @@ What don't you like about it?
 
 ### work-change
 What would you change about it?
+Optional: yes
 
 ### work-better-used
-Is there any way that you could be better utilized in your current position?
+Is there any way your job could make better use of what you're good at?
+Optional: yes
 
 ### work-tools
 What tools and systems are you using?
 Hint: Software, forms, records systems, phones, vehicles, anything you use to get the work done.
 
 ### work-skills
-What skills does your job take that you have, from how you run the work to the everyday tasks? List all of them.
+What skills do you use in your job, from running the work to the everyday tasks? List all of them.
 Hint: The things you do without thinking count: calming someone down, training a new hire, keeping a schedule.
 
 ### work-others-say
 What do people at work come to you for? What would your boss or your coworkers say you're best at?
+Optional: yes
 
 ### work-pitch
 What is your elevator pitch to someone over coffee who asks what you do, and why you do it?
@@ -70,10 +81,10 @@ Hint: Write it the way you'd say it today. Later you'll see it rewritten from yo
 
 ## Part 2: Tell a story about your projects or clients
 
-This part is the heart of it. Give as much detail as you can remember, and bullet points are fine. Leave out names and anything that would tell someone who the story is about, unless that person told you directly that it's okay.
+This part is the heart of it. Give as much detail as you can remember, and bullet points are fine. If you need to name someone, use a first name only. Names stay in your answers: they're taken out of everything written from them.
 
 ### stories-describe
-How would you describe your clients or projects?
+How would you describe your clients, projects, or the people your work is for?
 Hint: Clients can be anyone your work is for: students, patients, customers, your crew, the orders you ship.
 
 ### stories-now
@@ -112,6 +123,7 @@ Private: yes
 
 ### change-stories
 What are your best change stories? Tell me about the times someone or something ended up in a better place because of your work.
+Optional: yes
 
 ### coffee-stories
 What are your three strongest stories about your professional career that you would tell a friend over coffee if they asked what you've done really well?
@@ -126,7 +138,8 @@ What proof do you have of anything that you've done? Do you have any files, numb
 Hint: Numbers you remember count: how many a day, how many at a time, a rating. You don't need the file, and never copy anything private out of work.
 
 ### proof-looks-like
-If not, what do you think proof looks like for you, your industry, your job, and your stories?
+If you don't have proof yet, what do you think proof looks like for your job?
+Optional: yes
 
 ### proof-praise
 Do you have any reviews, awards, or notes from people you've helped or worked with? What do they say?
@@ -140,25 +153,27 @@ If you could do anything, what do you think you would be doing? Why?
 
 ### dream-day
 Tell me about what your day to day might look like, or what you would really love to spend your time doing.
+Optional: yes
 
 ### dream-now
 Are you getting to do any of that right now?
 
 ### dream-energy
 Which parts of your work now give you energy, and which parts wear you out?
+Optional: yes
 
 ### dream-titles
 What roles or titles do you wish you could hold, now or in the future?
 Hint: If you don't know what it's called, describe the job.
 
 ### dream-industry
-Is there any kind of position you'd like to work toward, or any type of industry you'd like to work in?
+Is there any type of industry you'd like to work in?
 
 ### dream-location
 What location or locations would you like to work in? Are you where you want to be location-wise right now?
 
 ### dream-money
-What's the least you can make and still be okay? How much of a pay cut, if any, could you take to make a change?
+What do you make now? What's the least you can make and still be okay? How much of a pay cut, if any, could you take to make a change?
 Private: yes
 Hint: This stays private. It's for picking which jobs to chase, never for a resume or a letter.
 
@@ -182,9 +197,11 @@ Last, the big picture. You've told your stories now, so use them.
 
 ### you-describe
 Tell me about you. How would you describe yourself?
+Optional: yes
 
 ### you-career
 How would you describe what you do and your professional career?
+Optional: yes
 
 ### you-superpowers
 What are your superpowers?
@@ -197,6 +214,7 @@ Hint: This stays private. It helps pick the right jobs, and it never goes on a p
 ### you-wont
 What are the things you won't do, or don't want to do, or don't like to do?
 Private: yes
+Optional: yes
 
 ### you-skills
 What do you think your skills are, personally and professionally? List all of them.

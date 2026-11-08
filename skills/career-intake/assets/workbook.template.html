@@ -191,7 +191,7 @@ function toMarkdown() {
   L.push("Saved: " + today());
   L.push("Workbook: career-intake " + WORKBOOK_VERSION, "");
   L.push("These are my answers to the career intake workbook from job-seeker-ops. To turn them into a career record, give this file to Claude with the job-seeker-ops plugin installed and ask it to build my career record.");
-  L.push("", "Answers marked (private) are for picking jobs and preparing for interviews. They never go on a resume, a letter, a profile, or anything else someone else reads. The stories leave out names on purpose: keep any name out of everything written from them unless I say that person told me directly it's okay.");
+  L.push("", "Answers marked (private) are for picking jobs and preparing for interviews. They never go on a resume, a letter, a profile, or anything else someone else reads. Any name in these answers stays here: take every name out of everything written from them.");
   PARTS.forEach(function (part) {
     L.push("", "## Part " + part.n + ": " + part.title);
     part.questions.forEach(function (q) {

@@ -126,9 +126,25 @@ var PARTS = [
     "optional": false
    },
    {
+    "id": "work-credentials",
+    "text": "What degrees, licenses, or certifications do you have?",
+    "hint": "Add the year, and when a license renews if it does.",
+    "type": "",
+    "private": false,
+    "optional": false
+   },
+   {
     "id": "work-responsibilities",
     "text": "What are your primary responsibilities?",
     "hint": "",
+    "type": "",
+    "private": false,
+    "optional": false
+   },
+   {
+    "id": "work-size",
+    "text": "How many people, how much money, or how much work do you handle in a week?",
+    "hint": "Team size, budget, cases, calls, orders, students. Your best estimate is fine.",
     "type": "",
     "private": false,
     "optional": false
@@ -155,15 +171,15 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "work-better-used",
-    "text": "Is there any way that you could be better utilized in your current position?",
+    "text": "Is there any way your job could make better use of what you're good at?",
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "work-tools",
@@ -175,7 +191,7 @@ var PARTS = [
    },
    {
     "id": "work-skills",
-    "text": "What skills does your job take that you have, from how you run the work to the everyday tasks? List all of them.",
+    "text": "What skills do you use in your job, from running the work to the everyday tasks? List all of them.",
     "hint": "The things you do without thinking count: calming someone down, training a new hire, keeping a schedule.",
     "type": "",
     "private": false,
@@ -187,7 +203,7 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "work-pitch",
@@ -203,12 +219,12 @@ var PARTS = [
   "n": 2,
   "title": "Tell a story about your projects or clients",
   "intro": [
-   "This part is the heart of it. Give as much detail as you can remember, and bullet points are fine. Leave out names and anything that would tell someone who the story is about, unless that person told you directly that it's okay."
+   "This part is the heart of it. Give as much detail as you can remember, and bullet points are fine. If you need to name someone, use a first name only. Names stay in your answers: they're taken out of everything written from them."
   ],
   "questions": [
    {
     "id": "stories-describe",
-    "text": "How would you describe your clients or projects?",
+    "text": "How would you describe your clients, projects, or the people your work is for?",
     "hint": "Clients can be anyone your work is for: students, patients, customers, your crew, the orders you ship.",
     "type": "",
     "private": false,
@@ -292,7 +308,7 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "coffee-stories",
@@ -320,11 +336,11 @@ var PARTS = [
    },
    {
     "id": "proof-looks-like",
-    "text": "If not, what do you think proof looks like for you, your industry, your job, and your stories?",
+    "text": "If you don't have proof yet, what do you think proof looks like for your job?",
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "proof-praise",
@@ -357,7 +373,7 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "dream-now",
@@ -373,7 +389,7 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "dream-titles",
@@ -385,7 +401,7 @@ var PARTS = [
    },
    {
     "id": "dream-industry",
-    "text": "Is there any kind of position you'd like to work toward, or any type of industry you'd like to work in?",
+    "text": "Is there any type of industry you'd like to work in?",
     "hint": "",
     "type": "",
     "private": false,
@@ -401,7 +417,7 @@ var PARTS = [
    },
    {
     "id": "dream-money",
-    "text": "What's the least you can make and still be okay? How much of a pay cut, if any, could you take to make a change?",
+    "text": "What do you make now? What's the least you can make and still be okay? How much of a pay cut, if any, could you take to make a change?",
     "hint": "This stays private. It's for picking which jobs to chase, never for a resume or a letter.",
     "type": "",
     "private": true,
@@ -454,7 +470,7 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "you-career",
@@ -462,7 +478,7 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": false,
-    "optional": false
+    "optional": true
    },
    {
     "id": "you-superpowers",
@@ -486,7 +502,7 @@ var PARTS = [
     "hint": "",
     "type": "",
     "private": true,
-    "optional": false
+    "optional": true
    },
    {
     "id": "you-skills",
@@ -612,7 +628,7 @@ function toMarkdown() {
   L.push("Saved: " + today());
   L.push("Workbook: career-intake " + WORKBOOK_VERSION, "");
   L.push("These are my answers to the career intake workbook from job-seeker-ops. To turn them into a career record, give this file to Claude with the job-seeker-ops plugin installed and ask it to build my career record.");
-  L.push("", "Answers marked (private) are for picking jobs and preparing for interviews. They never go on a resume, a letter, a profile, or anything else someone else reads. The stories leave out names on purpose: keep any name out of everything written from them unless I say that person told me directly it's okay.");
+  L.push("", "Answers marked (private) are for picking jobs and preparing for interviews. They never go on a resume, a letter, a profile, or anything else someone else reads. Any name in these answers stays here: take every name out of everything written from them.");
   PARTS.forEach(function (part) {
     L.push("", "## Part " + part.n + ": " + part.title);
     part.questions.forEach(function (q) {
