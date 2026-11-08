@@ -47,15 +47,11 @@ Proof to get: the program's yearly outcome report, with no names.
 - Before: I help people who are in a bad place not end up in a worse one. [work-pitch]
 - After: I keep about 40 people in crisis safe at home at a time.
 
-## 10. Private
-
-None.
-
-## 11. Open questions
+## 10. Open questions
 
 - How many hospital trips did the program avoid last year?
 
 ## Answers in this session
 
-- A1. Is "Dana" okay to name? "No, leave her out."
+- A1. Is it okay to use the pharmacist's name? "No, leave her out."
 - A2. What happened after? "He stayed home, no readmit."

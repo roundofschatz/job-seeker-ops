@@ -45,7 +45,7 @@ def parse(text):
             qid = m.group(1).strip()
             if not ID_RE.match(qid):
                 raise ValueError(f"line {n}: question id {qid!r} must be lowercase letters, numbers and hyphens")
-            q = {"id": qid, "text": "", "hint": "", "type": ""}
+            q = {"id": qid, "text": "", "hint": "", "type": "", "private": False, "optional": False}
             part["questions"].append(q)
             continue
         if not line.strip():
@@ -54,6 +54,11 @@ def parse(text):
             part["intro"].append(line.strip())
         elif line.startswith("Hint:"):
             q["hint"] = line[5:].strip()
+        elif line.startswith("Private:") or line.startswith("Optional:"):
+            key, _, val = line.partition(":")
+            if val.strip() not in ("yes", "no"):
+                raise ValueError(f"line {n}: {key} must be yes or no")
+            q[key.lower()] = val.strip() == "yes"
         elif line.startswith("Type:"):
             q["type"] = line[5:].strip()
             if q["type"] not in TYPES:

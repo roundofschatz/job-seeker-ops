@@ -100,7 +100,7 @@ class Answers(unittest.TestCase):
             path.write_text(text, encoding="utf-8")
             code, out = run(check_record.check_answers, str(path))
         self.assertEqual(code, 0)
-        self.assertIn("possible names, check before anything is written: Dana", out)
+        self.assertIn("possible names or places, check before anything is written: Dana", out)
         self.assertIn("coffee-stories: a line speaks to an AI tool", out)
 
     def test_refuses_another_file(self):
@@ -151,6 +151,44 @@ class Record(unittest.TestCase):
         code, out = self.check(check_record.check_aim, text)
         self.assertEqual(code, 1)
         self.assertIn("Recommend against:", out)
+
+    def test_private_answers_stay_out_of_the_record(self):
+        base = (FIXTURES / "career-record.md").read_text(encoding="utf-8")
+        code, out = self.check(check_record.check_record, base.replace("[work-pitch]", "[dream-money]"))
+        self.assertEqual(code, 1)
+        self.assertIn("cites the private answer [dream-money]", out)
+        code, out = self.check(check_record.check_record, base.replace("## 10. Open questions", "## 10. Private\n\nNone.\n\n## 10. Open questions"))
+        self.assertEqual(code, 1)
+        self.assertIn("goes in where-to-aim.md", out)
+
+    def test_sources_are_real_questions_answers_or_file_lines(self):
+        base = (FIXTURES / "career-record.md").read_text(encoding="utf-8")
+        for junk in ("[x]", "[todo]", "[confirmed]", "[best-storyy]"):
+            text = base.replace("[estimate] [stories-total]", "[estimate] " + junk)
+            self.assertEqual(self.check(check_record.check_record, text)[0], 1, junk)
+        for good in ("[My Resume.docx L4]", "[A3, A4]", "[resume.pdf p2]", "[stories-total; A2]"):
+            text = base.replace("[estimate] [stories-total]", "[estimate] " + good)
+            self.assertEqual(self.check(check_record.check_record, text)[0], 0, good)
+
+    def test_forgiving_on_form(self):
+        base = (FIXTURES / "career-record.md").read_text(encoding="utf-8")
+        text = "\ufeff" + base.replace("- People in it: no names", "- People in it: No names.").replace(
+            'Confirmed: 2026-11-08, "Yes, that\'s right."', "Confirmed: 2026-11-08, \u201cYes, that\'s right.\u201d")
+        code, out = self.check(check_record.check_record, text)
+        self.assertEqual(code, 0, out)
+
+    def test_names_in_the_record_get_flagged(self):
+        base = (FIXTURES / "career-record.md").read_text(encoding="utf-8")
+        text = base.replace("A man two days out", "Marcus Hill, two days out")
+        code, out = self.check(check_record.check_record, text)
+        self.assertIn("Marcus", out)
+        self.assertIn("Hill", out)
+
+    def test_the_name_flagger_catches_the_usual_cases(self):
+        found = check_record.possible_names("Maria called me. I went with Dr. Patel.\n- Marcus was there.\nWe used Excel.")
+        for name in ("Maria", "Patel", "Marcus"):
+            self.assertIn(name, found)
+        self.assertNotIn("Excel", found)
 
     def test_the_aim_file_says_it_is_private(self):
         text = (FIXTURES / "where-to-aim.md").read_text(encoding="utf-8").replace(

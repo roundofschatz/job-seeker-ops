@@ -14,7 +14,11 @@ Days with fewer night calls. [dream-energy]
 
 Keeps the counseling license. [dream-limits]
 
-## 3. Targets
+## 3. Private notes
+
+The worst story and the roadblocks go here. None yet.
+
+## 4. Targets
 
 | Target | Evidence | Repeatability | Recency | Market size | Title | Fit |
 |---|---|---|---|---|---|---|
@@ -22,16 +26,16 @@ Keeps the counseling license. [dream-limits]
 
 Postings checked 2026-11-08: https://example.com/job/1
 
-## 4. The calls
+## 5. The calls
 
 - Go for: Care coordinator at a health plan. The work is the same and the hours are days.
 - Runner-up: Member support lead. Fewer postings, but the title fits.
 - Recommend against: Peer support specialist. It looks close and pays below the floor.
 
-## 5. People who can help
+## 6. People who can help
 
 None.
 
-## 6. Next
+## 7. Next
 
 Look at three care coordinator postings, then run candidate-positioning.

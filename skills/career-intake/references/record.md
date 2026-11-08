@@ -2,13 +2,15 @@
 
 career-intake writes two Markdown files into the person's folder. This page is their format's one home, and `scripts/check_record.py` checks both.
 
-- `career-record.md` holds what's true about the person's work: roles, totals, stories, skills, proof, and how the work reads in other fields. candidate-positioning and resume-ops read it as a career record.
-- `where-to-aim.md` holds what the person wants, what can't change, and the targets worth chasing. It's private from top to bottom.
+- `career-record.md` holds what's true about the person's work: roles, totals, stories, skills, proof, and how the work reads in other fields. candidate-positioning and resume-ops read it as a career record, so nothing private goes in it.
+- `where-to-aim.md` holds what the person wants, what can't change, everything private, and the targets worth chasing. It's private from top to bottom, and no other skill reads it.
+
+The questions file marks the private answers with `Private: yes`. They go in `where-to-aim.md` only, and the check fails a record that cites one.
 
 ## Writing the parts
 
 - Dates are written `YYYY-MM-DD`.
-- Every fact line ends with its source in brackets. A workbook answer is its question id, like `[best-story]`. An answer given in this session is `[A3]`, listed under "Answers in this session" at the end. A line in a file is `[resume.txt L12]`. Separate two sources with a semicolon: `[best-story; A2]`.
+- Every fact line ends with its source in brackets. An answer to one of the questions is its question id, like `[best-story]`, whether it came from the workbook or the chat. A follow-up answer is `[A3]`, listed under "Answers in this session" at the end. A line in a file is `[resume.txt L12]`, or `[resume.pdf p2]` for a page. Separate two sources with a semicolon: `[best-story; A2]`. A tag like `[estimate]` isn't a source.
 - Use the person's own words wherever they work. A rewrite keeps every fact they gave and adds none.
 - A section with nothing in it says "None."
 
@@ -16,7 +18,9 @@ career-intake writes two Markdown files into the person's folder. This page is t
 
 Stories keep their full detail. They leave out names, and anything that together would tell a reader who the story is about, unless that person told the candidate directly that it's okay. In health, counseling, legal, school and social work, that also means no dates, small towns, ages, or rare details that point to one client.
 
-Write the person as a description: "a man in his first week out of the hospital", "a family of five", "a client who'd been through three other programs". Each story ends with a `People in it:` line that says `no names` or names the people who gave their yes, with the answer where the candidate said so.
+Write the person as a description: "a man in his first week out of the hospital", "a family of five", "a client who'd been through three other programs". Each story ends with a `People in it:` line that says `no names` or names the people who gave their yes, with the answer where the candidate said so. A yes counts only when that person told the candidate themselves. "They wouldn't mind" isn't a yes.
+
+The same rule covers every line in both files, the session answers included: write down what the candidate said with any name taken out.
 
 ## career-record.md
 
@@ -56,7 +60,7 @@ Each story gets a number and a short title in plain words, then these lines:
 - People in it: no names
 ```
 
-The best story, the change stories and the three coffee stories go here. The worst story goes in section 10.
+The best story, the change stories and the three coffee stories go here. The worst story goes in `where-to-aim.md`.
 
 ### 4. Things built that others use
 
@@ -83,17 +87,13 @@ Proof on hand: files, reports, numbers, and where each one lives. Proof to get: 
 - Before: the coffee pitch from the workbook, word for word. `[work-pitch]`
 - After: the pitch and a three- or four-sentence description, written from the stories and totals in the person's words, and confirmed by them.
 
-### 10. Private
+### 10. Open questions
 
-Nothing here goes on any page someone else reads: the worst story in full, gaps, things they won't do, roadblocks, and anything they asked to keep private. Each still has its source.
-
-### 11. Open questions
-
-Numbers to chase, proof to find, and anything left blank, each with the question to ask.
+Numbers to chase, proof to find, and anything left blank, each with the question to ask. A number the person can't share, such as one under a confidentiality agreement, is written "can't be shared" and never chased.
 
 ### Answers in this session
 
-`A1`, `A2` and on: the question and the person's answer, in their words.
+`A1`, `A2` and on: each follow-up question and the person's answer, in their words with any name taken out. A later session starts after the last number.
 
 ## where-to-aim.md
 
@@ -115,11 +115,15 @@ The kind of days they want, what gives them energy and what wears them out, the 
 
 The pay floor and the pay cut they can take, schedule, family, licenses to keep, drive time, and remote work.
 
-### 3. Targets
+### 3. Private notes
+
+The worst story in full, gaps, things they won't do, roadblocks, and anything else they asked to keep private, each with its source. They help pick targets and prepare for interviews.
+
+### 4. Targets
 
 Two to four targets, each a job family with the standard title recruiters search for. Score each on the six points in resume-ops's `references/intake.md`, under "Choosing a target": evidence, repeatability and recency from the record, and market size, title and fit from 8 to 12 live postings. List the postings under the table with their links and the date checked.
 
-### 4. The calls
+### 5. The calls
 
 ```
 - Go for: <target>. <why, in one or two sentences>
@@ -127,10 +131,10 @@ Two to four targets, each a job family with the standard title recruiters search
 - Recommend against: <target>. <why it looks strong from the inside and fails in the market>
 ```
 
-### 5. People who can help
+### 6. People who can help
 
 From the `dream-people` answer: who they know, where, and which target each one helps.
 
-### 6. Next
+### 7. Next
 
 The first postings to look at, and the step after: with a posting in hand, candidate-positioning reads the career record and works out the case.

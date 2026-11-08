@@ -2,6 +2,34 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.7.1 · career intake: red team fixes
+
+Two reviewers that hadn't seen the build read career intake on November 8. One tested the workbook and the scripts. The other went through all 48 questions as three made-up career changers. Their findings that were defects are fixed here. Changes to the owner's question wording wait for his ruling.
+
+Fixed:
+
+- Private answers left the career record. The worst story, gaps, things the person won't do, roadblocks, pay and limits are marked `Private: yes` in the questions file. They now go in `where-to-aim.md` only, which no other skill reads. Before, they sat in a section of the record that candidate-positioning and resume-ops read as evidence. The check fails a record with a private section or one that cites a private answer.
+- The workbook on a shared computer. A Clear my answers button, and a line on the welcome screen and under the page, tell people to clear their answers before leaving a shared or library computer. When the browser can't save, closing the page now asks first.
+- Opening a saved file no longer wipes answers. A blank answer in the file leaves the answer on the page alone, and the page says how many answers it opened.
+- A line starting "Notes:" inside the counting helper's notes no longer cuts off everything after it.
+- The answers file says which answers are private and that the stories leave out names on purpose, so any AI reading it gets the rule.
+- The counting helper warns when each one takes less than a week, and when a total passes 20,000.
+- The name check scans every answer, catches a name at the start of a sentence or list item and after Dr. or Mr., and skips job titles and words like Center or County. It now runs on the record and the session answers too. Lowercase names still get past it, so the skill tells Claude to read every line.
+- Sources are checked against the questions file. `[x]`, `[todo]` and `[confirmed]` no longer count as sources. A file name with spaces, a page like `[resume.pdf p2]` and `[A3, A4]` now do.
+- The record check accepts "No names.", curly quotes and a file saved with a byte-order mark.
+- Screen readers hear the save messages and the counting helper's total, and each box points to its question and hint.
+
+Changed:
+
+- `SKILL.md`: answers given in chat are saved as they come in the workbook's own file format, so a stop halfway loses nothing. A yes to a name counts only when the person in the story gave it themselves. A number that can't be shared is written that way and never chased. A new rule covers a person who gets upset or is at risk, with the 988 line. The voice check runs on the new pitch alone.
+- `references/questions.md`: hints and part openings only, in the plugin's words: the best and worst stories are told whole once; who counts as a client; what counts as a skill; proof from memory; picking a worst story you're okay going back to; describing a job you don't know the name of; bullet points are fine; you can stop after any part. The owner's question wording is unchanged. A question can now be marked `Optional: yes`, and the file says to retire a question that way instead of deleting its id.
+- `README.md`: the workbook needs a browser on a computer, and the name check is described as it works.
+
+Checked:
+
+- The workbook in headless Chrome at 375 pixels wide: the notes fix, a blank answer in an opened file, the clear button, the private tag and the less-than-a-week warning. No script errors.
+- The unit tests: 22 for career intake, up from 17.
+
 ## 0.7.0 · career intake: a starting point for people with no target yet
 
 Every skill in the plugin started from a job posting. The owner asked on November 8 for a skill that comes first, for someone who needs a career change and doesn't know where to start: it gets their stories out, works out the numbers behind them, and helps them say their work in other fields' words. He wrote the questions himself and asked that his wording be the rubric for how they're asked. He also asked for a workbook a person can download, fill in and bring back to any AI, and ruled that stories keep their full detail and leave out names unless the person in the story gave a direct yes.

@@ -34,17 +34,17 @@ The questions come in four parts, about 20 to 30 minutes each:
 
 Then Claude:
 
-1. Keeps the people in your stories private. Every name gets a question: did they tell you it's okay?
+1. Keeps the people in your stories private. Every name it finds gets a question: did they tell you themselves it's okay? A script flags capitalized names and places, and Claude reads every line for the rest.
 2. Pulls your skills out of your stories, and says your work back in two or three other fields' words, taken from live postings in those fields. You correct it.
 3. Writes `career-record.md`: your roles, totals with their math, stories, skills, proof and how your work reads elsewhere, every line tied to an answer you gave.
-4. Scores two to four targets against live postings and writes `where-to-aim.md`, a private page with the target to go for, a runner-up, and one to skip.
+4. Scores two to four targets against live postings and writes `where-to-aim.md`, a private page with the target to go for, a runner-up, and one to skip. Your pay, limits, gaps and worst story go there and only there, since no other skill reads it.
 5. Writes your new coffee pitch beside your old one, and asks you to confirm it all once.
 
 When you find a posting, candidate positioning reads the record and works out your case.
 
 ### The workbook
 
-`skills/career-intake/assets/workbook.html` is one page that runs in any browser with no internet. It asks one question at a time and saves on your device as you go, so you can stop and come back. When you're done, it saves one answers file to take to Claude, or to any AI you use. It sends nothing anywhere. It's built from the same questions file the chat uses, so the two always ask the same thing.
+`skills/career-intake/assets/workbook.html` is one page that runs in a web browser on a computer, with no internet. A phone's file preview won't run it. It asks one question at a time and saves on your device as you go, so you can stop and come back, and a button clears your answers from a shared computer. When you're done, it saves one answers file to take to Claude, or to any AI you use. The file marks which answers are private. The page sends nothing anywhere. It's built from the same questions file the chat uses, so the two always ask the same thing.
 
 ## Candidate positioning
 
