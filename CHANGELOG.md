@@ -2,6 +2,21 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.8.0 · resume-ops 2.6.0 and plainspeak-writer 1.10.0: every rule shows its evidence
+
+The owner's red team of November 22, 2026 graded every rule, ban and limit in resume-ops, plainspeak-writer's resume checks and the owner's own rulings by the evidence behind it, and two reviewers who hadn't seen the grades checked the 20 that matter most on the page. The owner said yes to the changes and ruled that evidence decides, not preference. This brings both tools in.
+
+Changed:
+
+- resume-ops 2.6.0, copied from its repository at commit 2427f23. It also brings 2.5.0 here for the first time (the summary as a pitch), which never reached this plugin. Zero spelling errors with a new `spell_check.py`; "Run" not "Runs", active voice and no contractions on a resume; numerals for 10 and up; three to five bullets a role; the summary held to four lines, about 75 words, for every candidate; a PDF when the employer asks; `parse_check.py --repair` for Google Docs exports; every `draft_review.py` finding prints its source or "judgment"; the serial comma is the candidate's choice. Its changelog has the full list.
+- plainspeak-writer 1.10.0, from its v1.10.0 release: on the resume surface, V04, V01 and R41 don't run, and "contributed to" warns instead of blocking. Letters, posts and blurbs are unchanged.
+- `.claude-plugin/marketplace.json`: plainspeak-writer's entry points at v1.10.0. resume-ops's entry points at main and pins the exact commit copied here with `sha`, since a cloud session can't push the release tag and resume-ops has no workflow that makes one. Claude Code checks out the `sha` when both are set, so a person who installs resume-ops on its own gets the version in this bundle.
+
+Checked:
+
+- The copy check (`tools/sync_bundled.py --check`) and the unit tests.
+- resume-ops's 343 tests and plainspeak-writer's resume-surface tests, in their own repositories.
+
 ## 0.7.2 · career intake: the owner's rulings on the questions and on names
 
 On November 8 the owner accepted every recommendation from the question red team, and ruled on names: people can write whatever they want in their answers, names included. The questions ask for first names only, and Claude is the final filter that takes every name out of what it writes. That replaces the 0.7.0 rule that let a name through with a direct yes.
