@@ -10,7 +10,7 @@ Changed:
 
 - resume-ops 2.6.0, copied from its repository at commit 2427f23. It also brings 2.5.0 here for the first time (the summary as a pitch), which never reached this plugin. Zero spelling errors with a new `spell_check.py`; "Run" not "Runs", active voice and no contractions on a resume; numerals for 10 and up; three to five bullets a role; the summary held to four lines, about 75 words, for every candidate; a PDF when the employer asks; `parse_check.py --repair` for Google Docs exports; every `draft_review.py` finding prints its source or "judgment"; the serial comma is the candidate's choice. Its changelog has the full list.
 - plainspeak-writer 1.10.0, from its v1.10.0 release: on the resume surface, V04, V01 and R41 don't run, and "contributed to" warns instead of blocking. Letters, posts and blurbs are unchanged.
-- `.claude-plugin/marketplace.json`: plainspeak-writer's entry points at v1.10.0. resume-ops's entry points at main and pins the exact commit copied here with `sha`, since a cloud session can't push the release tag and resume-ops has no workflow that makes one. Claude Code checks out the `sha` when both are set, so a person who installs resume-ops on its own gets the version in this bundle.
+- `.claude-plugin/marketplace.json`: plainspeak-writer's entry points at v1.10.0. resume-ops's entry first pointed at main and pinned the commit copied here with `sha`, because resume-ops had no release tag and a cloud session can't push one. On November 23 resume-ops got a release workflow of its own, the same as this plugin's, and published v2.6.0. Its entry now points at v2.6.0 like the others, with no `sha`, and `bundled.json` records that tag. The copied files didn't change.
 
 Checked:
 

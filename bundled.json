@@ -33,8 +33,8 @@
     "resume-ops": {
       "version": "2.6.0",
       "repository": "https://github.com/roundofschatz/resume-ops",
-      "ref": "main",
-      "commit": "2427f23b18115b7d407bbf6b49e1a79cb7606afa",
+      "ref": "v2.6.0",
+      "commit": "2eada55eb93695cfc2a834ac683278ab7c10c048",
       "source": "skills/resume-ops",
       "left_out": [
         "tests/"

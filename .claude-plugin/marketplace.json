@@ -17,8 +17,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/roundofschatz/resume-ops.git",
-        "ref": "main",
-        "sha": "2427f23b18115b7d407bbf6b49e1a79cb7606afa"
+        "ref": "v2.6.0"
       }
     },
     {
