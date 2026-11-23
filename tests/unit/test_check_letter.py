@@ -369,6 +369,19 @@ class ShapeTests(Base):
                 self.assertIn(kind, part, out)
                 self.assertIn(words, part, out)
 
+    def test_a_title_with_manager_and_parentheses_passes_the_names_check(self):
+        # The recipient line's "Hiring Manager" is the reader, but in a Re: line the word is
+        # part of the title, and a title's parentheses don't make it a new name.
+        with open(self.dir / "posting.txt", "a", encoding="utf-8") as f:
+            f.write("\nAlso hiring: Care Manager (BH Licensed)\n")
+        self.edit("Re: Supply Chain Planning Analyst", "Re: Care Manager (BH Licensed)")
+        code, out, _ = self.check()
+        fails = out.split("WARN (")[0].split("INFO (")[0]
+        self.assertNotIn("[names] The header's", fails, out)
+        self.edit("Re: Care Manager (BH Licensed)", "Re: Care Manager (Night Shift)")
+        code, out, _ = self.check()
+        self.assertFails(out, "Night Shift")
+
     def test_the_re_line_carries_the_requisition_number(self):
         with open(self.dir / "posting.txt", "a", encoding="utf-8") as f:
             f.write("\nReq ID: SG-2026-118\n")

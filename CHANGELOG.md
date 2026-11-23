@@ -2,6 +2,15 @@
 
 Every change to this plugin is logged here: what was added, changed or removed, and why. Nothing comes out without a line saying so. Newest first.
 
+## 0.8.1 · cover letter: a job title with "Manager" passes the header check
+
+Found while testing the job search starter on November 23, 2026. `check_letter.py` took the word "manager" out of every header line, to skip a recipient line like "Hiring Manager", and the Re: line went through the same step. A posting titled "Care Manager (BH Licensed)" came out as "Care BH Licensed", which no file holds, so the letter failed with a Re: line copied from the posting word for word.
+
+Fixed:
+
+- `skills/cover-letter/scripts/check_letter.py` 0.6.1: the Re: line keeps every word of the title, and its name counts when the title's words appear in that order in the three files, so parentheses in a title don't break the match. The recipient line works as before.
+- `tests/unit/test_check_letter.py`: a test with a "Manager" title in parentheses, and one that still fails a title the posting doesn't hold.
+
 ## 0.8.0 · resume-ops 2.6.0 and plainspeak-writer 1.10.0: every rule shows its evidence
 
 The owner's red team of November 22, 2026 graded every rule, ban and limit in resume-ops, plainspeak-writer's resume checks and the owner's own rulings by the evidence behind it, and two reviewers who hadn't seen the grades checked the 20 that matter most on the page. The owner said yes to the changes and ruled that evidence decides, not preference. This brings both tools in.

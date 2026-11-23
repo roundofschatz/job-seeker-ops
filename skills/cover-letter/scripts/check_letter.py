@@ -54,7 +54,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-__version__ = "0.6.0"
+__version__ = "0.6.1"
 
 HERE = Path(__file__).resolve().parent
 CP_PATH = HERE.parents[1] / "candidate-positioning" / "scripts" / "check_positioning.py"
@@ -842,12 +842,21 @@ def check_facts(letter, src, rep, given=()):
             rep.fail("names", f"The salutation names \"{run}\", which isn't in the three files. A wrong "
                      "company or person in the greeting blocks the letter; a name the person gave in "
                      "the session goes in with --given.")
+    loose = words_only(src.all_text)
     for line in letter.recipient + ([letter.re_line] if letter.re_line else []):
+        is_re = line == letter.re_line
         # The requisition number is checked against the posting in check_header.
         plain = REQ_ID.sub(" ", RE_LINE.sub(r"\1", line))
-        plain = re.sub(r"\b(?:hiring|search|recruiting)?\s*(?:team|manager|committee|panel)\b", " ", plain, flags=re.I)
+        if not is_re:
+            # "Hiring Team" or "Planning Team" on the recipient line is the reader, not a name.
+            # The Re: line keeps every word: "Manager" in "Care Manager" is part of the title.
+            plain = re.sub(r"\b(?:hiring|search|recruiting)?\s*(?:team|manager|committee|panel)\b", " ", plain, flags=re.I)
         for run, _loose in name_runs(plain):
             gone = missing_names(re.sub(r"^(?:Mr|Mrs|Ms|Mx|Dr)\.?\s+", "", run), lower, given)
+            if gone and is_re:
+                # A title like "Care Manager (BH Licensed)" reaches here without its parentheses,
+                # so the Re: line's name counts when its words appear in that order in the files.
+                gone = [g for g in gone if not re.search(r"(?<!\w)" + re.escape(words_only(g)) + r"(?!\w)", loose)]
             if gone and run.lower() not in {"mr", "mrs", "ms", "mx", "dr"}:
                 rep.fail("names", f"The header's \"{line[:60]}\" names \"{run}\", which isn't in the three "
                          "files. A name the person gave in the session goes in with --given.")
